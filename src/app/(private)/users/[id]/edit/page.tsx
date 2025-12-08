@@ -1,7 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 
 import { Metadata } from "next";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
@@ -20,7 +20,12 @@ export async function generateMetadata({
   params,
 }: EditUserPageProps): Promise<Metadata> {
   const { id } = await params;
-  const result = await getUserById(id);
+  const session = await getServerSession(authOptions);
+
+  // For current user, use getMyProfile
+  // For others (admin), use getUserById
+  const isCurrentUser = session?.user?.id === id;
+  const result = isCurrentUser ? await getMyProfile() : await getUserById(id);
 
   if (!result.success) {
     return {

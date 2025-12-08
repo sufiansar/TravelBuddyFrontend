@@ -20,6 +20,7 @@ export async function generateMetadata({
 }: UserDetailPageProps): Promise<Metadata> {
   const { id } = await params;
   const result = await getUserById(id);
+  console.log(result, "UserDetailPage - fetched user data for metadata:");
 
   if (!result.success) {
     return {
@@ -36,6 +37,7 @@ export async function generateMetadata({
 export default async function UserDetailPage({ params }: UserDetailPageProps) {
   const { id } = await params;
   const result = await getUserById(id);
+  console.log(result, "UserDetailPage - fetched user data:");
 
   if (!result.success) {
     notFound();

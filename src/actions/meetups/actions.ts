@@ -1,131 +1,208 @@
 "use server";
 
-import { makeApiCall } from "@/actions/shared/apiClient";
 import { revalidatePath } from "next/cache";
-import type { IUser, Meetup } from "@/actions/shared/types";
+import { api } from "./api";
 
-export async function createMeetup(formData: FormData) {
+export async function createMeetup(data: any) {
   try {
-    const data = {
-      title: formData.get("title"),
-      description: formData.get("description"),
-      location: formData.get("location"),
-      date: formData.get("date"),
-      maxMembers: Number(formData.get("maxMembers")),
-    };
+    console.log("createMeetup - Creating meetup with data:", data);
 
-    const result = await makeApiCall(
-      "/meetups",
-      {
-        method: "POST",
-        body: JSON.stringify(data),
-      },
-      true
-    );
+    const result = await api.meetups.create(data);
+
+    console.log("createMeetup - API response:", result);
 
     revalidatePath("/meetups");
-    return { success: true, data: result };
-  } catch (error: any) {
-    return { success: false, error: error.message };
-  }
-}
+    revalidatePath("/dashboard/meetups");
 
-export async function getAllMeetups(params?: Record<string, string>) {
-  try {
-    const result = await makeApiCall("/meetups", { params }, false);
-    return { success: true, data: result as Meetup[] };
-  } catch (error: any) {
-    return { success: false, error: error.message };
-  }
-}
-
-export async function getSingleMeetup(id: string) {
-  try {
-    const result = await makeApiCall(`/meetups/${id}`, {}, false);
-    return { success: true, data: result as Meetup };
-  } catch (error: any) {
-    return { success: false, error: error.message };
-  }
-}
-
-export async function updateMeetup(id: string, formData: FormData) {
-  try {
-    const data = {
-      title: formData.get("title"),
-      description: formData.get("description"),
-      location: formData.get("location"),
-      date: formData.get("date"),
-      maxMembers: Number(formData.get("maxMembers")),
+    return {
+      success: true,
+      data: result,
     };
+  } catch (error: any) {
+    console.error("createMeetup - Error:", error);
+    return {
+      success: false,
+      error: error.message || "Failed to create meetup",
+    };
+  }
+}
 
-    const result = await makeApiCall(
-      `/meetups/${id}`,
-      {
-        method: "PUT",
-        body: JSON.stringify(data),
-      },
-      true
-    );
+export async function updateMeetup(id: string, data: any) {
+  try {
+    console.log("updateMeetup - Updating meetup:", id, "with data:", data);
+
+    const result = await api.meetups.update(id, data);
+
+    console.log("updateMeetup - API response:", result);
 
     revalidatePath("/meetups");
+    revalidatePath("/dashboard/meetups");
     revalidatePath(`/meetups/${id}`);
-    return { success: true, data: result };
+    revalidatePath(`/dashboard/meetups/${id}`);
+
+    return {
+      success: true,
+      data: result,
+    };
   } catch (error: any) {
-    return { success: false, error: error.message };
+    console.error("updateMeetup - Error:", error);
+    return {
+      success: false,
+      error: error.message || "Failed to update meetup",
+    };
   }
 }
 
 export async function deleteMeetup(id: string) {
   try {
-    await makeApiCall(`/meetups/${id}`, { method: "DELETE" }, true);
+    console.log("deleteMeetup - Deleting meetup:", id);
+
+    const result = await api.meetups.delete(id);
+
+    console.log("deleteMeetup - API response:", result);
+
     revalidatePath("/meetups");
-    return { success: true };
+    revalidatePath("/dashboard/meetups");
+
+    return {
+      success: true,
+      data: result,
+    };
   } catch (error: any) {
-    return { success: false, error: error.message };
+    console.error("deleteMeetup - Error:", error);
+    return {
+      success: false,
+      error: error.message || "Failed to delete meetup",
+    };
   }
 }
 
 export async function joinMeetup(id: string) {
   try {
-    const result = await makeApiCall(
-      `/meetups/${id}/join`,
-      {
-        method: "POST",
-      },
-      true
-    );
+    console.log("joinMeetup - Joining meetup:", id);
+
+    const result = await api.meetups.join(id);
+
+    console.log("joinMeetup - API response:", result);
 
     revalidatePath("/meetups");
+    revalidatePath("/dashboard/meetups");
     revalidatePath(`/meetups/${id}`);
-    return { success: true, data: result };
+    revalidatePath(`/dashboard/meetups/${id}`);
+
+    return {
+      success: true,
+      data: result,
+    };
   } catch (error: any) {
-    return { success: false, error: error.message };
+    console.error("joinMeetup - Error:", error);
+    return {
+      success: false,
+      error: error.message || "Failed to join meetup",
+    };
   }
 }
 
 export async function leaveMeetup(id: string) {
   try {
-    const result = await makeApiCall(
-      `/meetups/${id}/leave`,
-      {
-        method: "POST",
-      },
-      true
-    );
+    console.log("leaveMeetup - Leaving meetup:", id);
+
+    const result = await api.meetups.leave(id);
+
+    console.log("leaveMeetup - API response:", result);
 
     revalidatePath("/meetups");
+    revalidatePath("/dashboard/meetups");
     revalidatePath(`/meetups/${id}`);
-    return { success: true, data: result };
+    revalidatePath(`/dashboard/meetups/${id}`);
+
+    return {
+      success: true,
+      data: result,
+    };
   } catch (error: any) {
-    return { success: false, error: error.message };
+    console.error("leaveMeetup - Error:", error);
+    return {
+      success: false,
+      error: error.message || "Failed to leave meetup",
+    };
+  }
+}
+
+type MeetupsGetAllResult = {
+  data: any[];
+  meta?: {
+    page: number;
+    limit: number;
+    total: number;
+    [key: string]: any;
+  };
+  [key: string]: any;
+};
+
+export async function getAllMeetups(filters?: any, options?: any) {
+  try {
+    console.log(
+      "getAllMeetups - Fetching meetups with filters:",
+      filters,
+      "options:",
+      options
+    );
+
+    const result = await api.meetups.getAll(filters, options) as MeetupsGetAllResult;
+
+    return {
+      success: true,
+      data: result?.data,
+      meta: result?.meta,
+    };
+  } catch (error: any) {
+    console.error("getAllMeetups - Error:", error);
+    return {
+      success: false,
+      error: error.message || "Failed to fetch meetups",
+      data: [],
+      meta: { page: 1, limit: 10, total: 0 },
+    };
+  }
+}
+
+export async function getMeetup(id: string) {
+  try {
+    console.log("getMeetup - Fetching meetup:", id);
+
+    const result = await api.meetups.getSingle(id);
+
+    return {
+      success: true,
+      data: result,
+    };
+  } catch (error: any) {
+    console.error("getMeetup - Error:", error);
+    return {
+      success: false,
+      error: error.message || "Failed to fetch meetup",
+      data: null,
+    };
   }
 }
 
 export async function getMeetupMembers(id: string) {
   try {
-    const result = await makeApiCall(`/meetups/${id}/members`, {}, true);
-    return { success: true, data: result as IUser[] };
+    console.log("getMeetupMembers - Fetching members for meetup:", id);
+
+    const result = await api.meetups.getMembers(id);
+
+    return {
+      success: true,
+      data: result,
+    };
   } catch (error: any) {
-    return { success: false, error: error.message };
+    console.error("getMeetupMembers - Error:", error);
+    return {
+      success: false,
+      error: error.message || "Failed to fetch meetup members",
+      data: [],
+    };
   }
 }

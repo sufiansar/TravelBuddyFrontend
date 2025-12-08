@@ -3,13 +3,7 @@
 import { makeApiCall } from "@/actions/shared/apiClient";
 import { uploadFile } from "@/actions/shared/apiClient";
 import { revalidatePath } from "next/cache";
-import {
-  User,
-  PublicUserProfile,
-  PaginatedResponse,
-  PaginationParams,
-  UpdateUserData,
-} from "@/lib/types";
+import { PaginationParams, UpdateUserData } from "@/lib/types";
 
 export async function getMyProfile() {
   try {
@@ -57,11 +51,7 @@ export async function updateUser(
     }
 
     // Single request with both data and image
-    const result = await uploadFile<User>(
-      `/update-user/${userId}`,
-      formData,
-      true
-    );
+    const result = await uploadFile(`/update-user/${userId}`, formData, true);
 
     console.log("updateUser - API response:", result);
 
@@ -91,7 +81,7 @@ export async function updateUserRole(
   try {
     console.log("updateUserRole - Updating role for user:", userId, "to", role);
 
-    const result = await makeApiCall<User>(
+    const result = await makeApiCall(
       `/user/update-role/${userId}`,
       {
         method: "PATCH",
@@ -121,10 +111,7 @@ export async function updateUserRole(
 // Get public profile
 export async function getPublicProfile(id: string) {
   try {
-    const result = await makeApiCall<PublicUserProfile>(
-      `/user/public/${id}`,
-      {}
-    );
+    const result = await makeApiCall(`/user/public/${id}`, {});
 
     console.log(
       "getPublicProfile - Full API Response:",
@@ -152,8 +139,8 @@ export async function getPublicProfile(id: string) {
 // Get single user
 export async function getUserById(id: string) {
   try {
-    // Try the standard endpoint first
-    const result = await makeApiCall<User>(`/user/profile/${id}`, {}, true);
+    // Fetch specific user by ID
+    const result = await makeApiCall(`/user/${id}`, {}, true);
 
     console.log(
       "getUserById - Full API Response:",
@@ -189,17 +176,17 @@ export async function getUserById(id: string) {
 // Get all users (admin only)
 export async function getAllUsers(params?: PaginationParams) {
   try {
-    const result = await makeApiCall<PaginatedResponse<User>>(
+    const result = await makeApiCall(
       "/user",
       {
         method: "GET",
         params: {
-          page: params?.page || 1,
-          limit: params?.limit || 10,
-          sortBy: params?.sortBy,
-          sortOrder: params?.sortOrder,
-          searchTerm: params?.searchTerm,
-          role: params?.role,
+          page: (params?.page ?? 1).toString(),
+          limit: (params?.limit ?? 10).toString(),
+          sortBy: params?.sortBy ?? "",
+          sortOrder: params?.sortOrder ?? "",
+          searchTerm: params?.searchTerm ?? "",
+          role: params?.role ?? "",
         },
       },
       true
