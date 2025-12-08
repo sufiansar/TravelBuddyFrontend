@@ -29,6 +29,7 @@ const PublicNavbar = async () => {
     { href: "/post", label: "Posts" },
     { href: "/explore", label: "Explore" },
     { href: "/travel-plans", label: "Travel Plans" },
+    // { href: "/matches", label: "Matches" },
     { href: "/dashboard", label: "Dashboard" },
   ];
 
@@ -69,11 +70,6 @@ const PublicNavbar = async () => {
             <>
               <Link href="/login">
                 <Button variant="outline">Login</Button>
-              </Link>
-              <Link href="/register">
-                <Button className="bg-primary hover:bg-primary/90">
-                  Register
-                </Button>
               </Link>
             </>
           )}
@@ -118,11 +114,6 @@ const PublicNavbar = async () => {
                       <Link href="/login">
                         <Button className="w-full" variant="outline">
                           Login
-                        </Button>
-                      </Link>
-                      <Link href="/register">
-                        <Button className="w-full bg-primary hover:bg-primary/90">
-                          Register
                         </Button>
                       </Link>
                     </>

@@ -4,7 +4,7 @@
 export * from "./travelPlans/actions";
 
 // Matches
-export * from "./matches/actions";
+
 
 // Reviews
 export * from "./reviews/actions";
@@ -24,4 +24,9 @@ export * from "./users/actions";
 
 // Shared
 export * from "./shared/apiClient";
-export * from "./shared/types";
+export type {
+  ITravelPlan,
+  ITravelPlanResponse,
+  TravelType,
+  PlanVisibility,
+} from "./shared/types";

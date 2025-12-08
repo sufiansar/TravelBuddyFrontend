@@ -1,24 +1,20 @@
 "use server";
 
 import { makeApiCall } from "@/actions/shared/apiClient";
+import {
+  CreateTravelPlanData,
+  PaginatedResponse,
+  PaginationParams,
+  TravelPlan,
+  TravelPlanRequest,
+} from "@/types/travlePlan.interface";
 import { revalidatePath } from "next/cache";
-import type { TravelPlan, JoinRequest } from "@/actions/shared/types";
 
-export async function createTravelPlan(formData: FormData) {
+// Create travel plan
+export async function createTravelPlan(data: CreateTravelPlanData) {
   try {
-    const data = {
-      destination: formData.get("destination"),
-      startDate: formData.get("startDate"),
-      endDate: formData.get("endDate"),
-      minBudget: Number(formData.get("minBudget") || 0),
-      maxBudget: Number(formData.get("maxBudget") || 0),
-      travelType: formData.get("travelType") || "GROUP",
-      description: formData.get("description"),
-      isPublic: formData.get("isPublic") || "PUBLIC",
-    };
-
     const result = await makeApiCall(
-      "/travel-plans",
+      "/travelPlans/create-travel-plan",
       {
         method: "POST",
         body: JSON.stringify(data),
@@ -27,50 +23,114 @@ export async function createTravelPlan(formData: FormData) {
     );
 
     revalidatePath("/travel-plans");
-    revalidatePath("/dashboard");
-    return { success: true, data: result };
-  } catch (error: any) {
-    return { success: false, error: error.message };
-  }
-}
+    revalidatePath("/travel-plans/my");
 
-export async function getAllTravelPlans(params?: Record<string, string>) {
-  try {
-    const result = await makeApiCall("/travelPlans", { params }, false);
-    // API returns { data: [...], meta: { page, limit, total } } or just the data
-    const plans = (result as any)?.data || result;
-    return { success: true, data: plans as TravelPlan[] };
-  } catch (error: any) {
-    return { success: false, error: error.message };
-  }
-}
+    // Extract plan data from nested structure
+    const planData = result?.data || result;
 
-export async function getSingleTravelPlan(id: string) {
-  try {
-    const result = await makeApiCall(`/travelPlans/${id}`, {}, false);
-    return { success: true, data: result as TravelPlan };
-  } catch (error: any) {
-    return { success: false, error: error.message };
-  }
-}
-
-export async function updateTravelPlan(id: string, formData: FormData) {
-  try {
-    const data = {
-      title: formData.get("title"),
-      destination: formData.get("destination"),
-      startDate: formData.get("startDate"),
-      endDate: formData.get("endDate"),
-      description: formData.get("description"),
-      activities: formData
-        .get("activities")
-        ?.toString()
-        .split(",")
-        .map((a) => a.trim()),
-      budget: Number(formData.get("budget")),
-      maxTravelers: Number(formData.get("maxTravelers")),
+    return {
+      success: true,
+      data: planData,
     };
+  } catch (error: any) {
+    return {
+      success: false,
+      error: error.message || "Failed to create travel plan",
+    };
+  }
+}
 
+// Get all travel plans (public)
+export async function getAllTravelPlans(params?: PaginationParams) {
+  try {
+    const result = await makeApiCall("/travelPlans", {
+      method: "GET",
+      params: {
+        page: String(params?.page || 1),
+        limit: String(params?.limit || 10),
+        ...(params?.sortBy && { sortBy: params.sortBy }),
+        ...(params?.sortOrder && { sortOrder: params.sortOrder }),
+        ...(params?.searchTerm && { searchTerm: params.searchTerm }),
+        ...(params?.travelType && { travelType: params.travelType }),
+        ...(params?.isPublic && { isPublic: params.isPublic }),
+        ...(params?.minBudget && { minBudget: String(params.minBudget) }),
+        ...(params?.maxBudget && { maxBudget: String(params.maxBudget) }),
+      },
+    });
+
+    return {
+      success: true,
+      data: result?.data?.data,
+      meta: result.meta,
+    };
+  } catch (error: any) {
+    return {
+      success: false,
+      error: error.message || "Failed to fetch travel plans",
+    };
+  }
+}
+
+// Get my travel plans
+export async function getMyTravelPlans(params?: PaginationParams) {
+  try {
+    const result = await makeApiCall(
+      "/travelPlans/my-plans",
+      {
+        method: "GET",
+        params: {
+          page: String(params?.page || 1),
+          limit: String(params?.limit || 10),
+          ...(params?.sortBy && { sortBy: params.sortBy }),
+          ...(params?.sortOrder && { sortOrder: params.sortOrder }),
+          ...(params?.searchTerm && { searchTerm: params.searchTerm }),
+        },
+      },
+      true
+    );
+
+    // Extract data from nested structure
+    const plansData = result?.data?.data || result?.data || result;
+
+    return {
+      success: true,
+      data: plansData,
+      meta: result.meta,
+    };
+  } catch (error: any) {
+    return {
+      success: false,
+      error: error.message || "Failed to fetch your travel plans",
+    };
+  }
+}
+
+// Get single travel plan
+export async function getTravelPlan(id: string) {
+  try {
+    const result = await makeApiCall(`/travelPlans/${id}`, {});
+
+    // Extract plan data from nested structure
+    const planData = result?.data || result;
+
+    return {
+      success: true,
+      data: planData,
+    };
+  } catch (error: any) {
+    return {
+      success: false,
+      error: error.message || "Failed to fetch travel plan",
+    };
+  }
+}
+
+// Update travel plan
+export async function updateTravelPlan(
+  id: string,
+  data: Partial<CreateTravelPlanData>
+) {
+  try {
     const result = await makeApiCall(
       `/travelPlans/${id}`,
       {
@@ -82,27 +142,50 @@ export async function updateTravelPlan(id: string, formData: FormData) {
 
     revalidatePath("/travel-plans");
     revalidatePath(`/travel-plans/${id}`);
-    return { success: true, data: result };
+    revalidatePath("/travel-plans/my");
+
+    return {
+      success: true,
+      data: result,
+    };
   } catch (error: any) {
-    return { success: false, error: error.message };
+    return {
+      success: false,
+      error: error.message || "Failed to update travel plan",
+    };
   }
 }
 
+// Delete travel plan
 export async function deleteTravelPlan(id: string) {
   try {
-    await makeApiCall(`/travelPlans/${id}`, { method: "DELETE" }, true);
+    await makeApiCall(
+      `/travelPlans/${id}`,
+      {
+        method: "DELETE",
+      },
+      true
+    );
+
     revalidatePath("/travel-plans");
-    revalidatePath("/dashboard");
-    return { success: true };
+    revalidatePath("/travel-plans/my");
+
+    return {
+      success: true,
+    };
   } catch (error: any) {
-    return { success: false, error: error.message };
+    return {
+      success: false,
+      error: error.message || "Failed to delete travel plan",
+    };
   }
 }
 
-export async function requestToJoin(planId: string, message?: string) {
+// Request to join travel plan
+export async function requestToJoin(travelPlanId: string, message?: string) {
   try {
     const result = await makeApiCall(
-      `/travelPlans/${planId}/request`,
+      `/travelPlans/${travelPlanId}/request`,
       {
         method: "POST",
         body: JSON.stringify({ message }),
@@ -110,44 +193,101 @@ export async function requestToJoin(planId: string, message?: string) {
       true
     );
 
-    revalidatePath(`/travel-plans/${planId}`);
-    return { success: true, data: result };
+    revalidatePath(`/travelPlans/${travelPlanId}`);
+
+    return {
+      success: true,
+      data: result,
+    };
   } catch (error: any) {
-    return { success: false, error: error.message };
+    return {
+      success: false,
+      error: error.message || "Failed to send join request",
+    };
   }
 }
 
-export async function getRequestsForOwner(planId: string) {
+// Get requests for travel plan (owner only)
+export async function getTravelPlanRequests(travelPlanId: string) {
   try {
     const result = await makeApiCall(
-      `/travel-plans/${planId}/requests`,
+      `/travelPlans/${travelPlanId}/requests`,
       {},
       true
     );
-    return { success: true, data: result as JoinRequest[] };
+
+    return {
+      success: true,
+      data: result,
+    };
   } catch (error: any) {
-    return { success: false, error: error.message };
+    return {
+      success: false,
+      error: error.message || "Failed to fetch requests",
+    };
   }
 }
 
+// Respond to join request
 export async function respondToRequest(
-  planId: string,
+  travelPlanId: string,
   requestId: string,
-  status: "accepted" | "rejected"
+  action: "ACCEPTED" | "REJECTED" | "PENDING"
 ) {
   try {
     const result = await makeApiCall(
-      `/travelPlans/${planId}/requests/${requestId}/respond`,
+      `/travelPlans/${travelPlanId}/requests/${requestId}/respond`,
       {
-        method: "PATCH",
-        body: JSON.stringify({ status }),
-      },
-      true
+        method: "POST",
+        body: JSON.stringify({ action }),
+      }
     );
 
-    revalidatePath(`/travel-plans/${planId}`);
-    return { success: true, data: result };
+    revalidatePath(`/travel-plans/${travelPlanId}`);
+    revalidatePath(`/travel-plans/${travelPlanId}/requests`);
+
+    return {
+      success: true,
+      data: result,
+    };
   } catch (error: any) {
-    return { success: false, error: error.message };
+    return {
+      success: false,
+      error: error.message || "Failed to respond to request",
+    };
+  }
+}
+
+// Get travel types for filter
+export async function getTravelTypes() {
+  try {
+    // This would come from your backend or constants
+    const travelTypes = [
+      "Adventure",
+      "Beach",
+      "City Tour",
+      "Cultural",
+      "Hiking",
+      "Road Trip",
+      "Ski/Snowboard",
+      "Backpacking",
+      "Luxury",
+      "Business",
+      "Family",
+      "Solo",
+      "Couple",
+      "Group",
+      "Other",
+    ];
+
+    return {
+      success: true,
+      data: travelTypes,
+    };
+  } catch (error: any) {
+    return {
+      success: false,
+      error: error.message || "Failed to fetch travel types",
+    };
   }
 }

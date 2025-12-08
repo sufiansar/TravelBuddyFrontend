@@ -1,160 +1,250 @@
-"use client";
-
+import { notFound, redirect } from "next/navigation";
+import {
+  getMyProfile,
+  getUserById,
+  getPublicProfile,
+} from "@/actions/users/actions";
+import { Metadata } from "next";
+import { UserProfile } from "@/components/modules/User/UserProfile";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { ArrowLeft, Settings, Shield } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { getServerSession } from "next-auth";
 
-interface UserProfile {
-  id: string;
-  fullName: string;
-  email: string;
-  bio?: string;
-  profileImage?: string;
-  currentLocation?: string;
-  visitedCountries?: string[];
-  travelInterests?: string[];
-  rating: number;
-  reviewCount: number;
+import { Badge } from "@/components/ui/badge";
+import { authOptions } from "../../../../helpers/authOptions";
+
+interface ProfilePageProps {
+  params: Promise<{
+    id: string;
+  }>;
 }
 
-export default function PublicProfilePage({
+export async function generateMetadata({
   params,
-}: {
-  params: { id: string };
-}) {
-  const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [loading, setLoading] = useState(true);
+}: ProfilePageProps): Promise<Metadata> {
+  const { id } = await params;
+  const session = await getServerSession(authOptions);
+  const isCurrentUser = session?.user?.id === id;
 
-  useEffect(() => {
-    // Fetch user profile
-    const fetchProfile = async () => {
-      try {
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching profile:", error);
-        setLoading(false);
-      }
+  if (isCurrentUser) {
+    return {
+      title: "My Profile | TravelBuddy",
     };
+  }
 
-    fetchProfile();
-  }, [params.id]);
+  const result = await getPublicProfile(id);
 
-  if (loading) return <div className="p-8 text-center">Loading...</div>;
-  if (!profile) return <div className="p-8 text-center">Profile not found</div>;
+  if (!result.success) {
+    return {
+      title: "Profile Not Found | TravelBuddy",
+    };
+  }
+
+  // Extract user from public profile response
+  const user = (result.data as any)?.user || result.data;
+
+  return {
+    title: `${user.fullName} | TravelBuddy`,
+    description: `Profile of ${user.fullName}`,
+  };
+}
+
+export default async function ProfilePage({ params }: ProfilePageProps) {
+  const { id } = await params;
+  const session = await getServerSession(authOptions);
+
+  if (!session) {
+    redirect("/login");
+  }
+
+  const isCurrentUser = session.user.id === id;
+  let user;
+
+  if (isCurrentUser) {
+    const result = await getMyProfile();
+    if (!result.success) {
+      redirect("/login");
+    }
+    user = result.data;
+  } else {
+    console.log("ProfilePage - Fetching user with ID:", id);
+
+    // Try getting public profile first, as it might have a different endpoint
+    const publicResult = await getPublicProfile(id);
+    console.log(
+      "ProfilePage - getPublicProfile result:",
+      JSON.stringify(publicResult, null, 2)
+    );
+
+    if (!publicResult.success) {
+      console.log("ProfilePage - User not found, showing 404");
+      notFound();
+    }
+
+    // Extract user from public profile response
+    const publicData = publicResult.data as any;
+    user = publicData?.user || publicData;
+
+    console.log("ProfilePage - Extracted user:", JSON.stringify(user, null, 2));
+
+    // Ensure we have the required fields
+    if (!user || !user.id) {
+      console.error("ProfilePage - Invalid user data structure");
+      notFound();
+    }
+
+    // Add missing fields for compatibility with UserProfile component
+    if (!user.email) {
+      user.email = user.username || "N/A";
+    }
+    if (!user.role) {
+      user.role = "USER";
+    }
+    if (!user.updatedAt) {
+      user.updatedAt = user.createdAt;
+    }
+  }
 
   return (
-    <div className="p-8 max-w-4xl mx-auto">
-      <Link href="/explore">
-        <Button variant="outline" className="mb-6">
-          ← Back to Explore
-        </Button>
-      </Link>
-
-      <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-        {/* Profile Header */}
-        <div className="bg-linear-to-r from-blue-400 to-blue-600 h-32"></div>
-
-        <div className="px-8 pb-8">
-          {/* Profile Photo and Info */}
-          <div className="flex flex-col md:flex-row gap-8 -mt-16 mb-8">
-            <div>
-              {profile.profileImage ? (
-                <img
-                  src={profile.profileImage}
-                  alt={profile.fullName}
-                  className="w-40 h-40 rounded-lg object-cover border-4 border-white shadow-lg"
-                />
-              ) : (
-                <div className="w-40 h-40 rounded-lg bg-blue-400 border-4 border-white shadow-lg"></div>
+    <div className="container mx-auto py-6 space-y-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div className="flex items-center gap-4">
+          <Button variant="outline" size="sm" asChild>
+            <Link href="/">
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back to Home
+            </Link>
+          </Button>
+          <div>
+            <div className="flex items-center gap-3">
+              <h1 className="text-3xl font-bold tracking-tight">
+                {isCurrentUser ? "My Profile" : "Profile"}
+              </h1>
+              {isCurrentUser && (
+                <Badge variant="secondary" className="gap-1">
+                  <Shield className="h-3 w-3" />
+                  {session.user.role}
+                </Badge>
               )}
             </div>
-
-            <div className="flex-1 pt-8">
-              <h2 className="text-3xl font-bold mb-2">{profile.fullName}</h2>
-
-              <div className="flex items-center gap-2 mb-4">
-                <span className="text-yellow-500">⭐ {profile.rating}/5</span>
-                <span className="text-gray-600">
-                  ({profile.reviewCount} reviews)
-                </span>
-              </div>
-
-              {profile.currentLocation && (
-                <p className="text-gray-700 mb-4">
-                  📍 {profile.currentLocation}
-                </p>
-              )}
-
-              <div className="flex gap-4">
-                <Button className="bg-blue-600 hover:bg-blue-700">
-                  Connect
-                </Button>
-                <Button variant="outline">Message</Button>
-                <Button variant="outline">View Plans</Button>
-              </div>
-            </div>
+            <p className="text-muted-foreground">
+              {isCurrentUser
+                ? "Manage your profile and settings"
+                : `Viewing ${user.fullName}'s profile`}
+            </p>
           </div>
-
-          {/* Bio */}
-          {profile.bio && (
-            <div className="mb-8">
-              <h3 className="text-xl font-semibold mb-3">About</h3>
-              <p className="text-gray-700">{profile.bio}</p>
-            </div>
-          )}
-
-          {/* Travel Interests */}
-          {profile.travelInterests && profile.travelInterests.length > 0 && (
-            <div className="mb-8">
-              <h3 className="text-xl font-semibold mb-3">Travel Interests</h3>
-              <div className="flex flex-wrap gap-2">
-                {profile.travelInterests.map((interest) => (
-                  <span
-                    key={interest}
-                    className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full"
-                  >
-                    {interest}
-                  </span>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Visited Countries */}
-          {profile.visitedCountries && profile.visitedCountries.length > 0 && (
-            <div className="mb-8">
-              <h3 className="text-xl font-semibold mb-3">Visited Countries</h3>
-              <div className="flex flex-wrap gap-2">
-                {profile.visitedCountries.map((country) => (
-                  <span
-                    key={country}
-                    className="bg-green-100 text-green-800 px-3 py-1 rounded-full"
-                  >
-                    {country}
-                  </span>
-                ))}
-              </div>
-            </div>
-          )}
         </div>
+
+        {isCurrentUser && (
+          <Button variant="outline" asChild>
+            <Link href="/settings">
+              <Settings className="mr-2 h-4 w-4" />
+              Settings
+            </Link>
+          </Button>
+        )}
       </div>
 
-      {/* Reviews Section */}
-      <div className="bg-white rounded-lg shadow-lg p-8 mt-8">
-        <h3 className="text-2xl font-bold mb-6">Recent Reviews</h3>
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <div className="lg:col-span-3">
+          <UserProfile user={user} showEditButton={isCurrentUser} />
+        </div>
+
         <div className="space-y-6">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="border-b pb-6">
-              <div className="flex justify-between items-start mb-2">
-                <p className="font-semibold">Review from Traveler {i}</p>
-                <span className="text-yellow-500">⭐ 5/5</span>
+          {/* Quick Actions */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Quick Actions</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <Button
+                variant="outline"
+                className="w-full justify-start"
+                asChild
+              >
+                <Link href={`/users/public/${user.id}`}>
+                  View Public Profile
+                </Link>
+              </Button>
+              {isCurrentUser && (
+                <>
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start"
+                    asChild
+                  >
+                    <Link href={`/users/${user.id}/edit`}>Edit Profile</Link>
+                  </Button>
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start"
+                    asChild
+                  >
+                    <Link href="/trips/new">Create New Trip</Link>
+                  </Button>
+                </>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Account Status */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Account Status</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div className="flex justify-between items-center">
+                <span className="text-sm">Email Verified</span>
+                <Badge variant={user.email ? "default" : "destructive"}>
+                  {user.email ? "Verified" : "Pending"}
+                </Badge>
               </div>
-              <p className="text-gray-700">
-                Great travel companion! Very organized and friendly.
-              </p>
-              <p className="text-sm text-gray-500 mt-2">2 months ago</p>
-            </div>
-          ))}
+              <div className="flex justify-between items-center">
+                <span className="text-sm">Profile Complete</span>
+                <Badge
+                  variant={
+                    user.bio && user.currentLocation ? "default" : "secondary"
+                  }
+                >
+                  {user.bio && user.currentLocation ? "Complete" : "Incomplete"}
+                </Badge>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm">Member Since</span>
+                <span className="text-sm font-medium">
+                  {new Date(user.createdAt).getFullYear()}
+                </span>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Privacy Settings */}
+          {isCurrentUser && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Privacy</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  <p className="text-sm text-muted-foreground">
+                    Control who can see your profile information
+                  </p>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="w-full"
+                    asChild
+                  >
+                    <Link href="/settings/privacy">
+                      Manage Privacy Settings
+                    </Link>
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          )}
         </div>
       </div>
     </div>

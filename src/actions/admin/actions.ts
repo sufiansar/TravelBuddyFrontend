@@ -6,7 +6,7 @@ import { revalidatePath } from "next/cache";
 export async function getAllUsers(params?: Record<string, string>) {
   try {
     const result = await makeApiCall("/admin/users", { params }, true);
-    return { success: true, data: result };
+    return { success: true, data: result.data };
   } catch (error: any) {
     return { success: false, error: error.message };
   }

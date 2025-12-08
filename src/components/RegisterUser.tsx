@@ -11,7 +11,9 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Eye, EyeOff, Github, Mail, Lock, User, Check } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "sonner";
 
 interface RegistrationFormData {
   fullName: string;
@@ -27,6 +29,7 @@ export function RegistrationForm({
 }: React.ComponentProps<"form"> & {
   onSubmit?: (data: RegistrationFormData) => void;
 }) {
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [formData, setFormData] = useState<RegistrationFormData>({
@@ -35,14 +38,68 @@ export function RegistrationForm({
     password: "",
     confirmPassword: "",
   });
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (formData.password !== formData.confirmPassword) {
       alert("Passwords do not match!");
       return;
     }
-    onSubmit?.(formData);
+
+    setError(null);
+    setSuccess(null);
+    setSubmitting(true);
+
+    const payload = {
+      fullName: formData.fullName,
+      email: formData.email,
+      password: formData.password,
+    };
+
+    // If parent supplied handler, delegate to it
+    if (onSubmit) {
+      try {
+        await onSubmit(formData);
+      } finally {
+        setSubmitting(false);
+      }
+      return;
+    }
+
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_API}/user/create-user`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        }
+      );
+
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body.message || "Registration failed");
+      }
+
+      // setSuccess("Account created. You can now sign in.");
+      toast.success("Account created. You can now sign in.");
+      setFormData({
+        fullName: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+      });
+      // Redirect after a short delay to let the toast show
+      setTimeout(() => router.push("/login"), 500);
+    } catch (err: any) {
+      setError(err.message || "Registration failed");
+      toast.error(err.message || "Registration failed");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -97,6 +154,17 @@ export function RegistrationForm({
           </div>
         </div>
 
+        {error && (
+          <div className="text-sm text-destructive rounded-md bg-destructive/10 border border-destructive/30 px-3 py-2">
+            {error}
+          </div>
+        )}
+        {success && (
+          <div className="text-sm text-emerald-600 rounded-md bg-emerald-500/10 border border-emerald-500/40 px-3 py-2">
+            {success}
+          </div>
+        )}
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Field>
             <FieldLabel htmlFor="fullName" className="flex items-center gap-2">
@@ -111,6 +179,7 @@ export function RegistrationForm({
               value={formData.fullName}
               onChange={handleChange}
               className="focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+              disabled={submitting}
             />
           </Field>
 
@@ -128,6 +197,7 @@ export function RegistrationForm({
                 value={formData.email}
                 onChange={handleChange}
                 className="pl-10 peer focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                disabled={submitting}
               />
               <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4 peer-focus:text-primary" />
             </div>
@@ -157,6 +227,7 @@ export function RegistrationForm({
                 value={formData.password}
                 onChange={handleChange}
                 className="pr-10 peer focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                disabled={submitting}
               />
               <button
                 type="button"
@@ -254,6 +325,7 @@ export function RegistrationForm({
                     ? "border-red-500 focus:border-red-500"
                     : ""
                 }`}
+                disabled={submitting}
               />
               <button
                 type="button"
@@ -309,9 +381,11 @@ export function RegistrationForm({
           <Button
             type="submit"
             className="w-full bg-linear-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary transition-all shadow-lg hover:shadow-xl active:scale-[0.98] text-white"
-            disabled={!passwordMatch || passwordStrengthValue < 75}
+            disabled={
+              !passwordMatch || passwordStrengthValue < 75 || submitting
+            }
           >
-            Create Account
+            {submitting ? "Creating..." : "Create Account"}
           </Button>
         </Field>
 

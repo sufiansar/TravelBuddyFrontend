@@ -20,6 +20,12 @@ export const commonNavItems = (role: UserRole): NavSection[] => {
           roles: ["SUPER_ADMIN", "ADMIN", "USER"] as unknown as UserRole[],
         },
         {
+          title: "Edit Profile",
+          href: "/users/me/edit",
+          icon: "Edit",
+          roles: ["SUPER_ADMIN", "ADMIN", "USER"] as unknown as UserRole[],
+        },
+        {
           title: "Home Page",
           href: "/",
           icon: "Home",
@@ -29,6 +35,23 @@ export const commonNavItems = (role: UserRole): NavSection[] => {
           title: "Travel Plans",
           href: "/travel-plans",
           icon: "MapPin",
+          roles: ["SUPER_ADMIN", "ADMIN", "USER"] as unknown as UserRole[],
+        },
+      ],
+    },
+    {
+      title: "Reviews",
+      items: [
+        {
+          title: "My Reviews",
+          href: "/reviews",
+          icon: "MessageSquare",
+          roles: ["USER"] as unknown as UserRole[],
+        },
+        {
+          title: "Write Review",
+          href: "/reviews/create",
+          icon: "Plus",
           roles: ["SUPER_ADMIN", "ADMIN", "USER"] as unknown as UserRole[],
         },
       ],
@@ -47,6 +70,12 @@ export const superAdminNavItems: NavSection[] = [
         roles: ["SUPER_ADMIN"] as unknown as UserRole[],
       },
       {
+        title: "Manage Roles",
+        href: "/admin/roles",
+        icon: "Shield",
+        roles: ["SUPER_ADMIN"] as unknown as UserRole[],
+      },
+      {
         title: "Settings",
         href: "/admin/settings",
         icon: "Settings",
@@ -57,6 +86,12 @@ export const superAdminNavItems: NavSection[] = [
         href: "/admin/reports",
         icon: "BarChart3",
         roles: ["SUPER_ADMIN"] as unknown as UserRole[],
+      },
+      {
+        title: "All Reviews",
+        href: "/reviews",
+        icon: "Star",
+        roles: ["SUPER_ADMIN", "ADMIN"] as unknown as UserRole[],
       },
     ],
   },
@@ -79,10 +114,22 @@ export const adminNavItems: NavSection[] = [
         roles: ["ADMIN"] as unknown as UserRole[],
       },
       {
+        title: "Manage Roles",
+        href: "/admin/roles",
+        icon: "Shield",
+        roles: ["ADMIN"] as unknown as UserRole[],
+      },
+      {
         title: "Analytics",
         href: "/admin/analytics",
         icon: "BarChart3",
         roles: ["ADMIN"] as unknown as UserRole[],
+      },
+      {
+        title: "All Reviews",
+        href: "/reviews",
+        icon: "Star",
+        roles: ["SUPER_ADMIN", "ADMIN"] as unknown as UserRole[],
       },
     ],
   },
@@ -94,7 +141,7 @@ export const userNavItems: NavSection[] = [
     items: [
       {
         title: "My Travel Plans",
-        href: "/travel-plans",
+        href: "/travel-plans/my-travel-plans",
         icon: "MapPin",
         roles: ["USER"] as unknown as UserRole[],
       },
@@ -108,6 +155,12 @@ export const userNavItems: NavSection[] = [
         title: "Community Posts",
         href: "/post",
         icon: "MessageSquare",
+        roles: ["USER"] as unknown as UserRole[],
+      },
+      {
+        title: "Matches",
+        href: "/matches",
+        icon: "Users",
         roles: ["USER"] as unknown as UserRole[],
       },
     ],

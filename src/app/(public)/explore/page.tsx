@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { exploreTravelers, explorePlans } from "@/actions";
-import type { IUser, TravelPlan } from "@/actions/shared/types";
+import type { IUser, ITravelPlan } from "@/actions/shared/types";
 
 export default function ExplorePage() {
   const [destination, setDestination] = useState("");
@@ -13,7 +13,7 @@ export default function ExplorePage() {
     "travelers"
   );
   const [travelers, setTravelers] = useState<IUser[]>([]);
-  const [plans, setPlans] = useState<TravelPlan[]>([]);
+  const [plans, setPlans] = useState<ITravelPlan[]>([]);
   const [loading, setLoading] = useState(false);
 
   const handleSearch = async () => {

@@ -1,117 +1,47 @@
 "use server";
 
-import { getUserSession } from "@/helpers/userSession";
-import { revalidateTag } from "next/cache";
+import { makeApiCall, uploadFile } from "@/actions/shared/apiClient";
 
-const BASE_API =
-  process.env.NEXT_PUBLIC_BASE_API || "http://localhost:5000/api";
+// Re-export for backward compatibility
+export { makeApiCall, uploadFile };
 
-// ============ PUBLIC API CALLS (No Authentication Required) ============
-
+/**
+ * @deprecated Use makeApiCall from @/actions/shared/apiClient instead
+ */
 export const makePublicApiCall = async (
   url: string,
   options: RequestInit = {}
 ) => {
   try {
-    const response = await fetch(`${BASE_API}${url}`, {
-      ...options,
-      headers: {
-        "Content-Type": "application/json",
-        ...options.headers,
-      },
-    });
-
-    const data = await response.json();
-
-    return {
-      ok: response.ok,
-      status: response.status,
-      data,
-      error: !response.ok ? data?.message : null,
-    };
+    return makeApiCall(url, options, false);
   } catch (error) {
-    console.error("Public API call error:", error);
     return {
-      ok: false,
-      status: 500,
-      data: null,
+      success: false,
       error: "Network error or failed to fetch",
     };
   }
 };
 
-// ============ PRIVATE API CALLS (Authentication Required) ============
-
-export const getAuthHeaders = async (includeContentType: boolean = true) => {
-  const session = await getUserSession();
-
-  if (!session?.user?.id) {
-    throw new Error("You must be logged in to perform this action");
-  }
-
-  const headers: Record<string, string> = {};
-
-  if (includeContentType) {
-    headers["Content-Type"] = "application/json";
-  }
-
-  const accessToken = (session as { accessToken?: string }).accessToken;
-  if (accessToken) {
-    headers.Authorization = `Bearer ${accessToken}`;
-  }
-
-  return { headers, session };
-};
-
+/**
+ * @deprecated Use makeApiCall from @/actions/shared/apiClient instead
+ */
 export const makePrivateApiCall = async (
   url: string,
   options: RequestInit = {}
 ) => {
   try {
-    const { headers, session } = await getAuthHeaders(
-      !options.body || typeof options.body === "string"
-    );
-
-    const response = await fetch(`${BASE_API}${url}`, {
-      ...options,
-      headers: {
-        ...headers,
-        ...options.headers,
-      },
-    });
-
-    const data = await response.json();
-
-    return {
-      ok: response.ok,
-      status: response.status,
-      data,
-      error: !response.ok ? data?.message : null,
-      session,
-    };
+    return makeApiCall(url, options, true);
   } catch (error) {
-    console.error("Private API call error:", error);
     return {
-      ok: false,
-      status: 500,
-      data: null,
+      success: false,
       error: "Network error or failed to fetch",
-      session: null,
     };
   }
 };
 
-export const makeApiCall = async (url: string, options: RequestInit) => {
-  const response = await fetch(url, options);
-  const result = await response.json();
-
-  return {
-    ok: response.ok,
-    status: response.status,
-    data: result,
-  };
-};
-
+/**
+ * Helper to parse comma-separated string into array
+ */
 export const processArrayField = async (
   field: string | null
 ): Promise<string[]> => {
@@ -122,27 +52,17 @@ export const processArrayField = async (
     .filter((item) => item.length > 0);
 };
 
-export const revalidateCache = async (type: string) => {
-  revalidateTag("api", type);
-};
-
+/**
+ * @deprecated Use uploadFile from @/actions/shared/apiClient instead
+ */
 export const uploadImage = async (file: File): Promise<string | null> => {
   try {
     const formData = new FormData();
     formData.append("file", file);
-
-    const res = await fetch(`${BASE_API}/upload`, {
-      method: "POST",
-      body: formData,
-    });
-
-    if (res.ok) {
-      const result = await res.json();
-      return result?.data?.fileUrl || null;
-    }
-
-    return null;
-  } catch {
+    const result = await uploadFile("/upload", formData, false);
+    return result?.fileUrl || null;
+  } catch (error) {
+    console.error("Upload error:", error);
     return null;
   }
 };

@@ -59,7 +59,7 @@ export const authOptions: NextAuthOptions = {
       async authorize(credentials) {
         if (!credentials?.email || !credentials.password) {
           console.error("Email or Password is missing");
-          throw new Error("Email or password is missing");
+          return null;
         }
 
         try {
@@ -78,39 +78,26 @@ export const authOptions: NextAuthOptions = {
           );
 
           if (!res?.ok) {
-            let message = "Login failed";
-            try {
-              const errBody = await res.json();
-              message = errBody?.message || message;
-            } catch (e) {
-              message = await res.text();
-            }
-            console.error("Login Failed", message);
-            throw new Error(message || "Invalid credentials");
+            console.error("Login Failed", await res.text());
+            return null;
           }
 
           const response = await res.json();
-          console.log("User response:", response);
 
-          // API returns { message, data: { accessToken, refreshToken, ... } }
           const data = response?.data || response;
 
-          // Extract tokens directly from data object (they are at top level in response.data)
+          // Extract tokens directly from data object
           const accessToken = data?.accessToken;
           const refreshToken = data?.refreshToken;
 
           const payload = decodeJwtPayload(accessToken as string | undefined);
-          console.log("Decoded JWT payload:", payload);
 
-          // Extract user info - prioritize JWT payload for role
           const user = data?.user || data;
 
           const id = payload?.id || payload?._id || user?.id || user?._id;
           const fullName = payload?.name || user?.fullName || user?.name;
           const email = payload?.email || user?.email;
           const role = payload?.role || user?.role || "USER";
-
-          console.log("Extracted user info:", { id, fullName, email, role });
 
           if (!id || !accessToken) {
             console.error("Missing id or accessToken in login response", {
@@ -121,7 +108,7 @@ export const authOptions: NextAuthOptions = {
               payload,
               response,
             });
-            throw new Error("Invalid login response from server");
+            return null;
           }
 
           return {
@@ -149,19 +136,11 @@ export const authOptions: NextAuthOptions = {
         token.role = (user as { role?: string }).role || "USER";
         token.accessToken = (user as { accessToken?: string }).accessToken;
         token.refreshToken = (user as { refreshToken?: string }).refreshToken;
-
-        console.log("JWT callback - User login:", {
-          id: token.id,
-          role: token.role,
-          hasAccessToken: Boolean(token.accessToken),
-        });
       } else {
         // Refresh token call - preserve existing tokens
-        console.log("JWT callback - Token refresh:", {
-          id: token.id,
-          role: token.role,
-          hasAccessToken: Boolean(token.accessToken),
-        });
+
+        console.log("Token ID:", token.id);
+        console.log("Has accessToken:", Boolean(token.accessToken));
       }
 
       return token;
@@ -173,15 +152,20 @@ export const authOptions: NextAuthOptions = {
         session.user.email = token.email as string;
         session.user.role = token.role as string;
       }
-      // Always include tokens from JWT - ensure they're always set
-      session.accessToken = (token.accessToken as string) || "";
-      session.refreshToken = (token.refreshToken as string) || "";
 
-      // Debug log for token presence
-      if (!session.accessToken) {
-        console.warn("Warning: accessToken missing in session", {
+      // Only set tokens if they actually exist (not empty or undefined)
+      if (token.accessToken) {
+        session.accessToken = token.accessToken as string;
+      }
+      if (token.refreshToken) {
+        session.refreshToken = token.refreshToken as string;
+      }
+
+      if (!session.accessToken || !token.accessToken) {
+        console.warn("Warning: accessToken missing", {
           tokenKeys: Object.keys(token),
           tokenAccessToken: token.accessToken,
+          sessionAccessToken: session.accessToken,
         });
       }
 

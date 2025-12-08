@@ -29,18 +29,28 @@ export async function makeApiCall(
 
   if (requireAuth) {
     const session = await getUserSession();
+
     const token = session?.accessToken;
 
-    if (!token) {
+    if (!token || token === "") {
       console.error("API Call Error: No token found in session", {
         hasSession: Boolean(session),
         sessionKeys: session ? Object.keys(session) : [],
         hasAccessToken: Boolean(session?.accessToken),
+        accessTokenValue: session?.accessToken,
+        fullSession: session,
       });
       throw new Error("jwt must be provided");
     }
 
+    // Set both common casings and cookie since backend reads from cookie
     headers.Authorization = `Bearer ${token}`;
+    headers.authorization = `Bearer ${token}`;
+    headers.Cookie = `accessToken=${token}`;
+    console.log(
+      "Authorization header set:",
+      headers.Authorization.substring(0, 30) + "..."
+    );
   }
 
   const response = await fetch(url, {

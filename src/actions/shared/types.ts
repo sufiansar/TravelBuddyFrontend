@@ -10,21 +10,39 @@ export interface PaginationParams {
   limit?: number;
 }
 
-export interface TravelPlan {
-  _id: string;
-  title: string;
+export interface TravelType {
+  SOLO: "SOLO";
+  FRIENDS: "FRIENDS";
+  FAMILY: "FAMILY";
+  GROUP: "GROUP";
+}
+export interface PlanVisibility {
+  PUBLIC: "PUBLIC";
+  PRIVATE: "PRIVATE";
+}
+
+export interface ITravelPlan {
   destination: string;
+  startDate: Date;
+  endDate: Date;
+  minBudget?: number;
+  maxBudget?: number;
+  travelType: TravelType;
+  description?: string;
+  isPublic?: PlanVisibility;
+  latitude?: number;
+  longitude?: number;
+  userId?: string;
+}
+
+// Response type when fetching travel plans from API (includes id and timestamps)
+export interface ITravelPlanResponse
+  extends Omit<ITravelPlan, "startDate" | "endDate"> {
+  id: string;
   startDate: string;
   endDate: string;
-  description: string;
-  activities: string[];
-  budget: number;
-  maxTravelers: number;
-  currentTravelers: number;
-  photos: string[];
-  owner: IUser;
-  createdAt: string;
-  updatedAt: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface UserRole {
@@ -56,8 +74,8 @@ export interface IUser {
 }
 
 export interface Match {
-  _id: string;
-  plan: TravelPlan;
+  id?: string;
+  plan: ITravelPlan;
   user: IUser;
   score: number;
   commonInterests: string[];
@@ -65,18 +83,18 @@ export interface Match {
 }
 
 export interface Review {
-  _id: string;
+  id?: string;
   plan: string;
   reviewer: IUser;
   reviewee: IUser;
   rating: number;
   comment: string;
-  createdAt: string;
-  updatedAt: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface Post {
-  _id: string;
+  id?: string;
   user: IUser;
   content: string;
   images: string[];

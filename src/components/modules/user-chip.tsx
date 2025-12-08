@@ -6,7 +6,7 @@ import { BadgeCheck } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 import { cn } from "@/lib/utils";
-import { IUser } from "@/actions";
+import { IUser } from "@/actions/shared/types";
 
 interface UserChipProps {
   user?: IUser;
