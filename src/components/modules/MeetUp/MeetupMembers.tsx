@@ -10,9 +10,9 @@ import { Users, Search, User, Crown, Calendar } from "lucide-react";
 
 import { format } from "date-fns";
 
-import { MeetupMember } from "@/types/meetup";
 import { getMeetupMembers } from "@/actions";
 import { toast } from "sonner";
+import { MeetupMember } from "@/types/meetup.interface";
 
 interface MeetupMembersProps {
   meetupId: string;
@@ -150,7 +150,7 @@ export function MeetupMembers({
                         <Calendar className="h-3 w-3" />
                         <span>
                           Joined{" "}
-                          {format(new Date(member.), "MMM d, yyyy")}
+                          {format(new Date(member?.createdAt!), "MMM d, yyyy")}
                         </span>
                       </div>
                     </div>

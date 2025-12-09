@@ -1,9 +1,9 @@
 export interface User {
   id: string;
-  name: string;
+  fullName: string;
   email: string;
   role: "USER" | "ADMIN";
-  avatar?: string;
+  profileImage?: string;
 }
 
 export interface MeetupMember {
@@ -11,7 +11,7 @@ export interface MeetupMember {
   userId: string;
   meetupId: string;
   user: User;
-  joinedAt: Date;
+  createdAt?: Date;
 }
 
 export interface Meetup {

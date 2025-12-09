@@ -56,9 +56,9 @@ export function UserFilters({ showRoleFilter = true }: UserFiltersProps) {
         <div className="flex gap-2">
           {showRoleFilter && (
             <Select
-              defaultValue={searchParams.get("role") || ""}
+              defaultValue={searchParams.get("role") || "all"}
               onValueChange={(value) =>
-                updateSearchParams("role", value || undefined)
+                updateSearchParams("role", value === "all" ? undefined : value)
               }
             >
               <SelectTrigger className="w-[140px]">
@@ -68,7 +68,7 @@ export function UserFilters({ showRoleFilter = true }: UserFiltersProps) {
                 </div>
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Roles</SelectItem>
+                <SelectItem value="all">All Roles</SelectItem>
                 <SelectItem value="USER">User</SelectItem>
                 <SelectItem value="ADMIN">Admin</SelectItem>
                 <SelectItem value="SUPER_ADMIN">Super Admin</SelectItem>

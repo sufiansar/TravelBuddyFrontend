@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useToast } from "@/hooks/use-toast";
+
 import {
   Calendar,
   MapPin,
@@ -22,10 +22,10 @@ import {
 import { format } from "date-fns";
 import Link from "next/link";
 
-import { Meetup } from "@/types/meetup";
 import { deleteMeetup, getMeetup, joinMeetup, leaveMeetup } from "@/actions";
 import { toast } from "sonner";
 import { MeetupMembers } from "@/components/modules/MeetUp/MeetupMembers";
+import { Meetup } from "@/types/meetup.interface";
 
 export default function MeetupDetailsPage() {
   const params = useParams();
@@ -41,17 +41,18 @@ export default function MeetupDetailsPage() {
     setLoading(true);
     try {
       const result: any = await getMeetup(params.id as string);
+      console.log(result);
       if (result.success && result.data) {
         setMeetup(result.data);
         const userId = session?.user?.id;
 
-        setIsHost(result.data.host.id === userId);
+        setIsHost(result?.data?.host?.id === userId);
         setIsParticipant(
-          result.data.participants.some((p: any) => p.user.id === userId)
+          result.data?.participants?.some((p: any) => p.user.id === userId)
         );
         setIsFull(
-          result.data.maxPeople !== null &&
-            result.data.participants.length >= result.data.maxPeople
+          result?.data?.maxPeople !== null &&
+            result.data?.participants?.length >= result.data?.maxPeople
         );
       } else {
         toast.error(result.error || "Failed to load meetup");
@@ -151,36 +152,40 @@ export default function MeetupDetailsPage() {
                   <div className="flex items-center gap-2">
                     <Avatar className="h-8 w-8">
                       <AvatarImage
-                        src={meetup.host.profileImage}
-                        alt={meetup.host.fullName}
+                        src={meetup?.host?.profileImage}
+                        alt={meetup?.host?.fullName}
                       />
                       <AvatarFallback>
-                        {meetup.host.fullName.charAt(0)}
+                        {meetup?.host?.fullName.charAt(0)}
                       </AvatarFallback>
                     </Avatar>
                     <span className="text-gray-600">
-                      Hosted by {meetup.host.fullName}
+                      Hosted by {meetup?.host?.fullName}
                     </span>
                   </div>
                 </div>
                 <Badge variant={isFull ? "destructive" : "default"}>
                   {isFull
                     ? "Full"
-                    : `${meetup.participants.length}${
-                        meetup.maxPeople ? `/${meetup.maxPeople}` : ""
+                    : `${meetup?.participants?.length}${
+                        meetup?.maxPeople ? `/${meetup?.maxPeople}` : ""
                       }`}
                 </Badge>
               </div>
             </CardHeader>
             <CardContent className="space-y-6">
-              <p className="text-gray-700">{meetup.description}</p>
+              <p className="text-gray-700">{meetup?.description}</p>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="flex items-center gap-3">
                   <Calendar className="h-5 w-5 text-blue-500" />
                   <div>
                     <p className="font-semibold">Date & Time</p>
-                    <p>{format(new Date(meetup.date), "PPP p")}</p>
+                    <p>
+                      {meetup?.date
+                        ? format(new Date(meetup.date), "PPP p")
+                        : "No date set"}
+                    </p>
                   </div>
                 </div>
 
@@ -188,7 +193,7 @@ export default function MeetupDetailsPage() {
                   <MapPin className="h-5 w-5 text-red-500" />
                   <div>
                     <p className="font-semibold">Location</p>
-                    <p>{meetup.location}</p>
+                    <p>{meetup?.location}</p>
                   </div>
                 </div>
 
@@ -197,8 +202,8 @@ export default function MeetupDetailsPage() {
                   <div>
                     <p className="font-semibold">Participants</p>
                     <p>
-                      {meetup.participants.length}
-                      {meetup.maxPeople && ` / ${meetup.maxPeople}`}
+                      {meetup?.participants?.length}
+                      {meetup?.maxPeople && ` / ${meetup?.maxPeople}`}
                     </p>
                   </div>
                 </div>

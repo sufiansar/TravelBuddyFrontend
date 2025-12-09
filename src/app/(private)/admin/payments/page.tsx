@@ -1,18 +1,15 @@
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Download, Filter, Plus } from "lucide-react";
+import { Download, Filter } from "lucide-react";
+import { getAllPayments } from "@/actions/admin/actions";
+import { PaymentTable } from "@/components/modules/Admin/PaymentTable";
+import { PaymentFilters } from "@/components/modules/Admin/PaymentFilters";
 
-import { UserFilters } from "@/components/modules/Admin/UserFilters";
-import { UserTable } from "@/components/modules/Admin/UserTable";
-import { getAllUsers } from "@/actions/admin/actions";
-
-interface UsersPageProps {
+interface PaymentsPageProps {
   searchParams?: {
-    searchTerm?: string;
-    role?: string;
-    userStatus?: string;
-    verifiedBadge?: string;
+    status?: string;
+    userId?: string;
     page?: string;
     limit?: string;
     sortBy?: string;
@@ -20,35 +17,45 @@ interface UsersPageProps {
   };
 }
 
-export default async function AdminUsersPage({ searchParams }: UsersPageProps) {
+export default async function AdminPaymentsPage({
+  searchParams,
+}: PaymentsPageProps) {
   const filters = {
-    searchTerm: searchParams?.searchTerm,
-    role: searchParams?.role,
-    userStatus: searchParams?.userStatus,
-    verifiedBadge: searchParams?.verifiedBadge,
+    status: searchParams?.status,
+    userId: searchParams?.userId,
     page: searchParams?.page ? parseInt(searchParams.page) : 1,
     limit: searchParams?.limit ? parseInt(searchParams.limit) : 10,
     sortBy: searchParams?.sortBy,
     sortOrder: searchParams?.sortOrder as "asc" | "desc",
   };
 
-  const result = await getAllUsers(filters as any);
+  const result = await getAllPayments(filters as any);
+  console.log(result);
 
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">User Management</h1>
+          <h1 className="text-3xl font-bold tracking-tight">
+            Payment Management
+          </h1>
           <p className="text-gray-600">
-            Manage platform users, roles, and status
+            View and manage all payment transactions
           </p>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <Button variant="outline" className="gap-2">
+            <Download className="h-4 w-4" />
+            Export
+          </Button>
         </div>
       </div>
 
       <Card>
         <CardHeader>
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <CardTitle>All Users</CardTitle>
+            <CardTitle>All Payments</CardTitle>
             <div className="flex items-center gap-2">
               <Button variant="outline" size="sm" className="gap-2">
                 <Filter className="h-4 w-4" />
@@ -58,18 +65,18 @@ export default async function AdminUsersPage({ searchParams }: UsersPageProps) {
           </div>
         </CardHeader>
         <CardContent>
-          <UserFilters initialFilters={filters} />
+          <PaymentFilters initialFilters={filters} />
 
           {result.success ? (
-            <UserTable
-              users={result.data || []}
+            <PaymentTable
+              payments={result.data || []}
               meta={result.meta}
               currentFilters={filters}
             />
           ) : (
             <div className="py-12 text-center">
               <p className="text-gray-500">
-                Failed to load users: {result.error}
+                Failed to load payments: {result.error}
               </p>
             </div>
           )}

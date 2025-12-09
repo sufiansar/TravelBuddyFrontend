@@ -149,7 +149,10 @@ export async function getAllMeetups(filters?: any, options?: any) {
       options
     );
 
-    const result = await api.meetups.getAll(filters, options) as MeetupsGetAllResult;
+    const result = (await api.meetups.getAll(
+      filters,
+      options
+    )) as MeetupsGetAllResult;
 
     return {
       success: true,

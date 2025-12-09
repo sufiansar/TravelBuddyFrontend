@@ -22,8 +22,6 @@ export async function generateMetadata({
   const { id } = await params;
   const session = await getServerSession(authOptions);
 
-  // For current user, use getMyProfile
-  // For others (admin), use getUserById
   const isCurrentUser = session?.user?.id === id;
   const result = isCurrentUser ? await getMyProfile() : await getUserById(id);
 
