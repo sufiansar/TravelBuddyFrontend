@@ -18,6 +18,7 @@ import {
   ArrowLeft,
   CheckCircle,
   XCircle,
+  BadgeCheck,
 } from "lucide-react";
 import { format } from "date-fns";
 import Link from "next/link";
@@ -26,6 +27,26 @@ import { deleteMeetup, getMeetup, joinMeetup, leaveMeetup } from "@/actions";
 import { toast } from "sonner";
 import { MeetupMembers } from "@/components/modules/MeetUp/MeetupMembers";
 import { Meetup } from "@/types/meetup.interface";
+
+// Helper to call backend directly with the user's access token from session
+const postWithToken = async (
+  url: string,
+  token?: string | null
+): Promise<any> => {
+  if (!token) throw new Error("Please sign in to continue");
+  const res = await fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ message: "Request failed" }));
+    throw new Error(err.message || `Request failed with ${res.status}`);
+  }
+  return res.json();
+};
 
 export default function MeetupDetailsPage() {
   const params = useParams();
@@ -90,29 +111,25 @@ export default function MeetupDetailsPage() {
 
   const handleJoin = async () => {
     try {
-      const result = await joinMeetup(params.id as string);
-      if (result.success) {
-        toast.success("Successfully joined the meetup!");
-        fetchMeetup();
-      } else {
-        toast.error(result.error || "Failed to join meetup");
-      }
-    } catch (error) {
-      toast.error("Failed to join meetup");
+      const token = session?.accessToken as string | undefined;
+      const apiBase = process.env.NEXT_PUBLIC_BASE_API;
+      await postWithToken(`${apiBase}/meetups/${params.id}/join`, token);
+      toast.success("Successfully joined the meetup!");
+      fetchMeetup();
+    } catch (error: any) {
+      toast.error(error?.message || "Failed to join meetup");
     }
   };
 
   const handleLeave = async () => {
     try {
-      const result = await leaveMeetup(params.id as string);
-      if (result.success) {
-        toast.success("Successfully left the meetup!");
-        fetchMeetup();
-      } else {
-        toast.error(result.error || "Failed to leave meetup");
-      }
-    } catch (error) {
-      toast.error("Failed to leave meetup");
+      const token = session?.accessToken as string | undefined;
+      const apiBase = process.env.NEXT_PUBLIC_BASE_API;
+      await postWithToken(`${apiBase}/meetups/${params.id}/leave`, token);
+      toast.success("Successfully left the meetup!");
+      fetchMeetup();
+    } catch (error: any) {
+      toast.error(error?.message || "Failed to leave meetup");
     }
   };
 
@@ -159,8 +176,11 @@ export default function MeetupDetailsPage() {
                         {meetup?.host?.fullName.charAt(0)}
                       </AvatarFallback>
                     </Avatar>
-                    <span className="text-gray-600">
+                    <span className="text-gray-600 flex items-center gap-1">
                       Hosted by {meetup?.host?.fullName}
+                      {meetup?.host?.verifiedBadge && (
+                        <BadgeCheck className="h-4 w-4 text-blue-500" />
+                      )}
                     </span>
                   </div>
                 </div>

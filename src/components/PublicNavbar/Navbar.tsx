@@ -19,6 +19,7 @@ const PublicNavbar = async () => {
     { href: "/", label: "Home" },
     { href: "/packages", label: "Packages" },
     { href: "/explore", label: "Explore" },
+
     { href: "/post", label: "Posts" },
     // { href: "/explore", label: "Explore" },
   ];

@@ -33,6 +33,7 @@ export default async function AdminUsersPage({ searchParams }: UsersPageProps) {
   };
 
   const result = await getAllUsers(filters as any);
+  console.log(result.data);
 
   return (
     <div className="space-y-6">

@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { getPublicProfile } from "@/actions/user";
+
 import { Metadata } from "next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, Calendar, MapPin, Globe, Star, Award } from "lucide-react";
 import Link from "next/link";
 import { format } from "date-fns";
+import { getPublicProfile } from "@/actions";
 
 interface PublicProfilePageProps {
   params: {
@@ -20,29 +21,61 @@ export async function generateMetadata({
 }: PublicProfilePageProps): Promise<Metadata> {
   const result = await getPublicProfile(params.id);
 
-  if (!result.success) {
+  const profile = result.success ? (result.data as any) : null;
+  const user = profile?.user ?? profile;
+
+  if (!result.success || !user) {
     return {
       title: "Profile Not Found | TravelBuddy",
     };
   }
 
   return {
-    title: `${result.data.user.fullName} | TravelBuddy`,
-    description:
-      result.data.user.bio || `Public profile of ${result.data.user.fullName}`,
+    title: `${user.fullName} | TravelBuddy`,
+    description: user.bio || `Public profile of ${user.fullName}`,
   };
 }
 
 export default async function PublicProfilePage({
   params,
 }: PublicProfilePageProps) {
-  const result = await getPublicProfile(params.id);
-
-  if (!result.success) {
+  if (!params?.id) {
     notFound();
   }
 
-  const { user, upcomingPlans, recentReviews, averageRating } = result.data;
+  const result = await getPublicProfile(params.id);
+
+  const profile = result.success ? (result.data as any) : null;
+  const user = profile?.user ?? profile;
+
+  if (!result.success || !user) {
+    return (
+      <div className="container mx-auto py-6 space-y-4">
+        <div className="flex items-center gap-4">
+          <Button variant="outline" size="sm" asChild>
+            <Link href="/explore">
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back to Explore
+            </Link>
+          </Button>
+          <h1 className="text-2xl font-semibold">Profile not available</h1>
+        </div>
+        <p className="text-muted-foreground">
+          We couldn’t load this traveler right now. Please try again later or
+          check the link.
+        </p>
+        {result.error && (
+          <p className="text-xs text-amber-600 bg-amber-50 border border-amber-200 rounded p-2">
+            {result.error}
+          </p>
+        )}
+      </div>
+    );
+  }
+
+  const upcomingPlans = profile?.upcomingPlans ?? [];
+  const recentReviews = profile?.recentReviews ?? [];
+  const averageRating = profile?.averageRating ?? null;
 
   return (
     <div className="container mx-auto py-6 space-y-6">
@@ -126,7 +159,7 @@ export default async function PublicProfilePage({
                 </CardHeader>
                 <CardContent>
                   <div className="flex flex-wrap gap-2">
-                    {user.interests.map((interest, index) => (
+                    {user.interests.map((interest: any, index: any) => (
                       <Badge key={index} variant="secondary">
                         {interest}
                       </Badge>
@@ -143,7 +176,7 @@ export default async function PublicProfilePage({
                 </CardHeader>
                 <CardContent>
                   <div className="flex flex-wrap gap-2">
-                    {user.visitedCountries.map((country, index) => (
+                    {user.visitedCountries.map((country: any, index: any) => (
                       <Badge key={index} variant="outline">
                         {country}
                       </Badge>
@@ -165,7 +198,7 @@ export default async function PublicProfilePage({
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {upcomingPlans.map((plan) => (
+                  {upcomingPlans.map((plan: any) => (
                     <div
                       key={plan.id}
                       className="p-4 border rounded-lg hover:bg-accent transition-colors"
@@ -203,7 +236,7 @@ export default async function PublicProfilePage({
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {recentReviews.map((review) => (
+                  {recentReviews.map((review: any) => (
                     <div key={review.id} className="p-4 border rounded-lg">
                       <div className="flex items-start gap-3">
                         <Avatar className="h-10 w-10">

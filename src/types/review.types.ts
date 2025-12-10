@@ -19,6 +19,13 @@ export interface Review {
     username: string;
     profileImage?: string;
   };
+  travelPlan?: {
+    id: string;
+    title: string;
+    destination: string;
+    startDate: string;
+    endDate: string;
+  };
 }
 
 export interface PaginatedResponse<T> {

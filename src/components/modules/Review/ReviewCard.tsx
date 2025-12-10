@@ -143,13 +143,13 @@ export function ReviewCard({
               </div>
             )}
 
-            {review.travelPlanId && (
+            {review.travelPlan && (
               <div className="flex items-center gap-2">
                 <MapPin className="h-4 w-4 text-muted-foreground" />
                 <span className="text-sm">
-                  Travel Plan:{" "}
+                  {review.travelPlan.destination} •{" "}
                   <Link
-                    href={`/reviews/plan/${review.travelPlanId}`}
+                    href={`/travel-plans/${review.travelPlan.id}`}
                     className="font-medium hover:underline"
                   >
                     View Plan

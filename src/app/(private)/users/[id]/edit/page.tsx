@@ -40,7 +40,6 @@ export default async function EditUserPage({ params }: EditUserPageProps) {
   const { id } = await params;
   const session = await getServerSession(authOptions);
 
-  // Check permissions
   const isCurrentUser = session?.user?.id === id;
   const isAdmin =
     session?.user?.role === "ADMIN" || session?.user?.role === "SUPER_ADMIN";
@@ -48,9 +47,6 @@ export default async function EditUserPage({ params }: EditUserPageProps) {
   if (!isCurrentUser && !isAdmin) {
     redirect("/unauthorized");
   }
-
-  // For current user, use getMyProfile for accurate data
-  // For other users (admin viewing), use getUserById
   let result;
   if (isCurrentUser) {
     result = await getMyProfile();

@@ -13,7 +13,17 @@ export async function createReview(data: CreateReviewData) {
   try {
     // Get current user session to get reviewerId
     const userResult = await makeApiCall("/auth/me", {}, true);
-    if (!userResult || !userResult.id) {
+
+    // Handle nested data structure from /auth/me
+    let userId = null;
+    if (userResult?.data?.id) {
+      userId = userResult.data.id;
+    } else if (userResult?.id) {
+      userId = userResult.id;
+    }
+
+    if (!userId) {
+      console.error("Failed to get user ID from session:", userResult);
       return {
         success: false,
         error: "You must be logged in to create a review",
@@ -24,7 +34,7 @@ export async function createReview(data: CreateReviewData) {
       rating: data.rating,
       comment: data.comment,
       receiverId: data.receiverId,
-      reviewerId: userResult.id,
+      reviewerId: userId,
       // Only include travelPlanId if it exists (backend expects null, not empty string)
       ...(data.travelPlanId && { travelPlanId: data.travelPlanId }),
     };
@@ -40,8 +50,11 @@ export async function createReview(data: CreateReviewData) {
 
     revalidatePath("/reviews");
     revalidatePath(`/reviews/user/${data.receiverId}`);
+    revalidatePath(`/users/public/${data.receiverId}`);
+    revalidatePath("/explore");
     if (data.travelPlanId) {
       revalidatePath(`/reviews/plan/${data.travelPlanId}`);
+      revalidatePath(`/travel-plans/${data.travelPlanId}`);
     }
 
     return { success: true, data: result as Review };
@@ -126,7 +139,16 @@ export async function getAllReviews(params?: PaginationParams) {
       },
       true
     );
-    return { success: true, ...(result.data as PaginatedResponse<Review>) };
+
+    // Handle nested response structure
+    if (result?.data) {
+      return { success: true, data: result.data, meta: result.meta };
+    }
+    return {
+      success: true,
+      data: result?.data || [],
+      meta: result?.meta || { page: 1, limit: 10, totalPage: 1, total: 0 },
+    };
   } catch (error: any) {
     return { success: false, error: error.message };
   }
@@ -210,9 +232,30 @@ export async function getUserCompletedTravelPlans() {
 
 export async function getUsersForReview() {
   try {
-    // Get all users that can be reviewed
-    const result = await makeApiCall("/user/all", {}, true);
-    const users = result?.data || result || [];
+    // Get all users that can be reviewed - use the correct endpoint
+    const result = await makeApiCall(
+      "/user",
+      {
+        method: "GET",
+        params: {
+          page: "1",
+          limit: "100", // Get enough users for the dropdown
+        },
+      },
+      true
+    );
+
+    // Handle nested data structure
+    let users = [];
+    if (result?.data?.data) {
+      users = result.data.data;
+    } else if (result?.data) {
+      users = Array.isArray(result.data) ? result.data : [];
+    } else if (Array.isArray(result)) {
+      users = result;
+    }
+
+    console.log("Fetched users for review:", users.length, users);
     return { success: true, data: users };
   } catch (error: any) {
     console.error("Get reviewable users error:", error);

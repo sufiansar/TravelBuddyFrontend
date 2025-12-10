@@ -7,15 +7,38 @@ import { PaginationParams, UpdateUserData } from "@/lib/types";
 
 export async function getMyProfile() {
   try {
-    const result = await makeApiCall("/auth/me", {}, true);
+    const { getUserSession } = await import("@/helpers/userSession");
+    const session = await getUserSession();
+    const token = session?.accessToken;
+
+    if (!token) {
+      return { success: false, error: "UNAUTHENTICATED" };
+    }
+
+    const result = await makeApiCall(
+      "/auth/me",
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+      true
+    );
 
     const data = (result as any)?.data ?? result;
     const user = (data as any)?.user ?? data;
 
     return { success: true, data: user };
   } catch (error: any) {
-    console.error("getMyProfile - Error:", error.message);
-    return { success: false, error: error.message };
+    const msg = error?.message ?? "Unknown error";
+    // Handle missing/expired token as expected unauthenticated state
+    const isAuthError = /invalid|expired|unauthorized|token/i.test(msg);
+    if (isAuthError) {
+      return { success: false, error: "UNAUTHENTICATED" };
+    }
+
+    console.error("getMyProfile - Error:", msg);
+    return { success: false, error: msg };
   }
 }
 
@@ -45,13 +68,35 @@ export async function updateUser(
       }
     });
 
-    // Add profile image if provided
     if (profileImage) {
       formData.append("profileImage", profileImage);
     }
 
-    // Single request with both data and image
-    const result = await uploadFile(`/update-user/${userId}`, formData, true);
+    const BASE_API = process.env.NEXT_PUBLIC_BASE_API;
+    const { getUserSession } = await import("@/helpers/userSession");
+    const session = await getUserSession();
+    const token = session?.accessToken;
+
+    if (!token) {
+      throw new Error("Please sign in to continue");
+    }
+
+    const response = await fetch(`${BASE_API}/user/update-user/${userId}`, {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
+    });
+
+    if (!response.ok) {
+      const error = await response
+        .json()
+        .catch(() => ({ message: "Update failed" }));
+      throw new Error(error.message || `HTTP ${response.status}`);
+    }
+
+    const result = await response.json();
 
     console.log("updateUser - API response:", result);
 
@@ -59,6 +104,8 @@ export async function updateUser(
     revalidatePath(`/users/${userId}`);
     revalidatePath(`/profile/${userId}`);
     revalidatePath(`/users/public/${userId}`);
+    revalidatePath(`/reviews/user/${userId}`);
+    revalidatePath("/reviews");
 
     return {
       success: true,
@@ -110,31 +157,56 @@ export async function updateUserRole(
 }
 // Get public profile
 export async function getPublicProfile(id: string) {
-  try {
-    const result = await makeApiCall(`/user/public/${id}`, {});
-
-    console.log(
-      "getPublicProfile - Full API Response:",
-      JSON.stringify(result, null, 2)
-    );
-
-    const data = (result as any)?.data ?? result;
-    console.log(
-      "getPublicProfile - Extracted data:",
-      JSON.stringify(data, null, 2)
-    );
-
-    return {
-      success: true,
-      data: data,
-    };
-  } catch (error: any) {
-    console.error("getPublicProfile - Error:", error.message);
-    return {
-      success: false,
-      error: error.message || "Failed to fetch public profile",
-    };
+  if (!id) {
+    return { success: false, error: "Invalid user id" };
   }
+
+  const attempts = [
+    { path: `/user/public/${id}`, auth: false },
+    { path: `/user/public/${id}`, auth: true },
+    { path: `/users/public/${id}`, auth: false },
+    { path: `/users/public/${id}`, auth: true },
+    { path: `/user/${id}`, auth: true },
+  ];
+
+  for (const attempt of attempts) {
+    try {
+      const result = await makeApiCall(attempt.path, {}, attempt.auth);
+
+      console.log(
+        "getPublicProfile - API Response:",
+        JSON.stringify(
+          { pathTried: attempt.path, auth: attempt.auth, result },
+          null,
+          2
+        )
+      );
+
+      const data = (result as any)?.data ?? result;
+      // Some APIs wrap user in { user }, others return flat user
+      const user = (data as any)?.user ?? data;
+
+      // Ensure we always pass back consistent shape for pages expecting { user, ... }
+      return {
+        success: true,
+        data: { user, ...((data as any) || {}) },
+      };
+    } catch (error: any) {
+      console.error(
+        "getPublicProfile - Attempt failed:",
+        JSON.stringify({
+          path: attempt.path,
+          auth: attempt.auth,
+          error: error.message,
+        })
+      );
+    }
+  }
+
+  return {
+    success: false,
+    error: "Failed to fetch public profile",
+  };
 }
 // Get single user
 export async function getUserById(id: string) {

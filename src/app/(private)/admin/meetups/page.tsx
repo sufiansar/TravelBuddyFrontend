@@ -39,7 +39,8 @@ export default function AdminMeetupsPage() {
   const fetchMeetups = async () => {
     setLoading(true);
     try {
-      const result = await getAllMeetups({}, {});
+      const result = await getAllMeetups();
+
       if (result.success) {
         setMeetups(result.data);
       } else {
@@ -101,7 +102,7 @@ export default function AdminMeetupsPage() {
           <Card>
             <CardHeader>
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <CardTitle>All Meetups ({filteredMeetups.length})</CardTitle>
+                <CardTitle>All Meetups ({filteredMeetups?.length})</CardTitle>
                 <div className="flex gap-2">
                   <div className="relative flex-1">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
@@ -136,14 +137,14 @@ export default function AdminMeetupsPage() {
                     ></div>
                   ))}
                 </div>
-              ) : filteredMeetups.length === 0 ? (
+              ) : filteredMeetups?.length === 0 ? (
                 <div className="text-center py-8">
                   <Calendar className="h-12 w-12 text-gray-300 mx-auto mb-3" />
                   <p className="text-gray-500">No meetups found</p>
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {filteredMeetups.map((meetup) => {
+                  {filteredMeetups?.map((meetup) => {
                     const meetupDate = new Date(meetup.date);
                     const now = new Date();
                     const isPast = meetupDate < now;
@@ -227,7 +228,7 @@ export default function AdminMeetupsPage() {
             <CardContent>
               <div className="space-y-4">
                 <div className="text-center p-4 border rounded-lg">
-                  <div className="text-3xl font-bold">{meetups.length}</div>
+                  <div className="text-3xl font-bold">{meetups?.length}</div>
                   <div className="text-gray-600">Total Meetups</div>
                 </div>
                 <div className="text-center p-4 border rounded-lg">

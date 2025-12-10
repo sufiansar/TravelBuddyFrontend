@@ -130,7 +130,7 @@ export async function leaveMeetup(id: string) {
 }
 
 type MeetupsGetAllResult = {
-  data: any[];
+  data: any;
   meta?: {
     page: number;
     limit: number;
@@ -156,7 +156,7 @@ export async function getAllMeetups(filters?: any, options?: any) {
 
     return {
       success: true,
-      data: result?.data,
+      data: result?.data?.data,
       meta: result?.meta,
     };
   } catch (error: any) {
@@ -176,9 +176,12 @@ export async function getMeetup(id: string) {
 
     const result = await api.meetups.getSingle(id);
 
+    // Backend may wrap payload as { data: meetup }, so unwrap if present
+    const data = (result as any)?.data ?? result;
+
     return {
       success: true,
-      data: result,
+      data,
     };
   } catch (error: any) {
     console.error("getMeetup - Error:", error);
@@ -190,15 +193,20 @@ export async function getMeetup(id: string) {
   }
 }
 
+type MeetupMembersResult = {
+  data: any;
+  [key: string]: any;
+};
+
 export async function getMeetupMembers(id: string) {
   try {
     console.log("getMeetupMembers - Fetching members for meetup:", id);
 
-    const result = await api.meetups.getMembers(id);
+    const result = (await api.meetups.getMembers(id)) as MeetupMembersResult;
 
     return {
       success: true,
-      data: result,
+      data: result?.data,
     };
   } catch (error: any) {
     console.error("getMeetupMembers - Error:", error);

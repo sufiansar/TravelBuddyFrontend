@@ -13,6 +13,7 @@ import {
   Edit,
   Trash2,
   Loader2,
+  BadgeCheck,
 } from "lucide-react";
 import { format } from "date-fns";
 import {
@@ -227,8 +228,11 @@ export function CommentsSection({
                 <div className="flex-1 space-y-1">
                   <div className="flex justify-between">
                     <div>
-                      <span className="font-semibold">
+                      <span className="font-semibold flex items-center gap-1">
                         {comment.user.fullName}
+                        {comment.user?.verifiedBadge && (
+                          <BadgeCheck className="h-4 w-4 text-blue-500" />
+                        )}
                       </span>
                       <span className="text-sm text-muted-foreground ml-2">
                         {format(new Date(comment.createdAt), "MMM d, h:mm a")}

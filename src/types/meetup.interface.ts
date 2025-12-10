@@ -4,6 +4,7 @@ export interface User {
   email: string;
   role: "USER" | "ADMIN";
   profileImage?: string;
+  verifiedBadge?: boolean;
 }
 
 export interface MeetupMember {

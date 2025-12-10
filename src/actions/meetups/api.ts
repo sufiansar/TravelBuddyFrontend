@@ -1,77 +1,66 @@
-import { getSession } from "next-auth/react";
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_API;
-
-export async function makeApiCall<T>(
-  endpoint: string,
-  options: RequestInit = {},
-  requireAuth = true
-): Promise<T> {
-  const url = `${API_BASE_URL}${endpoint}`;
-
-  const headers: Record<string, string> = {
-    "Content-Type": "application/json",
-    ...(options.headers as Record<string, string>),
-  };
-
-  if (requireAuth) {
-    const session = await getSession();
-    if (session?.accessToken) {
-      headers.Authorization = `Bearer ${session.accessToken}`;
-    }
-  }
-
-  const response = await fetch(url, {
-    ...options,
-    headers,
-  });
-
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(
-      errorData.message || `API call failed: ${response.statusText}`
-    );
-  }
-
-  return response.json();
-}
+import { makeApiCall } from "../shared/apiClient";
 
 export const api = {
   meetups: {
     getAll: (filters?: any, options?: any) =>
       makeApiCall(
-        `/meetups?${new URLSearchParams({ ...filters, ...options }).toString()}`
+        `/meetups?${new URLSearchParams({
+          ...filters,
+          ...options,
+        }).toString()}`,
+        {},
+        false
       ),
 
-    getSingle: (id: string) => makeApiCall(`/meetups/${id}`),
+    getSingle: (id: string) => makeApiCall(`/meetups/${id}`, {}, false),
 
     create: (data: any) =>
-      makeApiCall("/meetups", {
-        method: "POST",
-        body: JSON.stringify(data),
-      }),
+      makeApiCall(
+        "/meetups",
+        {
+          method: "POST",
+          body: JSON.stringify(data),
+        },
+        true
+      ),
 
     update: (id: string, data: any) =>
-      makeApiCall(`/meetups/${id}`, {
-        method: "PUT",
-        body: JSON.stringify(data),
-      }),
+      makeApiCall(
+        `/meetups/${id}`,
+        {
+          method: "PUT",
+          body: JSON.stringify(data),
+        },
+        true
+      ),
 
     delete: (id: string) =>
-      makeApiCall(`/meetups/${id}`, {
-        method: "DELETE",
-      }),
+      makeApiCall(
+        `/meetups/${id}`,
+        {
+          method: "DELETE",
+        },
+        true
+      ),
 
     join: (id: string) =>
-      makeApiCall(`/meetups/${id}/join`, {
-        method: "POST",
-      }),
+      makeApiCall(
+        `/meetups/${id}/join`,
+        {
+          method: "POST",
+        },
+        true
+      ),
 
     leave: (id: string) =>
-      makeApiCall(`/meetups/${id}/leave`, {
-        method: "POST",
-      }),
+      makeApiCall(
+        `/meetups/${id}/leave`,
+        {
+          method: "POST",
+        },
+        true
+      ),
 
-    getMembers: (id: string) => makeApiCall(`/meetups/${id}/members`),
+    getMembers: (id: string) => makeApiCall(`/meetups/${id}/members`, {}, true),
   },
 };

@@ -24,10 +24,8 @@ async function ReviewFormContent() {
   const users = usersResult.success ? usersResult.data || [] : [];
   const travelPlans = plansResult.success ? plansResult.data || [] : [];
 
-  console.log(users);
   console.log("Users fetched:", users.length);
   console.log("Travel plans fetched:", travelPlans.length);
-  console.log("Plans result:", plansResult);
 
   return (
     <div className="space-y-4">
@@ -36,6 +34,15 @@ async function ReviewFormContent() {
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>
             Failed to load users: {usersResult.error}
+          </AlertDescription>
+        </Alert>
+      )}
+
+      {usersResult.success && users.length === 0 && (
+        <Alert>
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>
+            No users available to review at the moment.
           </AlertDescription>
         </Alert>
       )}
@@ -54,7 +61,7 @@ async function ReviewFormContent() {
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>
             You have no completed travel plans yet. Reviews can optionally be
-            linked to completed trips.
+            linked to completed trips, or you can review any user directly.
           </AlertDescription>
         </Alert>
       )}
@@ -69,7 +76,7 @@ export default async function CreateReviewPage() {
     <div className="container mx-auto px-4 py-8">
       <ReviewsHeader
         title="Write a Review"
-        description="Share your experience with fellow travelers"
+        description="Share your experience with fellow travelers or review a completed travel plan"
         showBackButton={true}
       />
 
@@ -77,7 +84,8 @@ export default async function CreateReviewPage() {
         <CardHeader>
           <CardTitle className="text-2xl">Create Review</CardTitle>
           <CardDescription>
-            Reviews can only be created after travel plans have ended.
+            You can review any user you've traveled with, or optionally link
+            your review to a completed travel plan.
           </CardDescription>
         </CardHeader>
         <CardContent>

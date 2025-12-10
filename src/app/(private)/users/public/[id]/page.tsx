@@ -11,39 +11,78 @@ import { format } from "date-fns";
 import { getPublicProfile } from "@/actions";
 
 interface PublicProfilePageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 export async function generateMetadata({
   params,
 }: PublicProfilePageProps): Promise<Metadata> {
-  const result = await getPublicProfile(params.id);
+  const { id } = await params;
+  if (!id) {
+    return { title: "Profile Not Found | TravelBuddy" };
+  }
 
-  if (!result.success) {
+  const result = await getPublicProfile(id);
+
+  const profile = result.success ? (result.data as any) : null;
+  const user = profile?.user ?? profile;
+
+  if (!result.success || !user) {
     return {
       title: "Profile Not Found | TravelBuddy",
     };
   }
 
   return {
-    title: `${result.data.user.fullName} | TravelBuddy`,
-    description:
-      result.data.user.bio || `Public profile of ${result.data.user.fullName}`,
+    title: `${user.fullName} | TravelBuddy`,
+    description: user.bio || `Public profile of ${user.fullName}`,
   };
 }
 
 export default async function PublicProfilePage({
   params,
 }: PublicProfilePageProps) {
-  const result = await getPublicProfile(params.id);
+  const { id } = await params;
 
-  if (!result.success) {
+  if (!id) {
     notFound();
   }
 
-  const { user, upcomingPlans, recentReviews, averageRating } = result.data;
+  const result = await getPublicProfile(id);
+
+  const profile = result.success ? (result.data as any) : null;
+  const user = profile?.user ?? profile;
+
+  if (!result.success || !user) {
+    return (
+      <div className="container mx-auto py-6 space-y-4">
+        <div className="flex items-center gap-4">
+          <Button variant="outline" size="sm" asChild>
+            <Link href="/explore">
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back to Explore
+            </Link>
+          </Button>
+          <h1 className="text-2xl font-semibold">Profile not available</h1>
+        </div>
+        <p className="text-muted-foreground">
+          We couldn’t load this traveler right now. Please try again later or
+          check the link.
+        </p>
+        {result.error && (
+          <p className="text-xs text-amber-600 bg-amber-50 border border-amber-200 rounded p-2">
+            {result.error}
+          </p>
+        )}
+      </div>
+    );
+  }
+
+  const upcomingPlans = profile?.upcomingPlans ?? [];
+  const recentReviews = profile?.recentReviews ?? [];
+  const averageRating = profile?.averageRating ?? null;
 
   return (
     <div className="container mx-auto py-6 space-y-6">

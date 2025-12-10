@@ -16,6 +16,7 @@ import {
   Share2,
   Bookmark,
   Calendar,
+  BadgeCheck,
 } from "lucide-react";
 import { format } from "date-fns";
 import Image from "next/image";
@@ -77,9 +78,12 @@ export function PostCard({
               <div>
                 <button
                   onClick={handleViewProfile}
-                  className="font-semibold hover:underline"
+                  className="font-semibold hover:underline flex items-center gap-1"
                 >
                   {post.user.fullName}
+                  {post.user?.verifiedBadge && (
+                    <BadgeCheck className="h-4 w-4 text-blue-500" />
+                  )}
                 </button>
                 <p className="text-sm text-muted-foreground">
                   {format(new Date(post.createdAt), "MMM d, yyyy")}
@@ -107,9 +111,12 @@ export function PostCard({
             <div>
               <button
                 onClick={handleViewProfile}
-                className="font-semibold hover:underline text-left"
+                className="font-semibold hover:underline text-left flex items-center gap-1"
               >
                 {post.user?.fullName || "Unknown User"}
+                {post.user?.verifiedBadge && (
+                  <BadgeCheck className="h-4 w-4 text-blue-500" />
+                )}
               </button>
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Calendar className="h-3 w-3" />

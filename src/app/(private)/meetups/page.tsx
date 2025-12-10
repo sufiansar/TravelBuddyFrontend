@@ -6,13 +6,13 @@ import { Button } from "@/components/ui/button";
 
 import { Plus } from "lucide-react";
 import Link from "next/link";
-import { Meetup } from "@/types/meetup";
-import { getAllMeetups, joinMeetup, leaveMeetup } from "@/actions";
+
 import { toast } from "sonner";
 import { MeetupFilters } from "@/components/modules/MeetUp/MeetupFilters";
 import { MeetupCard } from "@/components/modules/MeetUp/MeetupCard";
 import { Pagination } from "@/components/Shared/Pagination";
-
+import { Meetup } from "@/types/meetup.interface";
+import { getAllMeetups, joinMeetup, leaveMeetup } from "@/actions";
 export default function MeetupsPage() {
   const [meetups, setMeetups] = useState<Meetup[]>([]);
   const [loading, setLoading] = useState(true);
@@ -32,9 +32,9 @@ export default function MeetupsPage() {
         sortBy: "date",
         sortOrder: "asc",
       });
-
+      console.log(result, "MeetUp");
       if (result.success) {
-        setMeetups(result?.data?.data);
+        setMeetups(result?.data || []);
         setPagination({
           page: result.meta?.page || 1,
           limit: result.meta?.limit || 9,
@@ -66,6 +66,7 @@ export default function MeetupsPage() {
   const handleJoinMeetup = async (meetupId: string) => {
     try {
       const result = await joinMeetup(meetupId);
+      console.log(result);
       if (result.success) {
         toast.success("Successfully joined the meetup!");
         fetchMeetups(pagination.page, filters);
@@ -118,7 +119,7 @@ export default function MeetupsPage() {
             </div>
           ))}
         </div>
-      ) : meetups.length === 0 ? (
+      ) : meetups?.length === 0 ? (
         <div className="text-center py-12">
           <h3 className="text-xl font-semibold mb-2">No meetups found</h3>
           <p className="text-gray-600 mb-4">

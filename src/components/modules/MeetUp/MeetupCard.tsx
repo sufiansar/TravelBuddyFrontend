@@ -8,7 +8,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Calendar, MapPin, Users, User } from "lucide-react";
+import { Calendar, MapPin, Users, User, BadgeCheck } from "lucide-react";
 import { format } from "date-fns";
 import Link from "next/link";
 import { Meetup } from "@/types/meetup";
@@ -53,7 +53,12 @@ export function MeetupCard({
                   {meetup.host.fullName.charAt(0)}
                 </AvatarFallback>
               </Avatar>
-              <span>Hosted by {meetup.host.fullName}</span>
+              <span className="flex items-center gap-1">
+                Hosted by {meetup.host.fullName}
+                {meetup.host.verifiedBadge && (
+                  <BadgeCheck className="h-4 w-4 text-blue-500" />
+                )}
+              </span>
             </div>
           </div>
           <Badge variant={isFull ? "destructive" : "default"}>

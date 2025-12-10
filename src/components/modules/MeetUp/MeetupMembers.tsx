@@ -54,6 +54,7 @@ export function MeetupMembers({
     setLoading(true);
     try {
       const result: any = await getMeetupMembers(meetupId);
+      console.log(result);
       if (result.success) {
         setMembers(result.data);
         setFilteredMembers(result.data);
@@ -69,7 +70,7 @@ export function MeetupMembers({
 
   const displayedMembers = showAll
     ? filteredMembers
-    : filteredMembers.slice(0, maxVisible);
+    : filteredMembers?.slice(0, maxVisible);
 
   const hasMoreMembers = filteredMembers.length > maxVisible;
 

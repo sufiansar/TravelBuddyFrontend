@@ -9,7 +9,7 @@ import { format } from "date-fns";
 
 import { useTransition } from "react";
 import { toast } from "sonner";
-import { deleteMatch, TravelMatch } from "@/actions";
+import { deleteMatch, TravelMatch } from "@/actions/matches/actions";
 
 interface MatchCardProps {
   match: TravelMatch;

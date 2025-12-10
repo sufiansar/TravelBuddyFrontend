@@ -97,6 +97,7 @@ export function ProfileForm({ user }: ProfileFormProps) {
         updateData,
         profileImage || undefined
       );
+      console.log(result);
 
       if (result.success) {
         toast.success("Profile updated successfully");

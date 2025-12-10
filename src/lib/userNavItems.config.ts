@@ -1,3 +1,6 @@
+import { UserRole } from "./commonNavItems.config";
+import { NavSection } from "./types";
+
 export const userNavItems: NavSection[] = [
   {
     title: "Travel",
@@ -26,19 +29,6 @@ export const userNavItems: NavSection[] = [
         icon: "Users",
         roles: ["USER"] as unknown as UserRole[],
       },
-      // Added Meetup specific items for regular users
-      {
-        title: "Upcoming Meetups",
-        href: "/meetups/upcoming",
-        icon: "Calendar",
-        roles: ["USER"] as unknown as UserRole[],
-      },
-      {
-        title: "Meetup Invites",
-        href: "/meetups/invites",
-        icon: "Bell",
-        roles: ["USER"] as unknown as UserRole[],
-      },
     ],
   },
   {
@@ -50,28 +40,11 @@ export const userNavItems: NavSection[] = [
         icon: "Search",
         roles: ["USER"] as unknown as UserRole[],
       },
-      {
-        title: "Create New Meetup",
-        href: "/meetups/create",
-        icon: "PlusCircle",
-        roles: ["USER"] as unknown as UserRole[],
-      },
-      {
-        title: "My Created Meetups",
-        href: "/meetups/my-created",
-        icon: "FolderPlus",
-        roles: ["USER"] as unknown as UserRole[],
-      },
+
       {
         title: "My Calendar",
         href: "/meetups/calendar",
         icon: "CalendarDays",
-        roles: ["USER"] as unknown as UserRole[],
-      },
-      {
-        title: "Meetup Suggestions",
-        href: "/meetups/suggestions",
-        icon: "Lightbulb",
         roles: ["USER"] as unknown as UserRole[],
       },
     ],

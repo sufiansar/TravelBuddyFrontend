@@ -81,8 +81,8 @@ export const commonNavItems = (role: UserRole): NavSection[] => {
         roles: ["SUPER_ADMIN", "ADMIN", "USER"] as unknown as UserRole[],
       },
       {
-        title: "Joined Meetups",
-        href: "/meetups/joined",
+        title: "My Joined Meetups",
+        href: "/meetups",
         icon: "CheckCircle",
         roles: ["SUPER_ADMIN", "ADMIN", "USER"] as unknown as UserRole[],
       },

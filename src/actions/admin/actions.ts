@@ -22,7 +22,7 @@ export async function getAllUsers(filters: AdminFilters = {}) {
 
     return {
       success: true,
-      data: result.data as User[],
+      data: result?.data?.data as User[],
       meta: result.meta,
     };
   } catch (error: any) {
@@ -91,7 +91,7 @@ export async function getAllPayments(filters: AdminFilters = {}) {
 
     return {
       success: true,
-      data: result.data as Payment[],
+      data: result?.data?.data as Payment[],
       meta: result.meta,
     };
   } catch (error: any) {
@@ -109,7 +109,7 @@ export async function getAllSubscriptions(filters: AdminFilters = {}) {
 
     return {
       success: true,
-      data: result.data as Subscription[],
+      data: result?.data?.data as Subscription[],
       meta: result.meta,
     };
   } catch (error: any) {
