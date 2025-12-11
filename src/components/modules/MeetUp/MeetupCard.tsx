@@ -30,6 +30,12 @@ export function MeetupCard({
   userId,
   isHost,
 }: MeetupCardProps) {
+  // Guard against undefined meetup or missing ID
+  if (!meetup || !meetup.id) {
+    console.warn("MeetupCard: Invalid meetup data", meetup);
+    return null;
+  }
+
   const isParticipant = meetup.participants.some((p) => p.user.id === userId);
   const isFull =
     meetup.maxPeople && meetup.participants.length >= meetup.maxPeople;

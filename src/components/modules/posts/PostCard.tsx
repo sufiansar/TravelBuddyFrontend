@@ -20,6 +20,8 @@ import {
 } from "lucide-react";
 import { format } from "date-fns";
 import Image from "next/image";
+import { useTransition } from "react";
+import { toast } from "sonner";
 
 import { PostActions } from "./PostActions";
 import { ReactionsDisplay } from "./ReactionsDisplay";
@@ -30,8 +32,28 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { Post } from "@/types/post.interface";
+import { deletePost } from "@/actions";
+
+const BASE_API = process.env.NEXT_PUBLIC_BASE_API || "";
+
+const resolveImageUrl = (url?: string) => {
+  if (!url) return "";
+  if (url.startsWith("http")) return url;
+  return BASE_API ? `${BASE_API}${url.startsWith("/") ? "" : "/"}${url}` : url;
+};
 
 interface PostCardProps {
   post: Post;
@@ -49,9 +71,14 @@ export function PostCard({
   compact = false,
 }: PostCardProps) {
   const router = useRouter();
+  const { data: session } = useSession();
+  const [isPending, startTransition] = useTransition();
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [isSaved, setIsSaved] = useState(
     post.saves?.some((save) => save.userId === "current-user-id") || false
   );
+
+  const isOwnPost = session?.user?.id === post.user.id;
 
   const handleViewPost = () => {
     router.push(`/post/${post.id}`);
@@ -60,6 +87,27 @@ export function PostCard({
   const handleViewProfile = (e: React.MouseEvent) => {
     e.stopPropagation();
     router.push(`/profile/${post.user.id}`);
+  };
+
+  const handleEdit = () => {
+    if (onEdit) {
+      onEdit(post);
+    } else {
+      router.push(`/post/${post.id}/edit`);
+    }
+  };
+
+  const handleDelete = async () => {
+    startTransition(async () => {
+      const result = await deletePost(post.id);
+      if (result.success) {
+        toast.success("Post deleted successfully");
+        setDeleteDialogOpen(false);
+        router.refresh();
+      } else {
+        toast.error(result.error || "Failed to delete post");
+      }
+    });
   };
 
   if (compact) {
@@ -71,7 +119,7 @@ export function PostCard({
         <CardContent className="p-4">
           <div className="flex items-start gap-3">
             <Avatar className="h-8 w-8">
-              <AvatarImage src={post.user.profileImage} />
+              <AvatarImage src={resolveImageUrl(post.user.profileImage)} />
               <AvatarFallback>{post.user.fullName?.charAt(0)}</AvatarFallback>
             </Avatar>
             <div className="flex-1 space-y-2">
@@ -81,7 +129,7 @@ export function PostCard({
                   className="font-semibold hover:underline flex items-center gap-1"
                 >
                   {post.user.fullName}
-                  {post.user?.verifiedBadge && (
+                  {(post.user as any)?.verifiedBadge && (
                     <BadgeCheck className="h-4 w-4 text-blue-500" />
                   )}
                 </button>
@@ -103,7 +151,7 @@ export function PostCard({
         <div className="flex justify-between items-start">
           <div className="flex items-center gap-3">
             <Avatar className="h-10 w-10">
-              <AvatarImage src={post.user?.profileImage} />
+              <AvatarImage src={resolveImageUrl(post.user?.profileImage)} />
               <AvatarFallback>
                 {post.user?.fullName?.charAt(0) || "U"}
               </AvatarFallback>
@@ -114,7 +162,7 @@ export function PostCard({
                 className="font-semibold hover:underline text-left flex items-center gap-1"
               >
                 {post.user?.fullName || "Unknown User"}
-                {post.user?.verifiedBadge && (
+                {(post.user as any)?.verifiedBadge && (
                   <BadgeCheck className="h-4 w-4 text-blue-500" />
                 )}
               </button>
@@ -126,7 +174,7 @@ export function PostCard({
               </div>
             </div>
           </div>
-          {showActions && (
+          {showActions && isOwnPost && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
@@ -134,12 +182,10 @@ export function PostCard({
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => onEdit?.(post)}>
-                  Edit
-                </DropdownMenuItem>
+                <DropdownMenuItem onClick={handleEdit}>Edit</DropdownMenuItem>
                 <DropdownMenuItem
                   className="text-destructive"
-                  onClick={() => onDelete?.(post.id)}
+                  onClick={() => setDeleteDialogOpen(true)}
                 >
                   Delete
                 </DropdownMenuItem>
@@ -153,17 +199,19 @@ export function PostCard({
         <p className="whitespace-pre-wrap">{post.content}</p>
 
         {post.images && post.images.length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             {post.images.slice(0, 4).map((image, index) => (
               <div
                 key={index}
-                className="relative aspect-square rounded-lg overflow-hidden"
+                className="relative w-full h-64 sm:h-56 md:h-64 rounded-lg overflow-hidden"
               >
                 <Image
-                  src={image}
+                  src={resolveImageUrl(image)}
                   alt={`Post image ${index + 1}`}
                   fill
                   className="object-cover"
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 50vw"
+                  priority={index === 0}
                 />
                 {index === 3 && post.images.length > 4 && (
                   <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
@@ -209,6 +257,28 @@ export function PostCard({
           onCommentClick={handleViewPost}
         />
       </CardFooter>
+
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Post</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this post? This action cannot be
+              undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDelete}
+              disabled={isPending}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {isPending ? "Deleting..." : "Delete"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Card>
   );
 }

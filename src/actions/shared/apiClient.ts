@@ -71,7 +71,8 @@ export async function makeApiCall(
 export async function uploadFile(
   endpoint: string,
   formData: FormData,
-  requireAuth: boolean = true
+  requireAuth: boolean = true,
+  method: "POST" | "PATCH" = "POST"
 ) {
   const url = `${BASE_API}${endpoint}`;
   const headers: Record<string, string> = {};
@@ -92,7 +93,7 @@ export async function uploadFile(
   }
 
   const response = await fetch(url, {
-    method: "POST",
+    method,
     headers,
     body: formData,
   });

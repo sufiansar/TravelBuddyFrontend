@@ -20,6 +20,16 @@ import {
   XCircle,
   BadgeCheck,
 } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { format } from "date-fns";
 import Link from "next/link";
 
@@ -57,6 +67,7 @@ export default function MeetupDetailsPage() {
   const [isHost, setIsHost] = useState(false);
   const [isParticipant, setIsParticipant] = useState(false);
   const [isFull, setIsFull] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   const fetchMeetup = async () => {
     setLoading(true);
@@ -94,11 +105,10 @@ export default function MeetupDetailsPage() {
   }, [params.id, session]);
 
   const handleDelete = async () => {
-    if (!confirm("Are you sure you want to delete this meetup?")) return;
-
     try {
       const result = await deleteMeetup(params.id as string);
       if (result.success) {
+        setDeleteDialogOpen(false);
         toast.success("Meetup deleted successfully!");
         router.push("/meetups");
       } else {
@@ -256,7 +266,10 @@ export default function MeetupDetailsPage() {
                         Edit Meetup
                       </Button>
                     </Link>
-                    <Button variant="destructive" onClick={handleDelete}>
+                    <Button
+                      variant="destructive"
+                      onClick={() => setDeleteDialogOpen(true)}
+                    >
                       <Trash2 className="h-4 w-4 mr-2" />
                       Delete Meetup
                     </Button>
@@ -279,6 +292,27 @@ export default function MeetupDetailsPage() {
           <MeetupMembers meetupId={meetup.id} />
         </div>
       </div>
+
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Meetup</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this meetup? This action cannot be
+              undone and all participants will be removed.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDelete}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

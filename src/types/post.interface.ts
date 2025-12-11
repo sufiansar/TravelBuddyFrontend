@@ -80,6 +80,11 @@ export interface CreatePostData {
   images?: File[];
 }
 
+export interface UpdatePostData {
+  content?: string;
+  images?: File[];
+}
+
 export interface CreateCommentData {
   content: string;
 }

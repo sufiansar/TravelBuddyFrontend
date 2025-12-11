@@ -14,18 +14,18 @@ import {
 import * as Icons from "lucide-react";
 
 import { Separator } from "@/components/ui/separator";
-import { IUser } from "@/actions";
+
 import { NavSection } from "@/types/dashboard.interface";
 import LogoutButton from "@/components/PublicNavbar/Logout";
 import { NavMain } from "./nav-main";
+import { User } from "@/types/user.interface";
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
-  userInfo: IUser | null;
+  userInfo: User | null;
   navItems: NavSection[];
 }
 
 export function AppSidebar({ userInfo, navItems, ...props }: AppSidebarProps) {
-  // Map icons correctly inside nested structure
   const mappedSections = navItems.map((section) => ({
     ...section,
     items: section.items.map((item) => ({

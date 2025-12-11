@@ -7,6 +7,7 @@ import {
   Post,
   PostComment,
   CreatePostData,
+  UpdatePostData,
 } from "@/types/post.interface";
 import { revalidatePath } from "next/cache";
 
@@ -172,6 +173,45 @@ export async function createPost(data: CreatePostData) {
     return {
       success: false,
       error: error.message || "Failed to create post",
+    };
+  }
+}
+
+// Update post
+export async function updatePost(postId: string, data: UpdatePostData) {
+  try {
+    const formData = new FormData();
+
+    if (typeof data.content === "string") {
+      formData.append("content", data.content);
+    }
+
+    if (data.images) {
+      data.images.forEach((image: File) => {
+        formData.append("images", image);
+      });
+    }
+
+    const result = await uploadFile(
+      `/posts/${postId}`,
+      formData,
+      true,
+      "PATCH"
+    );
+
+    revalidatePath("/posts");
+    revalidatePath("/posts/me");
+    revalidatePath(`/posts/${postId}`);
+
+    return {
+      success: true,
+      data: result,
+    };
+  } catch (error: any) {
+    console.error("updatePost error:", error);
+    return {
+      success: false,
+      error: error.message || "Failed to update post",
     };
   }
 }
@@ -437,6 +477,31 @@ export async function deleteComment(commentId: string) {
     return {
       success: false,
       error: error.message || "Failed to delete comment",
+    };
+  }
+}
+
+// Delete post
+export async function deletePost(postId: string) {
+  try {
+    await makeApiCall(
+      `/posts/${postId}`,
+      {
+        method: "DELETE",
+      },
+      true
+    );
+
+    revalidatePath("/posts");
+    revalidatePath("/posts/me");
+
+    return {
+      success: true,
+    };
+  } catch (error: any) {
+    return {
+      success: false,
+      error: error.message || "Failed to delete post",
     };
   }
 }

@@ -3,11 +3,12 @@ import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Input } from "../../ui/input";
 import { Bell, Search } from "lucide-react";
-import { UserProfile } from "@/app/(private)/profile/page";
+
 import UserDropdown from "./UserDropDrown";
+import { IUser } from "@/actions/shared/types";
 
 interface DashboardNavbarProps {
-  userInfo: UserProfile | null;
+  userInfo: IUser | null;
 }
 
 export function SiteHeader({ userInfo }: DashboardNavbarProps) {

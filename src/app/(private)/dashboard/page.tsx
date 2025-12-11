@@ -9,31 +9,25 @@ import { getMyProfile } from "@/actions";
 import { getAllTravelPlans } from "@/actions/travelPlans/actions";
 
 const DashboardHome = async () => {
-  // Fetch user profile and travel plans
   const [profileResult, plansResult] = await Promise.all([
     getMyProfile(),
     getAllTravelPlans(),
   ]);
 
-
   const userProfile = profileResult.success ? profileResult.data : null;
 
-  // Handle API response
   let travelPlans: any[] = [];
   if (plansResult.success && plansResult.data) {
-    // API returns array of plans or paginated response
     travelPlans = Array.isArray(plansResult.data)
       ? plansResult.data
       : (plansResult.data as any).data || [];
   }
 
-  // Calculate stats based on backend structure
   const activePlans = travelPlans.length;
   const destinationCount = new Set(
     travelPlans.map((plan: any) => plan.destination)
   ).size;
 
-  // Count pending requests across all plans
   const pendingRequests = travelPlans.reduce(
     (sum: number, plan: any) =>
       sum +
@@ -72,20 +66,18 @@ const DashboardHome = async () => {
     },
   ];
 
-  // Get recent 3 plans
   const recentPlans =
     travelPlans && travelPlans.length > 0 ? travelPlans.slice(0, 3) : [];
 
   const quickActions = [
-    { label: "Create Travel Plan", href: "/travel-plans/add", icon: Plus },
+    { label: "Create Travel Plan", href: "/travel-plans/create", icon: Plus },
     { label: "Browse Travelers", href: "/explore", icon: Users },
     { label: "View All Plans", href: "/travel-plans", icon: MapPin },
-    { label: "Profile Settings", href: "/profile/edit", icon: Users },
+    { label: "Profile Settings", href: "/users/me/edit", icon: Users },
   ];
 
   return (
     <div className="space-y-8">
-      {/* Welcome Section */}
       <div className="space-y-2">
         <h1 className="text-4xl font-bold text-foreground">
           Welcome to Your Dashboard
@@ -95,7 +87,6 @@ const DashboardHome = async () => {
         </p>
       </div>
 
-      {/* Statistics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {stats.map((stat, index) => {
           const Icon = stat.icon;
@@ -232,7 +223,7 @@ const DashboardHome = async () => {
                     Create your first travel plan to get started!
                   </p>
                 </div>
-                <Link href="/travel-plans/add">
+                <Link href="/travel-plans/create">
                   <Button className="bg-primary hover:bg-primary/90">
                     <Plus className="mr-2 h-4 w-4" />
                     Create Travel Plan
@@ -255,7 +246,7 @@ const DashboardHome = async () => {
             popular destinations.
           </p>
           <div className="flex gap-4 pt-2">
-            <Link href="/travel-plans/add">
+            <Link href="/travel-plans/create">
               <Button className="bg-primary hover:bg-primary/90">
                 <Plus className="mr-2 h-4 w-4" />
                 Create Travel Plan

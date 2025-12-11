@@ -7,10 +7,8 @@ import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { getNavItemsByRole } from "@/lib/navItem.confiq";
 
 const layout = async ({ children }: { children: React.ReactNode }) => {
-  // Try to get profile from API
   const result = await getMyProfile();
 
-  // Fallback to session if API fails
   const session = await getUserSession();
 
   let userInfo = null;

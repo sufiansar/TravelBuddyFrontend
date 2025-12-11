@@ -33,6 +33,9 @@ export function RequestList({
   const [selectedRequest, setSelectedRequest] =
     useState<TravelPlanRequest | null>(null);
 
+  // Ensure requests is an array
+  const requestsArray = Array.isArray(requests) ? requests : [];
+
   const handleRespond = (
     requestId: string,
     action: "ACCEPTED" | "REJECTED"
@@ -41,6 +44,7 @@ export function RequestList({
 
     startTransition(async () => {
       const result = await respondToRequest(travelPlanId, requestId, action);
+      console.log(result);
       if (result.success) {
         toast.success(`Request ${action.toLowerCase()} successfully`);
         onUpdate?.();
@@ -52,7 +56,7 @@ export function RequestList({
     });
   };
 
-  if (requests.length === 0) {
+  if (requestsArray.length === 0) {
     return (
       <div className="text-center py-12 space-y-4">
         <User className="h-12 w-12 mx-auto text-muted-foreground" />
@@ -66,8 +70,8 @@ export function RequestList({
     );
   }
 
-  const pendingRequests = requests.filter((req) => req.status === "PENDING");
-  const otherRequests = requests.filter((req) => req.status !== "PENDING");
+  const pendingRequests = requestsArray.filter((req) => req.status === "PENDING");
+  const otherRequests = requestsArray.filter((req) => req.status !== "PENDING");
 
   return (
     <div className="space-y-6">

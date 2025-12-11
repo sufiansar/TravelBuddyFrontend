@@ -9,14 +9,20 @@ export async function createMeetup(data: any) {
 
     const result = await api.meetups.create(data);
 
-    console.log("createMeetup - API response:", result);
+    console.log("createMeetup - Full API response:", result);
+
+    // Extract meetup data from response (backend may wrap in { data: meetup })
+    const meetupData = result?.data ?? result;
+
+    console.log("createMeetup - Extracted meetup data:", meetupData);
+    console.log("createMeetup - Meetup ID:", meetupData?.id);
 
     revalidatePath("/meetups");
     revalidatePath("/dashboard/meetups");
 
     return {
       success: true,
-      data: result,
+      data: meetupData,
     };
   } catch (error: any) {
     console.error("createMeetup - Error:", error);
@@ -154,10 +160,26 @@ export async function getAllMeetups(filters?: any, options?: any) {
       options
     )) as MeetupsGetAllResult;
 
+    console.log("getAllMeetups - Full API Response:", result);
+    console.log("getAllMeetups - result.data:", result?.data);
+    console.log("getAllMeetups - result.data.data:", result?.data?.data);
+
+    // Handle different response structures
+    const data = result?.data?.data || result?.data || [];
+    const meta = result?.meta ||
+      result?.data?.meta || {
+        page: 1,
+        limit: 10,
+        total: 0,
+      };
+
+    console.log("getAllMeetups - Extracted data:", data);
+    console.log("getAllMeetups - First meetup:", data[0]);
+
     return {
       success: true,
-      data: result?.data?.data,
-      meta: result?.meta,
+      data,
+      meta,
     };
   } catch (error: any) {
     console.error("getAllMeetups - Error:", error);

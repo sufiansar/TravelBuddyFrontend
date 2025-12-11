@@ -1,7 +1,35 @@
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { getTravelers, getTravelPlans } from "@/actions";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Star } from "lucide-react";
+import type { Traveler, TravelPlan } from "@/types/explore.interface";
 
-export default function Home() {
+export default async function Home() {
+  // Fetch real data with error handling
+  let topTravelers: Traveler[] = [];
+  let recentPlans: TravelPlan[] = [];
+
+  try {
+    const travelersData = await getTravelers();
+    topTravelers = travelersData?.data || [];
+    console.log(topTravelers);
+  } catch (error) {
+    console.error("Failed to fetch travelers:", error);
+  }
+
+  try {
+    const plansData = await getTravelPlans({}, { page: 1, limit: 8 });
+    recentPlans = plansData?.data || [];
+  } catch (error) {
+    console.error("Failed to fetch travel plans:", error);
+  }
+
+  // Extract unique destinations from plans
+  const destinations = Array.from(
+    new Set(recentPlans.map((plan) => plan.destination).filter(Boolean))
+  ).slice(0, 8);
   return (
     <main className="min-h-screen bg-background text-foreground">
       {/* Hero Section */}
@@ -95,60 +123,202 @@ export default function Home() {
             </p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-            {[
-              "Thailand",
-              "Japan",
-              "Italy",
-              "France",
-              "Spain",
-              "Australia",
-              "Canada",
-              "New Zealand",
-            ].map((destination) => (
-              <Link
-                key={destination}
-                href={`/explore?destination=${destination}`}
-                className="group"
-              >
-                <div className="relative overflow-hidden rounded-xl border border-border bg-muted/60 dark:bg-muted/40 p-5 transition hover:-translate-y-1 hover:shadow-lg">
-                  <div className="absolute inset-0 bg-linear-to-br from-primary/10 via-transparent to-accent/10 opacity-60" />
-                  <div className="relative space-y-1">
-                    <h3 className="text-lg font-semibold">{destination}</h3>
-                    <p className="text-sm text-muted-foreground">
-                      Join travelers here
-                    </p>
-                  </div>
-                </div>
-              </Link>
-            ))}
+            {destinations.length > 0
+              ? destinations.map((destination) => (
+                  <Link
+                    key={destination}
+                    href={`/explore?destination=${destination}`}
+                    className="group"
+                  >
+                    <div className="relative overflow-hidden rounded-xl border border-border bg-muted/60 dark:bg-muted/40 p-5 transition hover:-translate-y-1 hover:shadow-lg">
+                      <div className="absolute inset-0 bg-linear-to-br from-primary/10 via-transparent to-accent/10 opacity-60" />
+                      <div className="relative space-y-1">
+                        <h3 className="text-lg font-semibold">{destination}</h3>
+                        <p className="text-sm text-muted-foreground">
+                          Join travelers here
+                        </p>
+                      </div>
+                    </div>
+                  </Link>
+                ))
+              : [
+                  "Thailand",
+                  "Japan",
+                  "Italy",
+                  "France",
+                  "Spain",
+                  "Australia",
+                  "Canada",
+                  "New Zealand",
+                ].map((destination) => (
+                  <Link
+                    key={destination}
+                    href={`/explore?destination=${destination}`}
+                    className="group"
+                  >
+                    <div className="relative overflow-hidden rounded-xl border border-border bg-muted/60 dark:bg-muted/40 p-5 transition hover:-translate-y-1 hover:shadow-lg">
+                      <div className="absolute inset-0 bg-linear-to-br from-primary/10 via-transparent to-accent/10 opacity-60" />
+                      <div className="relative space-y-1">
+                        <h3 className="text-lg font-semibold">{destination}</h3>
+                        <p className="text-sm text-muted-foreground">
+                          Join travelers here
+                        </p>
+                      </div>
+                    </div>
+                  </Link>
+                ))}
           </div>
         </div>
       </section>
 
       {/* Featured Travelers Section */}
       <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
-          Top-rated travelers
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {[1, 2, 3].map((i) => (
-            <div
-              key={i}
-              className="bg-card border border-border rounded-xl p-6 shadow-sm text-center space-y-3 hover:-translate-y-1 transition"
-            >
-              <div className="w-16 h-16 rounded-full bg-primary/20 mx-auto grid place-items-center text-primary font-semibold">
-                {"T" + i}
-              </div>
-              <h3 className="text-xl font-semibold">Traveler {i}</h3>
-              <p className="text-amber-500 text-sm">⭐ 4.9/5 (128 reviews)</p>
-              <p className="text-muted-foreground text-sm">
-                Passionate explorer from Europe
-              </p>
-              <Link href={`/profile/${i}`}>
-                <Button className="w-full">View profile</Button>
-              </Link>
-            </div>
-          ))}
+        <div className="text-center mb-12 space-y-3">
+          <h2 className="text-3xl md:text-4xl font-bold">
+            Top-rated travelers
+          </h2>
+          <p className="text-muted-foreground text-lg">
+            Meet verified travelers with excellent community ratings
+          </p>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {topTravelers.length > 0
+            ? topTravelers.slice(0, 6).map((traveler) => (
+                <div
+                  key={traveler.id}
+                  className="bg-card border border-border rounded-xl p-6 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+                >
+                  <div className="flex items-start gap-4 mb-4">
+                    <Avatar className="w-16 h-16 ring-2 ring-primary/10">
+                      <AvatarImage src={traveler.profileImage || ""} />
+                      <AvatarFallback className="text-lg font-semibold bg-linear-to-br from-primary/20 to-primary/10">
+                        {traveler.fullName.charAt(0).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-lg font-bold mb-1 truncate">
+                        {traveler.fullName}
+                      </h3>
+                      {traveler.currentLocation && (
+                        <p className="text-xs text-muted-foreground truncate">
+                          📍 {traveler.currentLocation}
+                        </p>
+                      )}
+                      {traveler.averageRating && (
+                        <div className="flex items-center gap-1 mt-2">
+                          <Star className="h-4 w-4 fill-amber-500 text-amber-500" />
+                          <span className="text-sm font-semibold">
+                            {traveler.averageRating.toFixed(1)}
+                          </span>
+                          <span className="text-xs text-muted-foreground">
+                            / 5.0
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {traveler.bio && (
+                    <p className="text-sm text-muted-foreground line-clamp-2 mb-4">
+                      {traveler.bio}
+                    </p>
+                  )}
+
+                  <div className="space-y-3">
+                    {traveler.interests && traveler.interests.length > 0 && (
+                      <div className="flex flex-wrap gap-1.5">
+                        {traveler.interests.slice(0, 3).map((interest, idx) => (
+                          <Badge
+                            key={idx}
+                            variant="secondary"
+                            className="text-xs font-medium"
+                          >
+                            {interest}
+                          </Badge>
+                        ))}
+                        {traveler.interests.length > 3 && (
+                          <Badge variant="outline" className="text-xs">
+                            +{traveler.interests.length - 3}
+                          </Badge>
+                        )}
+                      </div>
+                    )}
+
+                    <div className="flex items-center justify-between text-xs text-muted-foreground pt-2 border-t">
+                      <span>
+                        🗺️ {traveler.visitedCountries?.length || 0} countries
+                      </span>
+                      <span>
+                        ✈️ {traveler.upcomingPlansCount || 0} upcoming
+                      </span>
+                    </div>
+
+                    <Link
+                      href={`/users/public/${traveler.id}`}
+                      className="block"
+                    >
+                      <Button className="w-full" size="sm">
+                        View profile
+                      </Button>
+                    </Link>
+                  </div>
+                </div>
+              ))
+            : [1, 2, 3].map((i) => (
+                <div
+                  key={i}
+                  className="bg-card border border-border rounded-xl p-6 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+                >
+                  <div className="flex items-start gap-4 mb-4">
+                    <div className="w-16 h-16 rounded-full bg-primary/20 grid place-items-center text-primary font-semibold text-lg">
+                      T{i}
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="text-lg font-bold mb-1">Traveler {i}</h3>
+                      <p className="text-xs text-muted-foreground">📍 Europe</p>
+                      <div className="flex items-center gap-1 mt-2">
+                        <Star className="h-4 w-4 fill-amber-500 text-amber-500" />
+                        <span className="text-sm font-semibold">4.9</span>
+                        <span className="text-xs text-muted-foreground">
+                          / 5.0
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Passionate explorer seeking adventure companions
+                  </p>
+                  <div className="space-y-3">
+                    <div className="flex flex-wrap gap-1.5">
+                      <Badge variant="secondary" className="text-xs">
+                        Adventure
+                      </Badge>
+                      <Badge variant="secondary" className="text-xs">
+                        Culture
+                      </Badge>
+                      <Badge variant="secondary" className="text-xs">
+                        Food
+                      </Badge>
+                    </div>
+                    <div className="flex items-center justify-between text-xs text-muted-foreground pt-2 border-t">
+                      <span>🗺️ 15 countries</span>
+                      <span>✈️ 3 upcoming</span>
+                    </div>
+                    <Link href="/explore" className="block">
+                      <Button className="w-full" size="sm">
+                        View profile
+                      </Button>
+                    </Link>
+                  </div>
+                </div>
+              ))}
+        </div>
+        <div className="text-center mt-8">
+          <Link href="/explore">
+            <Button variant="outline" size="lg">
+              View all travelers
+            </Button>
+          </Link>
         </div>
       </section>
 

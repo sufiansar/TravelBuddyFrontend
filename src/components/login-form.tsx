@@ -14,6 +14,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { toast } from "sonner";
 
 export function LoginForm({
   className,
@@ -47,6 +48,10 @@ export function LoginForm({
       email,
       password,
     });
+
+    if (result?.ok && !result?.error) {
+      toast.success("Successfully signed in!");
+    }
 
     if (result?.error) {
       setError(result.error);

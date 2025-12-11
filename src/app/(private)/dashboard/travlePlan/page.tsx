@@ -1,4 +1,4 @@
-import { TravelPlanForm } from "@/components/modules/TravlePlan";
+import { TravelPlanForm } from "@/components/modules/TravlePlan/TravelPlanForm";
 
 const TravlePlanpage = () => {
   return (

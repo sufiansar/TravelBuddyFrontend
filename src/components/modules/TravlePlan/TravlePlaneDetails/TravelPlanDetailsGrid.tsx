@@ -57,23 +57,6 @@ export function TravelPlanDetailsGrid({
           </Badge>
         </div>
       </div>
-
-      {/* Budget */}
-      {(minBudget || maxBudget) && (
-        <div className="space-y-2">
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <DollarSign className="h-4 w-4" />
-            <span>Budget Range</span>
-          </div>
-          <p className="font-semibold text-lg">
-            {minBudget && maxBudget
-              ? `$${minBudget} - $${maxBudget}`
-              : minBudget
-              ? `From $${minBudget}`
-              : `Up to $${maxBudget}`}
-          </p>
-        </div>
-      )}
     </>
   );
 }

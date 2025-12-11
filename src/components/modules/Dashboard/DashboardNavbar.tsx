@@ -7,7 +7,7 @@ import { User } from "@/types/user.interface";
 const DashboardNavbar = async () => {
   const result = await getMyProfile();
   const session = await getUserSession();
- 
+
   let userInfo: User | null = null;
 
   if ((result as any)?.success && (result as any)?.data) {
@@ -23,7 +23,7 @@ const DashboardNavbar = async () => {
 
   return (
     <div>
-      <SiteHeader userInfo={userInfo} />
+      <SiteHeader userInfo={userInfo as any} />
     </div>
   );
 };

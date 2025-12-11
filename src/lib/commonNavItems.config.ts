@@ -32,6 +32,12 @@ export const commonNavItems = (role: UserRole): NavSection[] => {
           roles: ["SUPER_ADMIN", "ADMIN", "USER"] as unknown as UserRole[],
         },
         {
+          title: "Create Travel Plan",
+          href: "/travel-plans/create",
+          icon: "MapPin",
+          roles: ["SUPER_ADMIN", "ADMIN", "USER"] as unknown as UserRole[],
+        },
+        {
           title: "Travel Plans",
           href: "/travel-plans",
           icon: "MapPin",

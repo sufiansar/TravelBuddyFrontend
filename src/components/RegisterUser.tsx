@@ -63,6 +63,7 @@ export function RegistrationForm({
     if (onSubmit) {
       try {
         await onSubmit(formData);
+        toast.success("Account created. You can now sign in.");
       } finally {
         setSubmitting(false);
       }

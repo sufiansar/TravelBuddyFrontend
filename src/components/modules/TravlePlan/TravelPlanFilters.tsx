@@ -149,28 +149,6 @@ export function TravelPlanFilters({
           </Button>
         </div>
       </div>
-
-      {showAdvanced && (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 bg-muted rounded-lg">
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Budget Range</label>
-            <div className="flex items-center gap-2">
-              <DollarSign className="h-4 w-4 text-muted-foreground" />
-              <Slider
-                defaultValue={budgetRange}
-                min={0}
-                max={10000}
-                step={100}
-                onValueChange={handleBudgetChange}
-                className="flex-1"
-              />
-              <div className="text-sm text-muted-foreground min-w-20">
-                ${budgetRange[0]} - ${budgetRange[1]}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

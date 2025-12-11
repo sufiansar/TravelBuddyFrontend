@@ -1,12 +1,14 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { CreatePostModal } from "@/components/modules/posts/CreatePostModal";
 
 export function PostsPageHeader() {
   const [createModalOpen, setCreateModalOpen] = useState(false);
+  const router = useRouter();
 
   return (
     <>
@@ -26,6 +28,7 @@ export function PostsPageHeader() {
       <CreatePostModal
         open={createModalOpen}
         onOpenChange={setCreateModalOpen}
+        onSuccess={() => router.refresh()}
       />
     </>
   );

@@ -13,11 +13,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 
-import { UserProfile } from "@/app/(private)/profile/page";
 import LogoutButton from "@/components/PublicNavbar/Logout";
+import { IUser } from "@/actions/shared/types";
 
 interface UserDropdownProps {
-  userInfo: UserProfile | null;
+  userInfo: IUser | null;
 }
 
 const UserDropdown = ({ userInfo }: UserDropdownProps) => {

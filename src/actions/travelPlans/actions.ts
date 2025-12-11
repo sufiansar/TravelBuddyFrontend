@@ -216,14 +216,20 @@ export async function getTravelPlanRequests(travelPlanId: string) {
       true
     );
 
+    // Extract data array from response (API might wrap in { data: [...] })
+    const data = (result as any)?.data ?? result;
+    const requests = Array.isArray(data) ? data : [];
+
     return {
       success: true,
-      data: result,
+      data: requests,
     };
   } catch (error: any) {
+    console.error("getTravelPlanRequests - Error:", error.message);
     return {
       success: false,
       error: error.message || "Failed to fetch requests",
+      data: [],
     };
   }
 }
@@ -240,7 +246,8 @@ export async function respondToRequest(
       {
         method: "POST",
         body: JSON.stringify({ action }),
-      }
+      },
+      true
     );
 
     revalidatePath(`/travel-plans/${travelPlanId}`);
@@ -251,6 +258,7 @@ export async function respondToRequest(
       data: result,
     };
   } catch (error: any) {
+    console.error("respondToRequest - Error:", error.message);
     return {
       success: false,
       error: error.message || "Failed to respond to request",

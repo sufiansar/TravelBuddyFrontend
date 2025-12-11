@@ -9,6 +9,8 @@ import {
 } from "@/components/ui/pagination";
 import { MessageSquare } from "lucide-react";
 import { getAllPosts } from "@/actions";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/helpers/authOptions";
 import { PostCard } from "@/components/modules/posts/PostCard";
 
 interface PostsFeedProps {
@@ -17,6 +19,7 @@ interface PostsFeedProps {
 
 export async function PostsFeed({ searchParams }: PostsFeedProps) {
   const params = await searchParams;
+  const session = await getServerSession(authOptions);
 
   const filters = {
     page: Number(params.page) || 1,
@@ -27,7 +30,6 @@ export async function PostsFeed({ searchParams }: PostsFeedProps) {
   };
 
   const result = await getAllPosts(filters);
-
 
   if (!result.success) {
     return (
@@ -63,9 +65,10 @@ export async function PostsFeed({ searchParams }: PostsFeedProps) {
   return (
     <>
       <div className="space-y-4">
-        {posts.map((post: any) => (
-          <PostCard key={post.id} post={post} />
-        ))}
+        {posts.map((post: any) => {
+          const isOwnPost = session?.user?.id === post.user.id;
+          return <PostCard key={post.id} post={post} showActions={isOwnPost} />;
+        })}
       </div>
 
       {meta.total > meta.limit && (
