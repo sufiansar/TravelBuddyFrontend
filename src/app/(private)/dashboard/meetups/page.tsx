@@ -99,7 +99,7 @@ export default function MeetupsPage() {
           <h1 className="text-3xl font-bold">Meetups</h1>
           <p className="text-gray-600">Discover and join amazing meetups</p>
         </div>
-        <Link href="/meetups/create">
+        <Link href="/dashboard/meetups/create">
           <Button>
             <Plus className="h-4 w-4 mr-2" />
             Create Meetup
@@ -125,7 +125,7 @@ export default function MeetupsPage() {
           <p className="text-gray-600 mb-4">
             Try adjusting your filters or create the first meetup!
           </p>
-          <Link href="/meetups/create">
+          <Link href="/dashboard/meetups/create">
             <Button>Create First Meetup</Button>
           </Link>
         </div>

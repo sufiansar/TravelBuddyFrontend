@@ -17,7 +17,7 @@ export default function CreateMeetupPage() {
       const result: any = await createMeetup(data);
       if (result.success) {
         toast.success("Meetup created successfully!");
-        router.push(`/meetups/${result?.data?.id}`);
+        router.push(`/dashboard/meetups/${result?.data?.id}`);
       } else {
         toast.error(result.error || "Failed to create meetup");
       }
