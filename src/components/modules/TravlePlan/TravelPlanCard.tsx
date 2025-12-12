@@ -88,7 +88,7 @@ export function TravelPlanCard({
   };
 
   const handleViewDetails = () => {
-    router.push(`/travel-plans/${plan.id}`);
+    router.push(`/dashboard/travel-plans/${plan.id}`);
   };
 
   if (variant === "compact") {
@@ -249,7 +249,7 @@ export function TravelPlanCard({
             </Button>
             {isOwner && (
               <Button size="sm" variant="outline" asChild>
-                <Link href={`/travel-plans/${plan.id}/requests`}>
+                <Link href={`/dashboard/travel-plans/${plan.id}/requests`}>
                   View Requests
                 </Link>
               </Button>

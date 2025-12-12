@@ -23,12 +23,7 @@ export const superAdminNavItems: NavSection[] = [
         icon: "Settings",
         roles: ["SUPER_ADMIN"] as unknown as UserRole[],
       },
-      {
-        title: "Reports",
-        href: "/admin/reports",
-        icon: "BarChart3",
-        roles: ["SUPER_ADMIN"] as unknown as UserRole[],
-      },
+
       {
         title: "All Reviews",
         href: "/reviews",
@@ -47,6 +42,12 @@ export const superAdminNavItems: NavSection[] = [
         href: "/admin/meetups/analytics",
         icon: "BarChart",
         roles: ["SUPER_ADMIN"] as unknown as UserRole[],
+      },
+      {
+        title: "Payments",
+        href: "/admin/payments",
+        icon: "CreditCard",
+        roles: ["ADMIN"] as unknown as UserRole[],
       },
     ],
   },

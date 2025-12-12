@@ -17,20 +17,17 @@ const PublicNavbar = async () => {
 
   const publicNavItems = [
     { href: "/", label: "Home" },
+    { href: "/explore", label: "Explore Travelers" },
     { href: "/packages", label: "Packages" },
-    { href: "/explore", label: "Explore" },
-
     { href: "/post", label: "Community Posts" },
-    // { href: "/explore", label: "Explore" },
   ];
 
   const loggedInNavItems = [
     { href: "/", label: "Home" },
+    { href: "/explore", label: "Explore Travelers" },
+    { href: "/dashboard/travel-plans", label: "Find Travel Buddy" },
     { href: "/packages", label: "Packages" },
     { href: "/post", label: "Community Posts" },
-    { href: "/explore", label: "Explore" },
-    { href: "/travel-plans", label: "Travel Plans" },
-    // { href: "/matches", label: "Matches" },
     { href: "/dashboard", label: "Dashboard" },
   ];
 

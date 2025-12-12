@@ -36,7 +36,7 @@ export function TravelPlanDetailsHeader({
       <div className="flex gap-2">
         {isOwner ? (
           <Button size="sm" variant="outline" asChild>
-            <Link href={`/travel-plans/${plan.id}/requests`}>
+            <Link href={`/dashboard/travel-plans/${plan.id}/requests`}>
               View Requests ({plan.requests?.length || 0})
             </Link>
           </Button>

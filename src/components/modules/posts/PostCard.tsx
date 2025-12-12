@@ -86,7 +86,7 @@ export function PostCard({
 
   const handleViewProfile = (e: React.MouseEvent) => {
     e.stopPropagation();
-    router.push(`/profile/${post.user.id}`);
+    router.push(`/users/public/${post.user.id}`);
   };
 
   const handleEdit = () => {

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -53,6 +54,11 @@ export function ReviewCard({
 }: ReviewCardProps) {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const router = useRouter();
+
+  const handleEdit = () => {
+    router.push(`/dashboard/reviews/${review.id}/edit`);
+  };
 
   const handleDelete = () => {
     startTransition(async () => {
@@ -105,12 +111,10 @@ export function ReviewCard({
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  {onEdit && (
-                    <DropdownMenuItem onClick={() => onEdit(review)}>
-                      <Edit className="mr-2 h-4 w-4" />
-                      Edit
-                    </DropdownMenuItem>
-                  )}
+                  <DropdownMenuItem onClick={handleEdit}>
+                    <Pencil className="mr-2 h-4 w-4" />
+                    Edit
+                  </DropdownMenuItem>
                   <DropdownMenuItem
                     className="text-destructive"
                     onClick={() => setIsDeleteDialogOpen(true)}

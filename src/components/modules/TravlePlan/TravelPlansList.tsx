@@ -31,7 +31,6 @@ export async function TravelPlansList({ searchParams }: TravelPlansListProps) {
     getTravelTypes(),
   ]);
 
- 
   if (!plansResult.success) {
     return (
       <div className="text-center py-12">
@@ -61,7 +60,7 @@ export async function TravelPlansList({ searchParams }: TravelPlansListProps) {
               : "No travel plans available yet"}
           </p>
           <Button className="mt-4" asChild>
-            <Link href="/travel-plans/create">
+            <Link href="/dashboard/travel-plans/create">
               <Plus className="mr-2 h-4 w-4" />
               Create First Plan
             </Link>

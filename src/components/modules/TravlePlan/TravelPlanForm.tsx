@@ -116,7 +116,7 @@ export function TravelPlanForm({
           onSuccess?.();
           const planId = result.data?.id;
           if (planId) {
-            router.push(`/travel-plans/${planId}`);
+            router.push(`/dashboard/travel-plans/${planId}`);
           } else {
             console.error("No plan ID in response:", result.data);
             setError("Failed to retrieve created plan ID");

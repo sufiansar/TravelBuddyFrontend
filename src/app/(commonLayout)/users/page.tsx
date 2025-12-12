@@ -9,8 +9,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 
 import { Metadata } from "next";
-import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+
 import Link from "next/link";
 import { getAllUsers } from "@/actions";
 import { UserFilters } from "@/components/modules/User/UserFilters";
@@ -36,14 +35,18 @@ async function UsersContent({ searchParams }: UsersPageProps) {
   const page = parseInt(searchParams.page || "1");
   const limit = parseInt(searchParams.limit || "10");
 
-  const result = await getAllUsers({
+  const params = {
     page,
     limit,
-    searchTerm: searchParams.searchTerm,
-    role: searchParams.role as any,
-    sortBy: searchParams.sortBy,
-    sortOrder: searchParams.sortOrder as "asc" | "desc",
-  });
+    ...(searchParams.searchTerm ? { searchTerm: searchParams.searchTerm } : {}),
+    ...(searchParams.role ? { role: searchParams.role as any } : {}),
+    ...(searchParams.sortBy ? { sortBy: searchParams.sortBy } : {}),
+    ...(searchParams.sortOrder
+      ? { sortOrder: searchParams.sortOrder as any }
+      : {}),
+  };
+
+  const result = await getAllUsers(params);
 
   if (!result.success) {
     return (
@@ -67,17 +70,12 @@ async function UsersContent({ searchParams }: UsersPageProps) {
             Manage users and administrators ({meta?.total || 0} total)
           </p>
         </div>
-        <Button asChild>
-          <Link href="/admin/create-user">
-            <Plus className="mr-2 h-4 w-4" />
-            Add User
-          </Link>
-        </Button>
       </div>
 
       <UserFilters showRoleFilter={true} />
 
-      {users.length === 0 ? (
+      {(Array.isArray(users) ? users.length : users?.data?.length || 0) ===
+      0 ? (
         <div className="flex flex-col items-center justify-center min-h-[300px] text-center border-2 border-dashed rounded-lg">
           <div className="p-8">
             <h3 className="text-lg font-semibold mb-2">No users found</h3>
@@ -91,14 +89,16 @@ async function UsersContent({ searchParams }: UsersPageProps) {
       ) : (
         <>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {users.map((user: any) => (
-              <UserCard
-                key={user.id}
-                user={user}
-                showActions={true}
-                isAdminView={true}
-              />
-            ))}
+            {(Array.isArray(users) ? users : users?.data || []).map(
+              (user: any) => (
+                <UserCard
+                  key={user.id}
+                  user={user}
+                  showActions={true}
+                  isAdminView={true}
+                />
+              )
+            )}
           </div>
 
           {meta && meta.total > meta.limit && (
@@ -110,12 +110,20 @@ async function UsersContent({ searchParams }: UsersPageProps) {
                   }).map((_, i) => (
                     <PaginationItem key={i + 1}>
                       <Link
-                        href={`?page=${i + 1}${
+                        href={`?page=${i + 1}&limit=${meta.limit}${
                           searchParams.searchTerm
                             ? `&searchTerm=${searchParams.searchTerm}`
                             : ""
                         }${
                           searchParams.role ? `&role=${searchParams.role}` : ""
+                        }${
+                          searchParams.sortBy
+                            ? `&sortBy=${searchParams.sortBy}`
+                            : ""
+                        }${
+                          searchParams.sortOrder
+                            ? `&sortOrder=${searchParams.sortOrder}`
+                            : ""
                         }`}
                       >
                         <PaginationLink isActive={meta.page === i + 1}>

@@ -1,4 +1,6 @@
 import { GalleryVerticalEnd, UserPlus } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
 
 import { RegistrationForm } from "@/components/RegisterUser";
 
@@ -17,12 +19,16 @@ export default function RegisterPage() {
     <div className="grid min-h-svh lg:grid-cols-2">
       <div className="flex flex-col gap-4 p-6 md:p-10">
         <div className="flex justify-center gap-2 md:justify-start">
-          <a href="#" className="flex items-center gap-2 font-medium">
-            <div className="bg-primary text-primary-foreground flex size-6 items-center justify-center rounded-md">
-              {/* <GalleryVerticalEnd className="size-4" /> */}
-            </div>
-            Logo
-          </a>
+          <Link href="/" className="flex items-center gap-2 font-medium">
+            <Image
+              src="/assets/Logo.jpg"
+              alt="TravelBuddy Logo"
+              width={40}
+              height={40}
+              className="rounded-md"
+            />
+            TravelBuddy
+          </Link>
         </div>
         <div className="flex flex-1 flex-col items-center justify-center">
           <div className="w-full max-w-xs">
@@ -52,24 +58,13 @@ export default function RegisterPage() {
         </div>
       </div>
       <div className="bg-muted relative hidden lg:block">
-        <img
-          src="/placeholder.svg"
-          alt="Image"
-          className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
+        <Image
+          src="/assets/Register.jpg"
+          alt="Register Illustration"
+          fill
+          className="object-cover"
+          priority
         />
-        <div className="absolute inset-0 bg-linear-to-t from-black/50 to-transparent" />
-        <div className="absolute bottom-10 left-10 right-10 text-white">
-          <blockquote className="space-y-4">
-            <p className="text-lg font-medium">
-              "Join thousands of satisfied customers who have transformed their
-              workflow with our platform."
-            </p>
-            <footer className="text-sm">
-              <div className="font-semibold">Sarah Johnson</div>
-              <div className="text-white/80">Product Manager at TechCorp</div>
-            </footer>
-          </blockquote>
-        </div>
       </div>
     </div>
   );

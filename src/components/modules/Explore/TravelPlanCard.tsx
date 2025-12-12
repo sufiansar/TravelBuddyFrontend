@@ -91,7 +91,7 @@ export function TravelPlanCard({ plan }: TravelPlanCardProps) {
             </div>
           </div>
           <Button size="sm" variant="outline" asChild>
-            <Link href={`/travel-plans/${plan.id}`}>View Plan</Link>
+            <Link href={`/dashboard/travel-plans/${plan.id}`}>View Plan</Link>
           </Button>
         </div>
       </CardContent>

@@ -70,9 +70,13 @@ const DashboardHome = async () => {
     travelPlans && travelPlans.length > 0 ? travelPlans.slice(0, 3) : [];
 
   const quickActions = [
-    { label: "Create Travel Plan", href: "/travel-plans/create", icon: Plus },
+    {
+      label: "Create Travel Plan",
+      href: "/dashboard/travel-plans/create",
+      icon: Plus,
+    },
     { label: "Browse Travelers", href: "/explore", icon: Users },
-    { label: "View All Plans", href: "/travel-plans", icon: MapPin },
+    { label: "View All Plans", href: "/dashboard/travel-plans", icon: MapPin },
     { label: "Profile Settings", href: "/users/me/edit", icon: Users },
   ];
 

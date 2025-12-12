@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Search, Grid3x3, List } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -218,6 +219,17 @@ export default function ExplorePage() {
             <p className="text-gray-600 dark:text-gray-400 mb-8">
               Discover amazing travel plans and connect with fellow travelers
             </p>
+
+            <div className="mb-6 flex justify-center gap-3">
+              <Link href="/travel-plans">
+                <Button size="lg">Find Travel Buddy</Button>
+              </Link>
+              <Link href="/explore">
+                <Button variant="outline" size="lg">
+                  Explore Travelers
+                </Button>
+              </Link>
+            </div>
 
             {/* Search Bar */}
             <form onSubmit={handleSearch} className="max-w-2xl mx-auto">

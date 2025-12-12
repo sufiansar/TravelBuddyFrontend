@@ -198,10 +198,8 @@ export async function deleteReview(id: string) {
 // Helper function to get user's completed travel plans for review
 export async function getUserCompletedTravelPlans() {
   try {
-    // Get user's travel plans that have ended
     const result = await makeApiCall("/travelPlans/my-plans", {}, true);
 
-    // Handle different response structures
     let plans = [];
     if (result?.data?.data) {
       plans = result.data.data;

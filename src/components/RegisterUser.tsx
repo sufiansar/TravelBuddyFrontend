@@ -14,6 +14,7 @@ import { Eye, EyeOff, Github, Mail, Lock, User, Check } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
+import Link from "next/link";
 
 interface RegistrationFormData {
   fullName: string;
@@ -139,22 +140,6 @@ export function RegistrationForm({
       {...props}
     >
       <FieldGroup>
-        <div className="flex flex-col items-center gap-3 text-center mb-6">
-          <div className="rounded-full bg-linear-to-br from-primary/20 to-primary/10 p-5">
-            <div className="rounded-full bg-linear-to-br from-primary to-primary/70 p-4">
-              <User className="w-8 h-8 text-white" />
-            </div>
-          </div>
-          <div>
-            <h1 className="text-2xl font-bold bg-linear-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-              Create Account
-            </h1>
-            <p className="text-muted-foreground text-sm mt-1">
-              Join our community today
-            </p>
-          </div>
-        </div>
-
         {error && (
           <div className="text-sm text-destructive rounded-md bg-destructive/10 border border-destructive/30 px-3 py-2">
             {error}
@@ -343,41 +328,6 @@ export function RegistrationForm({
           </Field>
         </div>
 
-        <Field className="space-y-4">
-          <div className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              id="terms"
-              required
-              className="w-4 h-4 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary focus:ring-2"
-            />
-            <label htmlFor="terms" className="text-sm text-muted-foreground">
-              I agree to the{" "}
-              <a href="#" className="text-primary hover:underline">
-                Terms of Service
-              </a>{" "}
-              and{" "}
-              <a href="#" className="text-primary hover:underline">
-                Privacy Policy
-              </a>
-            </label>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              id="newsletter"
-              className="w-4 h-4 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary focus:ring-2"
-            />
-            <label
-              htmlFor="newsletter"
-              className="text-sm text-muted-foreground"
-            >
-              Subscribe to our newsletter for updates and offers
-            </label>
-          </div>
-        </Field>
-
         <Field>
           <Button
             type="submit"
@@ -414,12 +364,12 @@ export function RegistrationForm({
 
         <FieldDescription className="text-center pt-4 border-t">
           Already have an account?{" "}
-          <a
-            href="#"
+          <Link
+            href="/login"
             className="font-semibold text-primary hover:text-primary/80 underline-offset-4 hover:underline transition-colors"
           >
             Sign in here
-          </a>
+          </Link>
         </FieldDescription>
       </FieldGroup>
     </form>

@@ -13,7 +13,7 @@ import Link from "next/link";
 import { getServerSession } from "next-auth";
 
 import { Badge } from "@/components/ui/badge";
-import { authOptions } from "../../../../helpers/authOptions";
+import { authOptions } from "@/helpers/authOptions";
 
 interface ProfilePageProps {
   params: Promise<{
@@ -42,7 +42,6 @@ export async function generateMetadata({
     };
   }
 
-  // Extract user from public profile response
   const user = (result.data as any)?.user || result.data;
 
   return {
@@ -71,7 +70,6 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
   } else {
     console.log("ProfilePage - Fetching user with ID:", id);
 
-    // Try getting public profile first, as it might have a different endpoint
     const publicResult = await getPublicProfile(id);
     console.log(
       "ProfilePage - getPublicProfile result:",
@@ -83,19 +81,16 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
       notFound();
     }
 
-    // Extract user from public profile response
     const publicData = publicResult.data as any;
     user = publicData?.user || publicData;
 
     console.log("ProfilePage - Extracted user:", JSON.stringify(user, null, 2));
 
-    // Ensure we have the required fields
     if (!user || !user.id) {
       console.error("ProfilePage - Invalid user data structure");
       notFound();
     }
 
-    // Add missing fields for compatibility with UserProfile component
     if (!user.email) {
       user.email = user.username || "N/A";
     }

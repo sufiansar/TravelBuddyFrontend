@@ -254,7 +254,7 @@ export default async function Home() {
                     </div>
 
                     <Link
-                      href={`/users/public/${traveler.id}`}
+                      href={`/dashboard/users/public/${traveler.id}`}
                       className="block"
                     >
                       <Button className="w-full" size="sm">
@@ -329,14 +329,14 @@ export default async function Home() {
         </h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
-            "Adventure",
-            "Food Tours",
-            "Photography",
-            "Hiking",
-            "Beach Relaxation",
-            "Cultural",
-            "Budget Travel",
-            "Luxury",
+            "ADVENTURE",
+            "BEACH",
+            "FRIENDS",
+            "CITY_TOUR",
+            "CULTURAL",
+            "HIKING",
+            "ROAD_TRIP",
+            "AND_MORE",
           ].map((category) => (
             <div
               key={category}
@@ -391,15 +391,15 @@ export default async function Home() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
               {
-                name: "Sarah J.",
+                name: "Md. Abu Sufian",
                 text: "Found amazing travel buddies for my Southeast Asia trip!",
               },
               {
-                name: "Mike T.",
+                name: "Sufian",
                 text: "Planning with strangers felt safe and exciting.",
               },
               {
-                name: "Emma L.",
+                name: "Osman Ghani",
                 text: "Met people I still travel with regularly.",
               },
             ].map((testimonial) => (
@@ -426,9 +426,9 @@ export default async function Home() {
           <p className="text-muted-foreground text-lg">
             Join thousands of travelers finding their perfect companions.
           </p>
-          <Link href="/register">
+          <Link href="/login">
             <Button size="lg" className="px-8">
-              Sign up now
+              Login Now
             </Button>
           </Link>
         </div>

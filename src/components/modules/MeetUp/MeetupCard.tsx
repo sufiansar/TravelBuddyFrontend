@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import {
   Card,
@@ -11,7 +13,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Calendar, MapPin, Users, User, BadgeCheck } from "lucide-react";
 import { format } from "date-fns";
 import Link from "next/link";
-import { Meetup } from "@/types/meetup";
+import { Meetup } from "@/types/meetup.interface";
 
 interface MeetupCardProps {
   meetup: Meetup;
@@ -97,7 +99,7 @@ export function MeetupCard({
       </CardContent>
       {showActions && (
         <CardFooter className="flex justify-between">
-          <Link href={`/meetups/${meetup.id}`}>
+          <Link href={`/dashboard/meetups/${meetup.id}`}>
             <Button variant="outline">View Details</Button>
           </Link>
           <div className="flex gap-2">
@@ -114,12 +116,8 @@ export function MeetupCard({
                 </Button>
               </>
             ) : isParticipant ? (
-              <Button
-                variant="destructive"
-                onClick={() => onLeave && onLeave(meetup.id)}
-                disabled={isHost}
-              >
-                Leave
+              <Button variant="secondary" disabled>
+                Joined
               </Button>
             ) : (
               <Button

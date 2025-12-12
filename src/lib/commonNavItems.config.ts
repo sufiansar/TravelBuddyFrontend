@@ -31,69 +31,9 @@ export const commonNavItems = (role: UserRole): NavSection[] => {
           icon: "Home",
           roles: ["SUPER_ADMIN", "ADMIN", "USER"] as unknown as UserRole[],
         },
-        {
-          title: "Create Travel Plan",
-          href: "/travel-plans/create",
-          icon: "MapPin",
-          roles: ["SUPER_ADMIN", "ADMIN", "USER"] as unknown as UserRole[],
-        },
-        {
-          title: "Travel Plans",
-          href: "/travel-plans",
-          icon: "MapPin",
-          roles: ["SUPER_ADMIN", "ADMIN", "USER"] as unknown as UserRole[],
-        },
-
-        {
-          title: "Meetups",
-          href: "/meetups",
-          icon: "Users",
-          roles: ["SUPER_ADMIN", "ADMIN", "USER"] as unknown as UserRole[],
-        },
-      ],
-    },
-    {
-      title: "Reviews",
-      items: [
-        {
-          title: "My Reviews",
-          href: "/reviews",
-          icon: "MessageSquare",
-          roles: ["USER"] as unknown as UserRole[],
-        },
-        {
-          title: "Write Review",
-          href: "/reviews/create",
-          icon: "Plus",
-          roles: ["SUPER_ADMIN", "ADMIN", "USER"] as unknown as UserRole[],
-        },
       ],
     },
   ];
-
-  items.push({
-    title: "Community",
-    items: [
-      {
-        title: "Create Meetup",
-        href: "/meetups/create",
-        icon: "PlusCircle",
-        roles: ["SUPER_ADMIN", "ADMIN", "USER"] as unknown as UserRole[],
-      },
-      {
-        title: "My Meetups",
-        href: "/meetups/my-meetups",
-        icon: "Calendar",
-        roles: ["SUPER_ADMIN", "ADMIN", "USER"] as unknown as UserRole[],
-      },
-      {
-        title: "My Joined Meetups",
-        href: "/meetups",
-        icon: "CheckCircle",
-        roles: ["SUPER_ADMIN", "ADMIN", "USER"] as unknown as UserRole[],
-      },
-    ],
-  });
 
   return items;
 };

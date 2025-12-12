@@ -5,10 +5,21 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Calendar, MapPin, Globe, Star, Award } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  ArrowLeft,
+  Calendar,
+  MapPin,
+  Globe,
+  Star,
+  Award,
+  User as UserIcon,
+} from "lucide-react";
 import Link from "next/link";
 import { format } from "date-fns";
 import { getPublicProfile } from "@/actions";
+import { UserReviewsSection } from "@/components/modules/User/UserReviewsSection";
+import { TravelHistory } from "@/components/modules/User/TravelHistory";
 
 interface PublicProfilePageProps {
   params: Promise<{
@@ -196,101 +207,21 @@ export default async function PublicProfilePage({
             )}
           </div>
 
-          {/* Upcoming Travel Plans */}
-          {upcomingPlans.length > 0 && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg flex items-center gap-2">
-                  <Globe className="h-5 w-5" />
-                  Upcoming Travel Plans
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {upcomingPlans.map((plan: any) => (
-                    <div
-                      key={plan.id}
-                      className="p-4 border rounded-lg hover:bg-accent transition-colors"
-                    >
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <h4 className="font-semibold">{plan.title}</h4>
-                          <p className="text-sm text-muted-foreground">
-                            {format(new Date(plan.startDate), "MMM d")} -{" "}
-                            {format(new Date(plan.endDate), "MMM d, yyyy")}
-                          </p>
-                        </div>
-                        <Badge variant="outline">{plan.destination}</Badge>
-                      </div>
-                      {plan.description && (
-                        <p className="mt-2 text-sm line-clamp-2">
-                          {plan.description}
-                        </p>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          )}
+          {/* Tabbed Content for Reviews and Travel History */}
+          <Tabs defaultValue="reviews" className="w-full">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="reviews">Reviews</TabsTrigger>
+              <TabsTrigger value="travel-history">Travel History</TabsTrigger>
+            </TabsList>
 
-          {/* Recent Reviews */}
-          {recentReviews.length > 0 && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg flex items-center gap-2">
-                  <Star className="h-5 w-5" />
-                  Recent Reviews
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {recentReviews.map((review: any) => (
-                    <div key={review.id} className="p-4 border rounded-lg">
-                      <div className="flex items-start gap-3">
-                        <Avatar className="h-10 w-10">
-                          <AvatarImage src={review.reviewer.profileImage} />
-                          <AvatarFallback>
-                            {review.reviewer.fullName?.charAt(0)}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div className="flex-1">
-                          <div className="flex justify-between items-start">
-                            <div>
-                              <h4 className="font-semibold">
-                                {review.reviewer.fullName}
-                              </h4>
-                              <div className="flex items-center gap-1">
-                                {[...Array(5)].map((_, i) => (
-                                  <Star
-                                    key={i}
-                                    className={`h-4 w-4 ${
-                                      i < review.rating
-                                        ? "text-yellow-500 fill-yellow-500"
-                                        : "text-gray-300"
-                                    }`}
-                                  />
-                                ))}
-                              </div>
-                            </div>
-                            <span className="text-sm text-muted-foreground">
-                              {format(
-                                new Date(review.createdAt),
-                                "MMM d, yyyy"
-                              )}
-                            </span>
-                          </div>
-                          {review.comment && (
-                            <p className="mt-2 text-sm">{review.comment}</p>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          )}
+            <TabsContent value="reviews" className="mt-6">
+              <UserReviewsSection userId={user.id} userName={user.fullName} />
+            </TabsContent>
+
+            <TabsContent value="travel-history" className="mt-6">
+              <TravelHistory userId={user.id} userName={user.fullName} />
+            </TabsContent>
+          </Tabs>
         </div>
 
         {/* Sidebar */}

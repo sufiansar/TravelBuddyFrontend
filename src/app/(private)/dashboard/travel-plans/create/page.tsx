@@ -15,7 +15,7 @@ export default function CreateTravelPlanPage() {
     <div className="container mx-auto px-4 py-8">
       <div className="flex items-center gap-4 mb-6">
         <Button variant="ghost" size="sm" asChild className="gap-2">
-          <Link href="/travel-plans">
+          <Link href="/dashboard/travel-plans">
             <ArrowLeft className="h-4 w-4" />
             Back to Plans
           </Link>
