@@ -55,13 +55,9 @@ export function SubscriptionTable({
   const router = useRouter();
   const getPlanColor = (plan: SubscriptionPlan) => {
     switch (plan) {
-      case SubscriptionPlan.PRO:
-        return "bg-purple-100 text-purple-800";
-      case SubscriptionPlan.PREMIUM:
-        return "bg-blue-100 text-blue-800";
-      case SubscriptionPlan.BASIC:
+      case SubscriptionPlan.MONTHLY:
         return "bg-green-100 text-green-800";
-      case SubscriptionPlan.FREE:
+      case SubscriptionPlan.YEARLY:
         return "bg-gray-100 text-gray-800";
       default:
         return "bg-gray-100 text-gray-800";
@@ -70,14 +66,11 @@ export function SubscriptionTable({
 
   const getPlanPrice = (plan: SubscriptionPlan) => {
     switch (plan) {
-      case SubscriptionPlan.PRO:
-        return "$49.99/mo";
-      case SubscriptionPlan.PREMIUM:
-        return "$29.99/mo";
-      case SubscriptionPlan.BASIC:
-        return "$9.99/mo";
-      case SubscriptionPlan.FREE:
-        return "Free";
+      case SubscriptionPlan.YEARLY:
+        return "$199.99/yr";
+      case SubscriptionPlan.MONTHLY:
+        return "$19.99/mo";
+
       default:
         return "Free";
     }
@@ -210,7 +203,7 @@ export function SubscriptionTable({
           currentPage={meta.page as number}
           totalPages={meta.totalPage as number}
           onPageChange={(page: number) => {
-            // Preserve current filters if any, and update the page query param
+        
             const params = new URLSearchParams({
               ...(currentFilters || {}),
               page: page.toString(),

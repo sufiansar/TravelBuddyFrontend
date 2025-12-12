@@ -3,6 +3,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Download, Filter, Plus } from "lucide-react";
 import { getAllTravelPlans } from "@/actions";
+
+// Mark this page as dynamic since it uses server session
+export const dynamic = "force-dynamic";
 import { TravelPlanTable } from "@/components/modules/Admin/TravelPlanTable";
 import { TravelPlanFilters } from "@/components/modules/Admin/TravleFilter";
 

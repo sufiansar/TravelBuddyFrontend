@@ -1,8 +1,8 @@
+import { getSavedPosts } from "@/actions";
 import { Button } from "@/components/ui/button";
 import { Bookmark } from "lucide-react";
 import Link from "next/link";
-import { getSavedPosts } from "@/actions/post";
-import { PostCard } from "@/components/modules/post/PostCard";
+import { PostCard } from "../PostCard";
 
 export async function SavedPostsList() {
   const result = await getSavedPosts();
@@ -36,7 +36,7 @@ export async function SavedPostsList() {
 
   return (
     <div className="space-y-4">
-      {posts.map((post) => (
+      {posts.map((post: any) => (
         <PostCard key={post.id} post={post} />
       ))}
     </div>

@@ -26,7 +26,7 @@ export const superAdminNavItems: NavSection[] = [
 
       {
         title: "All Reviews",
-        href: "/reviews",
+        href: "/admin/reviews",
         icon: "Star",
         roles: ["SUPER_ADMIN", "ADMIN"] as unknown as UserRole[],
       },

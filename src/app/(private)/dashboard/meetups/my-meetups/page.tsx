@@ -5,11 +5,12 @@ import { useSession } from "next-auth/react";
 
 import { Calendar, MapPin, Users, Plus } from "lucide-react";
 import Link from "next/link";
-import { Meetup } from "@/types/meetup";
+
 import { deleteMeetup, getAllMeetups } from "@/actions";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { MeetupCard } from "@/components/modules/MeetUp/MeetupCard";
+import { Meetup } from "@/types/meetup.interface";
 
 export default function MyMeetupsPage() {
   const { data: session } = useSession();
@@ -31,10 +32,10 @@ export default function MyMeetupsPage() {
         const allMeetups = result.data;
 
         const created = allMeetups.filter(
-          (meetup) => meetup.host.id === userId
+          (meetup: any) => meetup.host.id === userId
         );
         const joined = allMeetups.filter(
-          (meetup) =>
+          (meetup: any) =>
             meetup.participants.some((p: any) => p.user.id === userId) &&
             meetup.host.id !== userId
         );

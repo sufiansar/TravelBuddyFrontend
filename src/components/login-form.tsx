@@ -25,7 +25,11 @@ export function LoginForm({
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
+  // Support both 'redirect' and 'callbackUrl' parameter names
+  const callbackUrl =
+    searchParams.get("redirect") ||
+    searchParams.get("callbackUrl") ||
+    "/dashboard";
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();

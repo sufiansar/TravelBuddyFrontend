@@ -29,6 +29,7 @@ import {
   Calendar,
   User,
   MapPin,
+  Pencil,
 } from "lucide-react";
 import { format } from "date-fns";
 

@@ -7,9 +7,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { format, isSameDay } from "date-fns";
 import { Calendar as CalendarIcon, MapPin, Users } from "lucide-react";
-import { Meetup } from "@/types/meetup";
+
 import { getAllMeetups } from "@/actions";
 import { toast } from "sonner";
+import { Meetup } from "@/types/meetup.interface";
 
 export default function MeetupCalendarPage() {
   const [meetups, setMeetups] = useState<Meetup[]>([]);

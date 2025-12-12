@@ -1,5 +1,8 @@
 "use client";
 
+// Mark this page as dynamic since it uses server session
+export const dynamic = "force-dynamic";
+
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -33,7 +36,7 @@ export default function ManageRolesPage() {
       const result = await getAllUsersAdmin();
       console.log("ManageRolesPage - getAllUsers result:", result);
       if (result.success) {
-        setUsers(result.data?.data || result.data || []);
+        setUsers(result?.data as any);
       }
     } catch (error) {
       console.error("Failed to load users:", error);

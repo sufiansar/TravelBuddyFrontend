@@ -58,7 +58,7 @@ export interface AdminFilters {
   sortOrder?: "asc" | "desc";
 }
 
-export interface User {
+export interface AdminUser {
   id: string;
   fullName: string;
   username: string;

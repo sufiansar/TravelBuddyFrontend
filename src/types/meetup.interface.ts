@@ -1,11 +1,4 @@
-export interface User {
-  id: string;
-  fullName: string;
-  email: string;
-  role: "USER" | "ADMIN";
-  profileImage?: string;
-  verifiedBadge?: boolean;
-}
+import { User } from "./user.interface";
 
 export interface MeetupMember {
   id: string;

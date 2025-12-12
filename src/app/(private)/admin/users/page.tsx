@@ -7,6 +7,9 @@ import { UserFilters } from "@/components/modules/Admin/UserFilters";
 import { UserTable } from "@/components/modules/Admin/UserTable";
 import { getAllUsers } from "@/actions/admin/actions";
 
+// Mark this page as dynamic since it uses server session
+export const dynamic = "force-dynamic";
+
 interface UsersPageProps {
   searchParams?: {
     searchTerm?: string;

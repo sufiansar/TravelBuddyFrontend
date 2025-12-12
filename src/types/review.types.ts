@@ -28,24 +28,6 @@ export interface Review {
   };
 }
 
-export interface PaginatedResponse<T> {
-  data: T[];
-  meta: {
-    page: number;
-    limit: number;
-    totalPage: number;
-    total: number;
-    averageRating?: number | null;
-  };
-}
-
-export interface PaginationParams {
-  page?: number;
-  limit?: number;
-  sortBy?: string;
-  sortOrder?: "asc" | "desc";
-}
-
 export interface CreateReviewData {
   rating: number;
   comment: string;

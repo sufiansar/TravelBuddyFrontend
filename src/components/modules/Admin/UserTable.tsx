@@ -26,12 +26,12 @@ import { format } from "date-fns";
 // import { Pagination } from "@/components/ui/pagination";
 
 import { useRouter } from "next/navigation";
-import { User, UserStatus } from "@/types/admin.interface";
+import { AdminUser, UserStatus } from "@/types/admin.interface";
 import { toggleUserStatus } from "@/actions/admin/actions";
 import { Pagination } from "@/components/Shared/Pagination";
 
 interface UserTableProps {
-  users: User[];
+  users: AdminUser[];
   meta?: {
     page: number;
     limit: number;
@@ -168,11 +168,15 @@ export function UserTable({ users, meta, currentFilters }: UserTableProps) {
                       <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => router.push(`/admin/users/${user.id}`)}
+                        >
                           <Eye className="mr-2 h-4 w-4" />
                           View Details
                         </DropdownMenuItem>
-                        <DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => router.push(`/admin/users/${user.id}`)}
+                        >
                           <Edit className="mr-2 h-4 w-4" />
                           Edit User
                         </DropdownMenuItem>

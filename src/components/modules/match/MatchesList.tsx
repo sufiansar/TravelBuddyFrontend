@@ -1,7 +1,8 @@
 import { Users } from "lucide-react";
-import { getMatchesForPlan } from "@/actions";
+
 import { MatchCard } from "@/components/modules/match/MatchCard";
 import { Skeleton } from "@/components/ui/skeleton";
+import { getMatchesForPlan } from "@/actions/matches/actions";
 
 export async function MatchesList({ planId }: { planId: string }) {
   const result = await getMatchesForPlan(planId);

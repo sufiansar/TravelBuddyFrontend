@@ -1,10 +1,10 @@
 "use server";
 
 import { makeApiCall } from "@/actions/shared/apiClient";
+import { PaginatedResponse } from "@/types/user.interface";
 import {
   CreateTravelPlanData,
-  PaginatedResponse,
-  PaginationParams,
+  TravelPlanFilterParams,
   TravelPlan,
   TravelPlanRequest,
 } from "@/types/travlePlan.interface";
@@ -41,7 +41,7 @@ export async function createTravelPlan(data: CreateTravelPlanData) {
 }
 
 // Get all travel plans (public)
-export async function getAllTravelPlans(params?: PaginationParams) {
+export async function getAllTravelPlans(params?: TravelPlanFilterParams) {
   try {
     const result = await makeApiCall("/travelPlans", {
       method: "GET",
@@ -72,7 +72,7 @@ export async function getAllTravelPlans(params?: PaginationParams) {
 }
 
 // Get my travel plans
-export async function getMyTravelPlans(params?: PaginationParams) {
+export async function getMyTravelPlans(params?: TravelPlanFilterParams) {
   try {
     const result = await makeApiCall(
       "/travelPlans/my-plans",

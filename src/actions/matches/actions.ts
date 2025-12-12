@@ -63,7 +63,7 @@ export interface PaginatedResponse<T> {
   };
 }
 
-export interface PaginationParams {
+export interface MatchFilterParams {
   page?: number;
   limit?: number;
   searchTerm?: string;
@@ -95,7 +95,7 @@ export async function generateMatches(travelPlanId: string) {
   }
 }
 
-export async function getAllMatches(params?: PaginationParams) {
+export async function getAllMatches(params?: MatchFilterParams) {
   try {
     const result = await makeApiCall(
       "/travelMatches/",

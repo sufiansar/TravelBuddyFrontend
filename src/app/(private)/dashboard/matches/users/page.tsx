@@ -1,12 +1,14 @@
 import { Suspense } from "react";
-import { UserCard, UserFilters } from "@/components/modules/user";
-import { Pagination } from "@/components/ui/pagination";
-import { Skeleton } from "@/components/ui/skeleton";
-import { getAllUsers } from "@/actions/user";
+
 import { Metadata } from "next";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import Link from "next/link";
+import { getAllUsers } from "@/actions";
+import { UserFilters } from "@/components/modules/Admin/UserFilters";
+import { UserCard } from "@/components/modules/User/UserCard";
+import UsersLoadingSkeleton from "@/components/modules/User/UserLoading";
+import { Pagination } from "@/components/Shared/Pagination";
 
 export const metadata: Metadata = {
   title: "Users | TravelBuddy",
@@ -27,15 +29,16 @@ interface UsersPageProps {
 async function UsersContent({ searchParams }: UsersPageProps) {
   const page = parseInt(searchParams.page || "1");
   const limit = parseInt(searchParams.limit || "10");
-
-  const result = await getAllUsers({
+  const params = {
     page,
     limit,
     searchTerm: searchParams.searchTerm,
     role: searchParams.role as any,
     sortBy: searchParams.sortBy,
     sortOrder: searchParams.sortOrder as "asc" | "desc",
-  });
+  };
+
+  const result = await getAllUsers(params);
 
   if (!result.success) {
     return (
@@ -67,7 +70,7 @@ async function UsersContent({ searchParams }: UsersPageProps) {
         </Button>
       </div>
 
-      <UserFilters showRoleFilter={true} />
+      <UserFilters />
 
       {users.length === 0 ? (
         <div className="flex flex-col items-center justify-center min-h-[300px] text-center border-2 border-dashed rounded-lg">
@@ -83,7 +86,7 @@ async function UsersContent({ searchParams }: UsersPageProps) {
       ) : (
         <>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {users.map((user) => (
+            {users.map((user: any) => (
               <UserCard
                 key={user.id}
                 user={user}
@@ -98,7 +101,6 @@ async function UsersContent({ searchParams }: UsersPageProps) {
               <Pagination
                 currentPage={meta.page}
                 totalPages={Math.ceil(meta.total / meta.limit)}
-                pageSize={meta.limit}
                 onPageChange={(page) => {
                   const params = new URLSearchParams(searchParams as any);
                   params.set("page", page.toString());
@@ -122,4 +124,3 @@ export default function UsersPage(props: UsersPageProps) {
     </div>
   );
 }
-

@@ -1,7 +1,7 @@
 import { getAllReviews } from "@/actions";
 import { ReviewsLayout } from "@/components/modules/Review/ReviewsLayout";
 import { ReviewsList } from "@/components/modules/Review/ReviewsList";
-import { PaginationParams } from "@/types/review.types";
+import { PaginationParams } from "@/types/user.interface";
 
 async function AllReviewsContent({
   searchParams,

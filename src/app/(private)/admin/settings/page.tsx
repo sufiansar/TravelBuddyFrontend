@@ -1,5 +1,8 @@
 "use client";
 
+// Mark this page as dynamic since it uses server session
+export const dynamic = "force-dynamic";
+
 import React, { useState } from "react";
 import {
   Card,

@@ -1,12 +1,13 @@
 import { notFound } from "next/navigation";
-import { UserProfile } from "@/components/modules/user";
-import { getUserById } from "@/actions/user";
+
 import { Metadata } from "next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Calendar, MapPin, Mail, Globe } from "lucide-react";
 import Link from "next/link";
 import { format } from "date-fns";
+import { getUserById } from "@/actions";
+import { UserProfile } from "@/components/modules/User/UserProfile";
 
 interface UserDetailPageProps {
   params: {

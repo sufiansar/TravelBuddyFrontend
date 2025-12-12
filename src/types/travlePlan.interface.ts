@@ -1,10 +1,4 @@
-export interface User {
-  id: string;
-  fullName: string;
-  username: string;
-  profileImage?: string;
-  email?: string;
-}
+import { User } from "./user.interface";
 
 export interface TravelPlan {
   id: string;
@@ -47,16 +41,7 @@ export interface CreateTravelPlanData {
   isPublic?: "PUBLIC" | "PRIVATE";
 }
 
-export interface PaginatedResponse<T> {
-  data: T[];
-  meta: {
-    page: number;
-    limit: number;
-    total: number;
-  };
-}
-
-export interface PaginationParams {
+export interface TravelPlanFilterParams {
   page?: number;
   limit?: number;
   sortBy?: string;

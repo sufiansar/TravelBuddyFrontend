@@ -21,7 +21,7 @@ import {
 import { MapPin } from "lucide-react";
 
 import { MatchCard } from "@/components/modules/match/MatchCard";
-import { getAllMatches, PaginationParams } from "@/actions/matches/actions";
+import { getAllMatches, MatchFilterParams } from "@/actions/matches/actions";
 
 interface AllMatchesSectionProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -32,7 +32,7 @@ export async function AllMatchesSection({
 }: AllMatchesSectionProps) {
   const params = await searchParams;
 
-  const filters: PaginationParams = {
+  const filters: MatchFilterParams = {
     page: Number(params.page) || 1,
     limit: Number(params.limit) || 10,
     searchTerm: params.searchTerm as string,

@@ -1,9 +1,8 @@
 "use server";
 
 import { makeApiCall, uploadFile } from "@/actions/shared/apiClient";
+import { PaginatedResponse, PaginationParams } from "@/types/user.interface";
 import {
-  PaginatedResponse,
-  PaginationParams,
   Post,
   PostComment,
   CreatePostData,

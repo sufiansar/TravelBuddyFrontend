@@ -7,9 +7,10 @@ import {
   PlatformStats,
   Subscription,
   TravelPlan,
-  User,
+  AdminUser,
   UserStatus,
 } from "@/types/admin.interface";
+
 import { revalidatePath } from "next/cache";
 
 export async function getAllUsers(filters: AdminFilters = {}) {
@@ -22,7 +23,7 @@ export async function getAllUsers(filters: AdminFilters = {}) {
 
     return {
       success: true,
-      data: result?.data?.data as User[],
+      data: result?.data?.data as AdminUser[],
       meta: result.meta,
     };
   } catch (error: any) {
@@ -42,7 +43,7 @@ export async function toggleUserStatus(userId: string, status: UserStatus) {
     );
 
     revalidatePath("/admin/users");
-    return { success: true, data: result as User };
+    return { success: true, data: result as AdminUser };
   } catch (error: any) {
     return { success: false, error: error.message };
   }
@@ -120,7 +121,7 @@ export async function getAllSubscriptions(filters: AdminFilters = {}) {
 export async function getPlatformStats() {
   try {
     const result = await makeApiCall("/admin/stats", {}, true);
-    return { success: true, data: result as PlatformStats };
+    return { success: true, data: result.data as PlatformStats };
   } catch (error: any) {
     return { success: false, error: error.message };
   }

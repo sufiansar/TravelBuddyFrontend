@@ -5,11 +5,6 @@ export interface ApiResponse<T = any> {
   error?: string;
 }
 
-export interface PaginationParams {
-  page?: number;
-  limit?: number;
-}
-
 export interface TravelType {
   SOLO: "SOLO";
   FRIENDS: "FRIENDS";

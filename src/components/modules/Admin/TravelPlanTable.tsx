@@ -19,7 +19,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { MoreHorizontal, Eye, Trash2, Globe, Lock } from "lucide-react";
+import { MoreHorizontal, Eye, Trash2, Globe, Lock, Edit } from "lucide-react";
 
 import { format } from "date-fns";
 
@@ -197,9 +197,21 @@ export function TravelPlanTable({
                       <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() =>
+                            router.push(`/admin/travel-plans/${plan.id}`)
+                          }
+                        >
                           <Eye className="mr-2 h-4 w-4" />
                           View Details
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() =>
+                            router.push(`/admin/travel-plans/${plan.id}`)
+                          }
+                        >
+                          <Edit className="mr-2 h-4 w-4" />
+                          Edit Plan
                         </DropdownMenuItem>
                         <AlertDialog>
                           <AlertDialogTrigger asChild>

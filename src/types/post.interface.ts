@@ -1,10 +1,4 @@
-export interface User {
-  id: string;
-  fullName: string;
-  username: string;
-  profileImage?: string;
-  email?: string;
-}
+import { User } from "./user.interface";
 
 export interface Post {
   id: string;
@@ -56,23 +50,6 @@ export interface PostComment {
   createdAt: string;
   updatedAt: string;
   user: User;
-}
-
-export interface PaginatedResponse<T> {
-  data: T[];
-  meta: {
-    page: number;
-    limit: number;
-    total: number;
-  };
-}
-
-export interface PaginationParams {
-  page?: number;
-  limit?: number;
-  sortBy?: string;
-  sortOrder?: "asc" | "desc";
-  searchTerm?: string;
 }
 
 export interface CreatePostData {

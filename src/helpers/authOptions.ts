@@ -172,12 +172,13 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
     async redirect({ url, baseUrl }) {
-      // Handle callback URL parameter
-      if (url.includes("callbackUrl")) {
+      // Handle callback URL parameter - support both 'redirect' and 'callbackUrl'
+      if (url.includes("?")) {
         const urlParams = new URLSearchParams(url.split("?")[1]);
-        const callbackUrl = urlParams.get("callbackUrl");
-        if (callbackUrl) {
-          return decodeURIComponent(callbackUrl);
+        const callbackUrl =
+          urlParams.get("redirect") || urlParams.get("callbackUrl");
+        if (callbackUrl && callbackUrl.startsWith("/")) {
+          return `${baseUrl}${decodeURIComponent(callbackUrl)}`;
         }
       }
 

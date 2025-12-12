@@ -3,7 +3,7 @@ import { RatingStars } from "@/components/modules/Review/RatingStars";
 import { ReviewsLayout } from "@/components/modules/Review/ReviewsLayout";
 import { ReviewsList } from "@/components/modules/Review/ReviewsList";
 import { Button } from "@/components/ui/button";
-import { PaginationParams } from "@/types/review.types";
+import { PaginationParams } from "@/types/user.interface";
 import Link from "next/link";
 
 async function PlanReviewsContent({
@@ -52,7 +52,11 @@ async function PlanReviewsContent({
         <div>
           <h3 className="font-semibold">Overall Rating</h3>
           <div className="flex items-center gap-2 mt-1">
-            <RatingStars rating={meta.averageRating ?? 0} size="lg" showNumber />
+            <RatingStars
+              rating={meta.averageRating ?? 0}
+              size="lg"
+              showNumber
+            />
             <span className="text-sm text-muted-foreground">
               ({meta.total} reviews)
             </span>

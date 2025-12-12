@@ -143,7 +143,7 @@ const DashboardHome = async () => {
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <h2 className="text-2xl font-bold text-foreground">Recent Plans</h2>
-          <Link href="/travel-plans">
+          <Link href="/dashboard/travel-plans">
             <Button variant="outline" size="sm">
               View All
               <ArrowRight className="ml-2 h-4 w-4" />
@@ -205,7 +205,9 @@ const DashboardHome = async () => {
                     >
                       {plan.isPublic || "PUBLIC"}
                     </Badge>
-                    <Link href={`/travel-plans/${plan._id || plan.id}`}>
+                    <Link
+                      href={`/dashboard/travel-plans/${plan._id || plan.id}`}
+                    >
                       <Button variant="ghost" size="sm">
                         View
                         <ArrowRight className="ml-2 h-4 w-4" />
@@ -227,7 +229,7 @@ const DashboardHome = async () => {
                     Create your first travel plan to get started!
                   </p>
                 </div>
-                <Link href="/travel-plans/create">
+                <Link href="/dashboard/travel-plans/create">
                   <Button className="bg-primary hover:bg-primary/90">
                     <Plus className="mr-2 h-4 w-4" />
                     Create Travel Plan
@@ -250,7 +252,7 @@ const DashboardHome = async () => {
             popular destinations.
           </p>
           <div className="flex gap-4 pt-2">
-            <Link href="/travel-plans/create">
+            <Link href="/dashboard/travel-plans/create">
               <Button className="bg-primary hover:bg-primary/90">
                 <Plus className="mr-2 h-4 w-4" />
                 Create Travel Plan

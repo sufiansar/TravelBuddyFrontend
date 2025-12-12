@@ -3,9 +3,10 @@
 import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Sparkles } from "lucide-react";
-import { generateMatches } from "@/actions";
+
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { generateMatches } from "@/actions/matches/actions";
 
 interface PlanMatchesClientProps {
   planId: string;
@@ -22,7 +23,7 @@ export function PlanMatchesClient({ planId }: PlanMatchesClientProps) {
         toast.success(
           `Generated ${result.data?.length || 0} matches successfully!`
         );
-        router.refresh(); // Refresh the page to show new matches
+        router.refresh();
       } else {
         toast.error(result.error || "Failed to generate matches");
       }

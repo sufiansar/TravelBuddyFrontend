@@ -4,111 +4,73 @@ Your ultimate travel companion platform. Connect with verified travelers, plan s
 
 ## 🌍 Overview
 
-Travel Buddy is a comprehensive web application that enables users to:
-- **Find Travel Companions** - Discover and match with travelers who share your interests and travel style
-- **Plan Together** - Create and manage travel plans with real-time collaboration
-- **Join Meetups** - Organize and attend meetups at travel destinations
-- **Share Experiences** - Create posts, leave reviews, and build a trusted travel community
-- **Secure Payments** - Subscribe to premium plans with verified traveler badges
+Travel Buddy enables users to:
 
-**Current Status**: ~80% Complete
+- **Find Travel Companions** - Discover and match with travelers
+- **Plan Together** - Create and manage travel plans
+- **Join Meetups** - Organize meetups at destinations
+- **Share Experiences** - Create posts, leave reviews, and build community
+- **Secure Payments** - Subscribe to premium plans with Stripe
+
+**Current Status**: Production Ready - Full Admin Dashboard with Reviews Management
 
 ## 🚀 Tech Stack
 
-### Core Framework
-- **Next.js 16** - React framework with App Router and Server Components
-- **React 19** - UI library
-- **TypeScript** - Type-safe development
-- **Node.js/Bun** - Runtime environment
-
-### Styling & UI
+- **Next.js 16.0.7** - React framework with App Router, Server Components, Turbopack
+- **React 19.2** - UI library with concurrent features
+- **TypeScript** - Type-safe development with strict mode
+- **Bun** - Fast runtime and package manager
 - **Tailwind CSS 4** - Utility-first CSS framework
 - **Shadcn/ui** - High-quality React component library
-- **Radix UI** - Headless UI primitives
-- **Lucide React** - Beautiful icon library
-- **Recharts** - Data visualization library
-
-### Authentication & State
-- **NextAuth.js** - Authentication and session management
-- **Next-themes** - Dark mode support
+- **NextAuth.js 4.24** - Authentication and session management
+- **Stripe 14.14** - Payment processing
+- **Recharts** - Data visualization
 - **React Hook Form** - Form state management
 - **Zod** - Schema validation
 
-### Backend Integration
-- **Server Actions** - Type-safe server-client communication
-- **Fetch API** - HTTP requests
-- **Next.js Image Optimization** - Responsive image handling
-
-### Additional Tools
-- **Stripe** - Payment processing
-- **Sonner** - Toast notifications
-- **dnd-kit** - Drag-and-drop functionality
-- **TanStack React Table** - Advanced table management
-- **date-fns** - Date utilities
-
 ## 📋 Prerequisites
 
-Before getting started, ensure you have:
 - **Node.js** 18+ or **Bun** package manager
 - **Git** for version control
-- A backend API server running (TravelBuddy API)
-- **Stripe** account for payment processing
+- Backend API server running (TravelBuddy API)
+- **Stripe** account for payments
 - **NextAuth.js** credentials configured
 
 ## 🛠️ Installation & Setup
 
-### 1. Clone the Repository
+### 1. Clone Repository
+
 ```bash
 git clone https://github.com/sufiansar/TravelBuddyFrontend.git
 cd TravelBuddyFrontend
 ```
 
 ### 2. Install Dependencies
-Using Bun (recommended):
+
 ```bash
 bun install
-```
-
-Or using npm:
-```bash
-npm install
-```
-
-Or using yarn:
-```bash
-yarn install
+# or npm install
 ```
 
 ### 3. Environment Configuration
 
-Create a `.env.local` file in the project root:
+Create `.env.local`:
 
 ```env
-# API Configuration
 NEXT_PUBLIC_BASE_API=http://localhost:5000/api
-
-# NextAuth.js Configuration
 NEXTAUTH_URL=http://localhost:3000
-NEXTAUTH_SECRET=your-secret-key-here
-
-# Stripe Configuration
-NEXT_PUBLIC_STRIPE_PUBLIC_KEY=your-stripe-public-key
-STRIPE_SECRET_KEY=your-stripe-secret-key
-
-# OAuth Providers (if applicable)
-GITHUB_ID=your-github-id
-GITHUB_SECRET=your-github-secret
+NEXTAUTH_SECRET=<generate-with: openssl-rand-hex-32>
+NEXT_PUBLIC_STRIPE_PUBLIC_KEY=pk_test_xxx
+STRIPE_SECRET_KEY=sk_test_xxx
 ```
 
-### 4. Run the Development Server
+### 4. Run Development Server
 
 ```bash
 bun dev
-# or
-npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+Open [http://localhost:3000](http://localhost:3000)
 
 ## 📁 Project Structure
 
@@ -116,194 +78,159 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 src/
 ├── app/                          # Next.js App Router pages
 │   ├── (public)/                # Public routes (auth, home, explore)
-│   │   ├── (auth)/              # Login/Register pages
-│   │   ├── contact/             # Contact form page
-│   │   ├── explore/             # Discover travelers and plans
-│   │   ├── packages/            # Subscription plans page
-│   │   ├── post/                # Travel posts
-│   │   ├── travel-plans/        # Browse travel plans
-│   │   └── page.tsx             # Home page
-│   ├── (commonLayout)/          # Shared layout routes
-│   │   ├── profile/             # User profiles
-│   │   └── users/               # User directory/management
+│   ├── (commonLayout)/          # Shared layout (profiles, users)
 │   ├── (private)/               # Authenticated routes
-│   │   ├── admin/               # Admin dashboard
-│   │   │   ├── page.tsx         # Admin overview
-│   │   │   └── [modules]/       # Admin modules
-│   │   └── dashboard/           # User dashboard
-│   │       ├── matches/         # Travel companion matches
+│   │   ├── admin/               # Admin Dashboard (COMPLETE)
+│   │   │   ├── users/           # User management
+│   │   │   ├── travel-plans/    # Travel plan management
+│   │   │   ├── reviews/         # Review management (NEW)
+│   │   │   ├── activity/        # Activity logs
+│   │   │   ├── payments/        # Payments
+│   │   │   ├── subscriptions/   # Subscriptions
+│   │   │   ├── meetups/         # Meetups
+│   │   │   ├── roles/           # Roles
+│   │   │   └── settings/        # Settings
+│   │   └── dashboard/           # User Dashboard
+│   │       ├── matches/         # Travel companions
 │   │       ├── meetups/         # Meetup management
-│   │       ├── payments/        # Subscription & billing
+│   │       ├── payments/        # Billing
 │   │       ├── reviews/         # User reviews
-│   │       ├── travel-plans/    # Travel plan management
-│   │       └── page.tsx         # Dashboard overview
-│   ├── layout.tsx               # Root layout
-│   └── error.tsx                # Error boundary
-├── actions/                     # Server actions (data fetching)
+│   │       ├── travel-plans/    # Travel plans
+│   │       └── post/            # Posts
+│   ├── api/                      # API routes
+│   └── layout.tsx               # Root layout
+├── actions/                     # Server Actions
 │   ├── admin/                   # Admin operations
 │   ├── explore/                 # Explore features
-│   ├── matches/                 # Matching algorithms
-│   ├── meetups/                 # Meetup operations
-│   ├── payments/                # Payment operations
-│   ├── posts/                   # Post operations
-│   ├── reviews/                 # Review operations
-│   ├── travelPlans/             # Travel plan operations
-│   ├── users/                   # User operations
-│   ├── shared/                  # Shared utilities
-│   │   ├── apiClient.ts         # API client
-│   │   └── types.ts             # Shared types
-│   └── index.ts                 # Central exports
-├── components/                  # Reusable React components
-│   ├── modules/                 # Feature-specific components
-│   │   ├── Admin/               # Admin UI components
+│   ├── matches/                 # Matching
+│   ├── meetups/                 # Meetups
+│   ├── payments/                # Payments
+│   ├── posts/                   # Posts
+│   ├── reviews/                 # Reviews
+│   ├── travelPlans/             # Travel plans
+│   ├── users/                   # Users
+│   └── shared/                  # Shared utilities
+├── components/                  # Reusable Components
+│   ├── modules/
+│   │   ├── Admin/               # Admin components
 │   │   ├── Dashboard/           # Dashboard components
-│   │   ├── Explore/             # Explore features
-│   │   ├── MeetUp/              # Meetup components
-│   │   ├── Payment/             # Payment/billing components
-│   │   ├── posts/               # Post components
-│   │   ├── Review/              # Review components
-│   │   ├── TravlePlan/          # Travel plan components
-│   │   ├── User/                # User profile components
-│   │   └── match/               # Matching components
+│   │   ├── Explore/             # Explore components
+│   │   └── ...
 │   ├── ui/                      # Shadcn/ui components
-│   ├── PublicNavbar/            # Navigation bar
-│   ├── Footer.tsx               # Footer with contact support
-│   ├── login-form.tsx           # Login form
-│   ├── RegisterUser.tsx         # Registration form
-│   ├── modeToggle.tsx           # Dark mode toggle
-│   └── theme-provider.tsx       # Theme context
-├── helpers/                     # Utility functions
-│   ├── authOptions.ts           # NextAuth configuration
-│   └── userSession.ts           # Session helpers
-├── hooks/                       # Custom React hooks
-│   └── use-mobile.ts            # Mobile detection
-├── lib/                         # Library utilities
-│   ├── adminNavItem.config.ts   # Admin navigation config
-│   ├── auth-utils.ts            # Auth utilities
-│   ├── commonNavItems.config.ts # Common nav items
-│   ├── navItem.confiq.ts        # Main nav configuration
-│   ├── userNavItems.config.ts   # User nav items
-│   ├── serverFetch.ts           # Server-side fetch wrapper
-│   ├── types.ts                 # Shared types
-│   └── utils.ts                 # General utilities
-├── providers/                   # React context providers
-│   └── AuthProvider.tsx         # Auth context
+│   └── ...
+├── helpers/                     # Helper functions
+├── hooks/                       # Custom hooks
+├── lib/                         # Utilities & config
+├── providers/                   # React contexts
 ├── types/                       # TypeScript interfaces
-│   ├── admin.interface.ts       # Admin types
-│   ├── dashboard.interface.ts   # Dashboard types
-│   ├── explore.interface.ts     # Explore types
-│   ├── meetup.interface.ts      # Meetup types
-│   ├── payment.interface.ts     # Payment types
-│   ├── post.interface.ts        # Post types
-│   ├── review.types.ts          # Review types
-│   ├── travlePlan.interface.ts  # Travel plan types
-│   └── user.interface.ts        # User types
-├── assets/                      # Static assets
-└── proxy.ts                     # API proxy configuration
-
-public/
-├── assets/                      # Public images and media
-│   ├── Logo.jpg
-│   ├── Login.jpg
-│   └── Register.jpg
-└── favicon.ico
+└── proxy.ts                     # API proxy
 ```
 
 ## 🎯 Key Features
 
-### 1. **Authentication & Authorization**
-- Secure login/registration with NextAuth.js
+### 1. Authentication & Authorization ✅
+
+- Secure JWT-based login/registration with NextAuth.js
 - Role-based access control (User, Admin, Super Admin)
-- Session management and JWT tokens
-- Profile management and account settings
+- Session management with automatic token refresh
+- Protected routes based on user roles
 
-### 2. **Travel Plan Management**
-- Create, edit, and delete travel plans
-- Set destination, dates, budget, and travel type
+### 2. Travel Plan Management ✅
+
+- Create, edit, delete travel plans
+- Set destination, dates, budget, travel type
 - Visibility controls (private, public, shareable)
-- Request system for plan participation
-- Real-time updates and notifications
+- Travel plan matching based on filters
 
-### 3. **Traveler Matching**
+### 3. Traveler Matching ✅
+
 - Smart algorithm-based compatibility matching
-- Filter by interests, travel style, and destinations
+- Filter by interests, travel style, destinations
 - View traveler profiles with verification badges
-- Connection requests and messaging
 
-### 4. **Meetups & Events**
+### 4. Meetups & Events ✅
+
 - Organize meetups at travel destinations
-- Join meetups with RSVP functionality
-- Meetup details, members, and communications
-- Activity tracking for meetups attended/hosted
+- Join with RSVP functionality
+- Activity tracking and calendar view
 
-### 5. **Community Features**
+### 5. Community Features ✅
+
 - Create and share travel posts
 - Comments and social engagement
-- Leave and view reviews for other travelers
+- Leave and view reviews
 - Build reputation with verified badges
 
-### 6. **Payment & Subscriptions**
+### 6. Payment & Subscriptions ✅
+
 - Stripe integration for secure payments
 - Monthly and yearly subscription plans
 - Verified traveler badge after subscription
 - Payment history and invoice management
-- Billing information management
 
-### 7. **Admin Dashboard**
-- User management and moderation
-- Subscription and payment tracking
-- Activity monitoring and analytics
-- Content management
-- Travel plan and request approvals
+### 7. Admin Dashboard ⭐ COMPLETE
 
-### 8. **Public Pages**
-- Home page with trending travelers and plans
-- Explore page with advanced filtering
-- Public profiles with reviews and ratings
+- **Dashboard Overview**: Real-time statistics, revenue charts, activity feed
+- **User Management**: View, filter, edit, delete users with advanced options
+- **Travel Plans**: Manage plans with filters and detailed views
+- **Reviews (NEW)**: Search, filter, sort, export reviews with detail pages
+- **Activity Logs**: Timeline with filtering and export
+- **Payments**: Transaction tracking and history
+- **Subscriptions**: Subscription management and billing
+- **Settings**: Platform configuration and security
+- **Admin Features**: RBAC, responsive design, CSV export, real-time updates
+
+### 8. Public Pages ✅
+
+- Home page with trending travelers
+- Explore page with filtering
+- Public profiles with reviews
 - Subscription packages display
-- Contact and support page
-- Travel plans browsing
+- Contact form & support
 
 ## 🔧 Development Guide
 
-### Running the Development Server
+### Running Development Server
+
 ```bash
 bun dev
 ```
-The app will be available at `http://localhost:3000`.
+
+Available at `http://localhost:3000`
 
 ### Building for Production
+
 ```bash
 bun run build
 bun run start
 ```
 
-### Linting
-```bash
-bun run lint
-```
-
 ### File Naming Conventions
-- **Page components**: `page.tsx`
+
+- **Page components**: `page.tsx` (Next.js App Router)
 - **Layout components**: `layout.tsx`
 - **Client components**: Add `"use client"` directive
 - **Server components**: Default (no directive)
 - **Components**: PascalCase (e.g., `UserCard.tsx`)
 - **Utilities**: camelCase (e.g., `authUtils.ts`)
 
-### Component Pattern
+### Component Patterns
+
+**Server Component (Default)**
+
 ```tsx
-// Server Component (default)
 import { getUser } from "@/actions";
 
-export default async function Page() {
-  const user = await getUser();
-  return <div>{user.name}</div>;
+export default async function UserPage({ params }: { params: { id: string } }) {
+  const user = await getUser(params.id);
+  return <div>{user?.name}</div>;
 }
+```
 
-// Client Component
+**Client Component**
+
+```tsx
 "use client";
-
 import { useState } from "react";
 
 export function UserForm() {
@@ -312,130 +239,153 @@ export function UserForm() {
 }
 ```
 
-### Server Actions Pattern
-```typescript
-// src/actions/users/actions.ts
-"use server";
+**Server Action**
 
+```typescript
+"use server";
 import { makeApiCall } from "@/actions/apiUtils";
 
 export async function getUser(userId: string) {
-  return makeApiCall(`/users/${userId}`, { method: "GET" });
+  try {
+    return await makeApiCall(`/users/${userId}`, { method: "GET" });
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
 }
 ```
 
 ### API Integration
+
 ```typescript
 // Using server actions
 import { getUser } from "@/actions";
-
 const user = await getUser("123");
 
 // Direct fetch
-const response = await fetch(
-  `${process.env.NEXT_PUBLIC_BASE_API}/users/123`
-);
+const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/users/123`);
 const data = await response.json();
+
+// API Client
+import { apiClient } from "@/actions/shared/apiClient";
+const result = await apiClient("/users/123", { method: "GET" });
 ```
 
 ## 📱 Responsive Design
 
-The application is fully responsive with breakpoints:
 - **Mobile**: < 640px
 - **Tablet**: 640px - 1024px
 - **Desktop**: > 1024px
 
-Using Tailwind's responsive classes:
 ```tsx
 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-  {/* Single column on mobile, 2 on tablet, 3 on desktop */}
+  {/* Responsive grid */}
 </div>
 ```
 
 ## 🎨 Theming
 
-Dark mode support via `next-themes`:
+Dark mode via `next-themes`:
+
 ```tsx
-// In components
+"use client";
 import { useTheme } from "next-themes";
 
 export function ThemeToggle() {
   const { theme, setTheme } = useTheme();
-  // ...
+  return (
+    <button onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>
+      Toggle Theme
+    </button>
+  );
 }
 ```
 
 ## 📊 State Management
 
-### Client State
-- **React hooks**: `useState`, `useEffect`, `useTransition`
-- **React Hook Form**: For complex form states
-- **URL Search Params**: For pagination, filtering
-
-### Server State
-- **Server Actions**: Primary data fetching mechanism
-- **Revalidation**: `revalidatePath()` for cache invalidation
+**Client State**: React hooks, React Hook Form, URL search params, React Context
+**Server State**: Server Actions, revalidatePath(), ISR
 
 ## 🔐 Security
 
-- **Authentication**: NextAuth.js with secure session handling
-- **Authorization**: Role-based access control on routes
-- **Input Validation**: Zod schema validation
-- **API Protection**: CORS and request validation
-- **HTTPS**: All production requests over HTTPS
-- **Environment Variables**: Sensitive data in `.env.local`
+- NextAuth.js with secure session handling
+- Role-based access control (RBAC)
+- Zod schema validation
+- CORS and request validation
+- HTTPS for production
+- Secure cookie-based session storage
+- React's XSS protection
+- NextAuth.js CSRF tokens
 
 ## 🚨 Error Handling
 
 ```typescript
-// Server actions with error handling
 export async function getUser(id: string) {
   try {
     const response = await fetch(`${API_URL}/users/${id}`);
-    if (!response.ok) throw new Error("User not found");
+    if (!response.ok) throw new Error(`User not found`);
     return { success: true, data: await response.json() };
   } catch (error) {
     return { success: false, error: error.message };
   }
 }
 
-// In components
 const result = await getUser("123");
 if (!result.success) {
   toast.error(result.error);
 }
 ```
 
-## 🧪 Testing
-
-Currently, the project uses manual testing. Consider adding:
-- **Jest**: Unit testing
-- **Playwright**: E2E testing
-- **React Testing Library**: Component testing
-
 ## 📈 Performance Optimization
 
-- **Image Optimization**: Next.js Image component
-- **Code Splitting**: Automatic with App Router
-- **Streaming**: React Server Components streaming
-- **Caching**: Server-side data caching with revalidation
-- **Bundle Analysis**: Monitor with `@next/bundle-analyzer`
+- Next.js Image component with optimization
+- Automatic code splitting
+- React Server Components streaming
+- Server-side data caching
+- Turbopack for 5x faster builds
+- Dynamic imports for large components
 
 ## 🐛 Common Issues & Solutions
 
-### Issue: "NEXTAUTH_SECRET is required"
-**Solution**: Add `NEXTAUTH_SECRET` to `.env.local`
+**Issue**: NEXTAUTH_SECRET is required
 
-### Issue: API requests failing
-**Solution**: Check `NEXT_PUBLIC_BASE_API` is correctly set
+```bash
+openssl rand -hex 32
+```
 
-### Issue: Images not loading
-**Solution**: Ensure images are in `public/assets/` directory
+**Issue**: API requests failing with 401
 
-### Issue: "event handlers cannot be passed to Client Component"
-**Solution**: Add `"use client"` directive to components with event handlers
+- Check NEXTAUTH_URL matches production domain
+- Verify token is being sent
+- Check token hasn't expired
 
-## 📚 Useful Resources
+**Issue**: Images not loading
+
+- Ensure images are in `public/assets/`
+- Configure remote image domains in `next.config.ts`
+
+**Issue**: Event handlers error
+
+```tsx
+"use client";
+export function MyComponent() {
+  const handleClick = () => console.log("Clicked!");
+  return <button onClick={handleClick}>Click me</button>;
+}
+```
+
+**Issue**: Cannot use async in client component
+
+```tsx
+"use server";
+export async function fetchData() {
+  /* async code */
+}
+
+("use client");
+import { fetchData } from "@/actions";
+```
+
+## 📚 Resources
 
 - [Next.js Documentation](https://nextjs.org/docs)
 - [React Documentation](https://react.dev)
@@ -443,31 +393,76 @@ Currently, the project uses manual testing. Consider adding:
 - [Shadcn/ui Components](https://ui.shadcn.com)
 - [NextAuth.js Guide](https://next-auth.js.org)
 - [TypeScript Handbook](https://www.typescriptlang.org/docs)
+- [Vercel Deployment](https://vercel.com/docs)
+- [Bun Documentation](https://bun.sh/docs)
 
-## 🗺️ Roadmap & Remaining Work
+## 🚀 Deployment to Vercel
 
-### In Progress (20-22% Remaining)
-- [ ] **Payment Integration** - Complete Stripe/SSLCommerz flow
-- [ ] **Admin Dashboard** - Full CRUD for users, plans, activity
-- [ ] **Public Profiles** - User profiles with reviews and history
-- [ ] **Navbar Refinement** - Role-based navigation items
-- [ ] **Home Personalization** - Recommended matches for logged-in users
+1. **Push to GitHub**:
 
-### Completed Features (78-80%)
-- ✅ Authentication & Authorization
-- ✅ Travel plan management
-- ✅ Traveler matching
-- ✅ Meetup organization
-- ✅ Posts & community
-- ✅ Reviews system
-- ✅ Basic admin dashboard
-- ✅ Subscription plans display
-- ✅ Contact form & support
-- ✅ Footer with embedded contact
+```bash
+git add .
+git commit -m "Deploy to Vercel"
+git push origin main
+```
+
+2. **Connect to Vercel**: Visit [vercel.com](https://vercel.com) and connect your GitHub repository
+
+3. **Set Environment Variables**:
+
+```env
+NEXT_PUBLIC_BASE_API=https://your-api-domain.com/api
+NEXTAUTH_URL=https://your-app.vercel.app
+NEXTAUTH_SECRET=your-generated-secret
+NEXT_PUBLIC_STRIPE_PUBLIC_KEY=pk_live_your_key
+STRIPE_SECRET_KEY=sk_live_your_key
+```
+
+4. **Deploy**: Click "Deploy" button in Vercel dashboard
+
+**Important**: `NEXTAUTH_URL` must match your production domain exactly.
+
+## 🗺️ Roadmap
+
+### Completed ✅
+
+- Authentication & Authorization (JWT + NextAuth.js)
+- Travel plan management (full CRUD)
+- Traveler matching (algorithm-based)
+- Meetup organization (events & calendar)
+- Posts & community (social features)
+- Reviews system (ratings & comments)
+- **Admin Dashboard** (full CRUD operations)
+  - User management
+  - Travel plan management
+  - Review management (view, filter, export)
+  - Activity logs
+  - Payment management
+  - Subscription tracking
+  - Platform statistics & charts
+  - Settings & configuration
+- Public profiles with reviews
+- Subscription plans display
+- Dark/Light mode
+- Responsive design
+- CSV export functionality
+
+### Remaining
+
+- [ ] Advanced notifications system
+- [ ] Real-time messaging/chat
+- [ ] Payment webhook handling
+- [ ] Email notifications
+- [ ] Advanced analytics
+- [ ] Mobile app (React Native)
+- [ ] Multi-language support (i18n)
+- [ ] API rate limiting
+- [ ] Advanced search with Elasticsearch
+- [ ] Content moderation
 
 ## 🤝 Contributing
 
-1. Create a feature branch: `git checkout -b feature/amazing-feature`
+1. Create feature branch: `git checkout -b feature/amazing-feature`
 2. Commit changes: `git commit -m 'Add amazing feature'`
 3. Push to branch: `git push origin feature/amazing-feature`
 4. Open a pull request
@@ -479,19 +474,26 @@ This project is proprietary and confidential.
 ## 👥 Team
 
 - **Developer**: Sufian Sar
-- **Project**: Travel Buddy Platform
+- **Project**: Travel Buddy Platform - Social Travel Companion App
 
-## 📞 Support
+## 📞 Support & Contact
 
-For support, please use the contact form on the platform or email support@travelbuddy.com
+For support:
+
+- Use the contact form on the platform
+- Email: support@travelbuddy.com
+- GitHub Issues: [Report an issue](https://github.com/sufiansar/TravelBuddyFrontend/issues)
 
 ## 🎉 Acknowledgments
 
-- [Vercel](https://vercel.com) for Next.js
-- [Shadcn](https://shadcn.com) for UI components
+- [Vercel](https://vercel.com) for Next.js and hosting
+- [Shadcn](https://shadcn.com) for beautiful UI components
 - [Stripe](https://stripe.com) for payment processing
+- [Radix UI](https://radix-ui.com) for accessible component primitives
+- [Tailwind Labs](https://tailwindlabs.com) for Tailwind CSS
 
 ---
 
-**Last Updated**: December 2025
-**Version**: 0.1.0
+**Last Updated**: December 2025  
+**Version**: 0.1.0  
+**Status**: Production Ready

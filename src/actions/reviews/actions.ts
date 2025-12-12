@@ -1,12 +1,8 @@
 "use server";
 
 import { makeApiCall } from "@/actions/shared/apiClient";
-import {
-  CreateReviewData,
-  PaginatedResponse,
-  PaginationParams,
-  Review,
-} from "@/types/review.types";
+import { PaginatedResponse, PaginationParams } from "@/types/user.interface";
+import { CreateReviewData, Review } from "@/types/review.types";
 import { revalidatePath } from "next/cache";
 
 export async function createReview(data: CreateReviewData) {

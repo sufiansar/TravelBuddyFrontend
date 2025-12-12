@@ -1,3 +1,6 @@
+import { Review } from "./review.types";
+import { TravelPlan } from "./travlePlan.interface";
+
 export interface User {
   id: string;
   fullName: string;
@@ -6,6 +9,7 @@ export interface User {
   profileImage?: string;
   bio?: string;
   interests?: string[];
+  userStatus?: "ACTIVE" | "INACTIVE" | "BANNED";
   visitedCountries?: string[];
   currentLocation?: string;
   role: "USER" | "ADMIN" | "SUPER_ADMIN";
@@ -32,34 +36,14 @@ export interface PublicUserProfile {
   averageRating: number | null;
 }
 
-export interface TravelPlan {
-  id: string;
-  title: string;
-  description?: string;
-  destination: string;
-  startDate: Date;
-  endDate: Date;
-  isPublic: boolean;
-}
-
-export interface Review {
-  id: string;
-  rating: number;
-  comment?: string;
-  createdAt: Date;
-  reviewer: {
-    id: string;
-    fullName: string;
-    profileImage?: string;
-  };
-}
-
 export interface PaginatedResponse<T> {
   data: T[];
   meta: {
     page: number;
     limit: number;
+    totalPage: number;
     total: number;
+    averageRating?: number | null;
   };
 }
 

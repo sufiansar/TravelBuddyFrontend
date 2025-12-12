@@ -13,6 +13,9 @@ import {
   Calendar,
   ArrowRight,
 } from "lucide-react";
+
+// Mark this page as dynamic since it uses server session
+export const dynamic = "force-dynamic";
 import { getPlatformStats } from "@/actions/admin/actions";
 
 export default async function AdminDashboard() {

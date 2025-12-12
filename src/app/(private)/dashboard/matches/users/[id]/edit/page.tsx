@@ -1,13 +1,12 @@
 import { notFound, redirect } from "next/navigation";
-import { ProfileForm } from "@/components/modules/user";
-import { getUserById } from "@/actions/user";
 import { Metadata } from "next";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getUserById } from "@/actions";
+import { authOptions } from "@/helpers/authOptions";
+import { ProfileForm } from "@/components/modules/User/ProfileForm";
 
 interface EditUserPageProps {
   params: {

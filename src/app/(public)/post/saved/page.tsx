@@ -3,8 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
-import { SavedPostsList } from "@/components/modules/post/SavedPostsList";
-import { SavedPostsSkeleton } from "@/components/modules/post/SavedPostsSkeleton";
+import { SavedPostsSkeleton } from "@/components/modules/posts/SavePost/SavedPostsSkeleton";
+import { SavedPostsList } from "@/components/modules/posts/SavePost/SavedPostsList";
 
 export default function SavedPostsPage() {
   return (

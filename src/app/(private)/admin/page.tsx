@@ -3,11 +3,15 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Users, Map, Repeat, TrendingUp, DollarSign } from "lucide-react";
 import { getPlatformStats } from "@/actions/admin/actions";
 import { RevenueChart } from "@/components/modules/Admin/RevenueChart";
+
+// Mark this page as dynamic since it uses server session
+export const dynamic = "force-dynamic";
 import { RecentActivity } from "@/components/modules/Admin/RecentActivity";
 
 export default async function AdminDashboardPage() {
   const statsResult = await getPlatformStats();
   const stats = statsResult.success ? statsResult.data : null;
+  console.log(stats, " Admin Dashboard Stats");
 
   return (
     <div className="space-y-6">
