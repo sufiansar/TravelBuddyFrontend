@@ -237,16 +237,16 @@ export function PostCard({
       <CardFooter className="flex flex-col pt-4 border-t">
         <div className="flex justify-between w-full mb-3">
           <div className="flex items-center gap-4 text-sm text-muted-foreground">
-            <span>{post.reactions?.length || 0} reactions</span>
+            {/* <span>{post.reactions?.length || 0} reactions</span> */}
             <span>{post._count?.comments || 0} comments</span>
-            <span>{post.shares?.length || 0} shares</span>
+            {/* <span>{post.shares?.length || 0} shares</span> */}
           </div>
-          {post.saves?.length > 0 && (
+          {/* {post.saves?.length > 0 && (
             <Badge variant="outline" className="gap-1">
               <Bookmark className="h-3 w-3" />
               {post.saves.length}
             </Badge>
-          )}
+          )} */}
         </div>
 
         <PostActions

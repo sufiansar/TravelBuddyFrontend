@@ -97,16 +97,8 @@ export function PaymentFilters({ initialFilters }: PaymentFiltersProps) {
 
   const hasFilters = Object.values(filters).some((value) => value);
 
-  const paymentMethods = [
-    { value: "credit_card", label: "Credit Card" },
-    { value: "paypal", label: "PayPal" },
-    { value: "stripe", label: "Stripe" },
-    { value: "bank_transfer", label: "Bank Transfer" },
-    { value: "crypto", label: "Cryptocurrency" },
-  ];
-
   return (
-    <div className="space-y-4 mb-6">
+    <div className="space-y-4 mx-auto mb-6">
       <div className="flex flex-col sm:flex-row gap-4">
         <div className="flex-1">
           <div className="relative">
@@ -148,25 +140,6 @@ export function PaymentFilters({ initialFilters }: PaymentFiltersProps) {
           </SelectContent>
         </Select>
 
-        <Select
-          value={filters.paymentMethod || "all"}
-          onValueChange={(value) =>
-            handleFilterChange("paymentMethod", value === "all" ? "" : value)
-          }
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Payment Method" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Methods</SelectItem>
-            {paymentMethods.map((method) => (
-              <SelectItem key={method.value} value={method.value}>
-                {method.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-
         <Input
           placeholder="User ID"
           value={filters.userId}
@@ -194,39 +167,6 @@ export function PaymentFilters({ initialFilters }: PaymentFiltersProps) {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div>
-          <label className="text-sm text-gray-600 mb-1 block">
-            Amount Range
-          </label>
-          <div className="flex gap-2">
-            <Input
-              type="number"
-              placeholder="Min"
-              value={filters.minAmount}
-              onChange={(e) => handleFilterChange("minAmount", e.target.value)}
-              className="flex-1"
-            />
-            <Input
-              type="number"
-              placeholder="Max"
-              value={filters.maxAmount}
-              onChange={(e) => handleFilterChange("maxAmount", e.target.value)}
-              className="flex-1"
-            />
-          </div>
-        </div>
-
-        {hasFilters && (
-          <div className="flex items-end">
-            <Button variant="outline" onClick={clearFilters} className="gap-2">
-              <X className="h-4 w-4" />
-              Clear All Filters
-            </Button>
-          </div>
-        )}
-      </div>
-
       {hasFilters && (
         <div className="pt-4 border-t">
           <div className="flex flex-wrap gap-2">
@@ -241,21 +181,7 @@ export function PaymentFilters({ initialFilters }: PaymentFiltersProps) {
                 </button>
               </Badge>
             )}
-            {filters.paymentMethod && (
-              <Badge variant="secondary" className="gap-1">
-                Method:{" "}
-                {
-                  paymentMethods.find((m) => m.value === filters.paymentMethod)
-                    ?.label
-                }
-                <button
-                  onClick={() => handleFilterChange("paymentMethod", "")}
-                  className="ml-1 hover:text-red-500"
-                >
-                  <X className="h-3 w-3" />
-                </button>
-              </Badge>
-            )}
+
             {filters.userId && (
               <Badge variant="secondary" className="gap-1">
                 User ID: {filters.userId.slice(0, 8)}...
@@ -275,20 +201,6 @@ export function PaymentFilters({ initialFilters }: PaymentFiltersProps) {
                   onClick={() => {
                     handleFilterChange("startDate", "");
                     handleFilterChange("endDate", "");
-                  }}
-                  className="ml-1 hover:text-red-500"
-                >
-                  <X className="h-3 w-3" />
-                </button>
-              </Badge>
-            )}
-            {(filters.minAmount || filters.maxAmount) && (
-              <Badge variant="secondary" className="gap-1">
-                Amount: {filters.minAmount || "0"} - {filters.maxAmount || "∞"}
-                <button
-                  onClick={() => {
-                    handleFilterChange("minAmount", "");
-                    handleFilterChange("maxAmount", "");
                   }}
                   className="ml-1 hover:text-red-500"
                 >

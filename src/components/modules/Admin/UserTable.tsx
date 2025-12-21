@@ -209,11 +209,15 @@ export function UserTable({ users, meta, currentFilters }: UserTableProps) {
           currentPage={meta.page as number}
           totalPages={meta.totalPage as number}
           onPageChange={(page: number) => {
-            // Preserve current filters if any, and update the page query param
-            const params = new URLSearchParams({
-              ...(currentFilters || {}),
-              page: page.toString(),
-            });
+            const params = new URLSearchParams();
+            if (currentFilters) {
+              Object.entries(currentFilters).forEach(([key, value]) => {
+                if (value && key !== "page" && key !== "limit") {
+                  params.set(key, String(value));
+                }
+              });
+            }
+            params.set("page", page.toString());
             router.push(`?${params.toString()}`);
           }}
         />

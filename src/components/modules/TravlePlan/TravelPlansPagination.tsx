@@ -1,76 +1,32 @@
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
-
-interface PaginationMeta {
-  page: number;
-  limit: number;
-  total: number;
-}
-
 interface TravelPlansPaginationProps {
-  meta: PaginationMeta;
+  meta?: { page: number; limit: number; total: number };
+  onPageChange: (page: number) => void;
 }
 
-export function TravelPlansPagination({ meta }: TravelPlansPaginationProps) {
-  const totalPages = Math.ceil(meta.total / meta.limit);
+export function TravelPlansPagination({
+  meta,
+  onPageChange,
+}: TravelPlansPaginationProps) {
+  if (!meta) return null;
+
+  const { page = 1, limit = 10, total = 0 } = meta;
+  const totalPages = Math.ceil(total / limit);
+
+  if (totalPages <= 1) return null;
 
   return (
-    <Pagination className="mt-6">
-      <PaginationContent>
-        <PaginationItem>
-          <PaginationPrevious
-            href={meta.page > 1 ? `?page=${meta.page - 1}` : undefined}
-            className={meta.page === 1 ? "pointer-events-none opacity-50" : ""}
-          />
-        </PaginationItem>
-
-        {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-          let pageNum;
-
-          if (totalPages <= 5) {
-            pageNum = i + 1;
-          } else if (meta.page <= 3) {
-            pageNum = i + 1;
-          } else if (meta.page >= totalPages - 2) {
-            pageNum = totalPages - 4 + i;
-          } else {
-            pageNum = meta.page - 2 + i;
-          }
-
-          return (
-            <PaginationItem key={pageNum}>
-              <PaginationLink
-                href={`?page=${pageNum}`}
-                isActive={meta.page === pageNum}
-              >
-                {pageNum}
-              </PaginationLink>
-            </PaginationItem>
-          );
-        })}
-
-        {totalPages > 5 && meta.page < totalPages - 2 && (
-          <PaginationItem>
-            <PaginationEllipsis />
-          </PaginationItem>
-        )}
-
-        <PaginationItem>
-          <PaginationNext
-            href={meta.page < totalPages ? `?page=${meta.page + 1}` : undefined}
-            className={
-              meta.page === totalPages ? "pointer-events-none opacity-50" : ""
-            }
-          />
-        </PaginationItem>
-      </PaginationContent>
-    </Pagination>
+    <div className="flex justify-center gap-2 mt-4">
+      {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+        <button
+          key={p}
+          onClick={() => onPageChange(p)}
+          className={`px-3 py-1 rounded ${
+            p === page ? "bg-blue-500 text-white" : "bg-gray-200"
+          }`}
+        >
+          {p}
+        </button>
+      ))}
+    </div>
   );
 }

@@ -262,7 +262,14 @@ export function TravelPlanTable({
           currentPage={meta.page}
           totalPages={meta.totalPage}
           onPageChange={(page) => {
-            const params = new URLSearchParams(currentFilters || {});
+            const params = new URLSearchParams();
+            if (currentFilters) {
+              Object.entries(currentFilters).forEach(([key, value]) => {
+                if (value && key !== "page" && key !== "limit") {
+                  params.set(key, String(value));
+                }
+              });
+            }
             params.set("page", page.toString());
             router.push(`?${params.toString()}`);
           }}

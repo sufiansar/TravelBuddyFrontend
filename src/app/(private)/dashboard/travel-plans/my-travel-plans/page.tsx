@@ -28,7 +28,7 @@ export default async function MyTravelPlansPage({
           </p>
         </div>
         <Button asChild>
-          <Link href="/travel-plans/create">
+          <Link href="/dashboard/travel-plans/create">
             <Plus className="mr-2 h-4 w-4" />
             Create New Plan
           </Link>

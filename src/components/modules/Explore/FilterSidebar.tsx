@@ -207,67 +207,6 @@ export function FilterSidebar({
                   </Select>
                 </div>
               )}
-              {/* Budget (only for plans) */}
-              {activeTab === "plans" && (
-                <div className="space-y-3">
-                  <Label className="flex items-center gap-2">
-                    <DollarSign className="h-4 w-4" />
-                    Budget Range
-                  </Label>
-                  <div className="flex flex-col sm:flex-row gap-2">
-                    <Input
-                      type="number"
-                      placeholder="Min"
-                      className="w-full"
-                      value={filters.minBudget || ""}
-                      onChange={(e) =>
-                        handleInputChange("minBudget", Number(e.target.value))
-                      }
-                    />
-                    <Input
-                      type="number"
-                      placeholder="Max"
-                      className="w-full"
-                      value={filters.maxBudget || ""}
-                      onChange={(e) =>
-                        handleInputChange("maxBudget", Number(e.target.value))
-                      }
-                    />
-                  </div>
-                </div>
-              )}
-
-              {/* Interests */}
-              <div className="space-y-3">
-                <Label className="flex items-center gap-2">
-                  <Tag className="h-4 w-4" />
-                  Interests
-                </Label>
-                <ScrollArea className="h-48 sm:h-60 border rounded-md p-3">
-                  <div className="space-y-2">
-                    {interests.map((interest) => (
-                      <div
-                        key={interest}
-                        className="flex items-center space-x-2"
-                      >
-                        <Checkbox
-                          id={`interest-${interest}`}
-                          checked={
-                            filters.interests?.includes(interest) || false
-                          }
-                          onCheckedChange={() => handleInterestToggle(interest)}
-                        />
-                        <Label
-                          htmlFor={`interest-${interest}`}
-                          className="text-sm cursor-pointer flex-1"
-                        >
-                          {interest}
-                        </Label>
-                      </div>
-                    ))}
-                  </div>
-                </ScrollArea>
-              </div>
             </div>
           </ScrollArea>
 

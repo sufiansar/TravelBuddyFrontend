@@ -36,7 +36,7 @@ export default async function AdminPaymentsPage({
   console.log(result);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 mx-auto 7xl:px-0 px-4 py-8">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">
@@ -45,13 +45,6 @@ export default async function AdminPaymentsPage({
           <p className="text-gray-600">
             View and manage all payment transactions
           </p>
-        </div>
-
-        <div className="flex items-center gap-3">
-          <Button variant="outline" className="gap-2">
-            <Download className="h-4 w-4" />
-            Export
-          </Button>
         </div>
       </div>
 

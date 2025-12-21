@@ -28,10 +28,10 @@ export function TravelerCard({ traveler }: TravelerCardProps) {
       <CardContent className="p-6 flex flex-col h-full">
         {/* Header */}
         <div className="flex items-start gap-4 mb-4">
-          <Avatar className="h-16 w-16 border-2 shadow-md ring-2 ring-offset-2 ring-primary/10">
+          <Avatar className="h-8 w-8 border-2 shadow-md ring-2 ring-offset-2 ring-primary/10">
             <AvatarImage src={traveler.profileImage || ""} />
-            <AvatarFallback className="text-lg font-semibold bg-linear-to-br from-primary/20 to-primary/10">
-              {traveler.fullName.charAt(0).toUpperCase()}
+            <AvatarFallback className=" font-semibold bg-linear-to-br from-primary/20 to-primary/10">
+              {traveler.fullName}
             </AvatarFallback>
           </Avatar>
           <div className="flex-1 min-w-0">
@@ -40,11 +40,11 @@ export function TravelerCard({ traveler }: TravelerCardProps) {
               {traveler.verifiedBadge && (
                 <Badge
                   variant="outline"
-                  className="h-5 px-2 flex items-center gap-1 shrink-0 border-blue-400 bg-blue-50 text-blue-600"
+                  className="h-5 flex items-center   text-blue-600"
                   title="Verified traveler"
                 >
-                  <CheckCircle className="h-3.5 w-3.5 fill-blue-500" />
-                  <span className="text-xs font-medium">Verified</span>
+                  <CheckCircle className="h-3.5 w-3.5 " />
+                  {/* <span className="text-xs font-medium">Verified</span> */}
                 </Badge>
               )}
             </div>
@@ -78,14 +78,14 @@ export function TravelerCard({ traveler }: TravelerCardProps) {
             <p className="font-bold text-lg">{traveler.upcomingPlansCount}</p>
             <p className="text-xs text-muted-foreground text-center">Plans</p>
           </div>
-          <div className="flex flex-col items-center justify-center bg-linear-to-br from-yellow-50 to-yellow-100/50 rounded-lg p-3 border border-yellow-200">
+          <div className="flex flex-col items-center justify-center bg-linear-to-br from-primary/5 to-primary/10 rounded-lg p-3 border border-primary/10">
             <Star className="h-5 w-5 text-yellow-600 mb-1 fill-yellow-500" />
             <p className="font-bold text-lg">
               {traveler.averageRating?.toFixed(1) || "N/A"}
             </p>
             <p className="text-xs text-muted-foreground text-center">Rating</p>
           </div>
-          <div className="flex flex-col items-center justify-center bg-linear-to-br from-green-50 to-green-100/50 rounded-lg p-3 border border-green-200">
+          <div className="flex flex-col items-center justify-center bg-linear-to-br from-primary/5 to-primary/10 rounded-lg p-3 border border-primary/10">
             <Globe className="h-5 w-5 text-green-600 mb-1" />
             <p className="font-bold text-lg">
               {traveler.visitedCountries?.length || 0}

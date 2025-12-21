@@ -43,6 +43,16 @@ export function ReviewTable({
   };
 
   const handlePageChange = (page: number) => {
+    const params = new URLSearchParams();
+    if (currentFilters) {
+      Object.entries(currentFilters).forEach(([key, value]) => {
+        if (value && key !== "page" && key !== "limit") {
+          params.set(key, String(value));
+        }
+      });
+    }
+    params.set("page", page.toString());
+    window.history.pushState(null, "", `?${params.toString()}`);
     onFiltersChange({ ...currentFilters, page });
   };
 

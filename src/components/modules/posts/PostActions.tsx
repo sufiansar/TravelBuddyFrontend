@@ -18,7 +18,13 @@ import {
 
 import { toast } from "sonner";
 import { useSession } from "next-auth/react";
-import { reactToPost, removeReaction, savePost, sharePost, unsavePost } from "@/actions";
+import {
+  reactToPost,
+  removeReaction,
+  savePost,
+  sharePost,
+  unsavePost,
+} from "@/actions";
 
 interface PostActionsProps {
   postId: string;
@@ -75,48 +81,48 @@ export function PostActions({
     });
   };
 
-  const handleSave = () => {
-    if (!session) {
-      toast.error("Please login to save posts");
-      return;
-    }
+  // const handleSave = () => {
+  //   if (!session) {
+  //     toast.error("Please login to save posts");
+  //     return;
+  //   }
 
-    startTransition(async () => {
-      if (isSaved) {
-        const result = await unsavePost(postId);
-        if (result.success) {
-          toast.success("Post unsaved");
-          onSaveToggle?.();
-        } else {
-          toast.error(result.error || "Failed to unsave post");
-        }
-      } else {
-        const result = await savePost(postId);
-        if (result.success) {
-          toast.success("Post saved");
-          onSaveToggle?.();
-        } else {
-          toast.error(result.error || "Failed to save post");
-        }
-      }
-    });
-  };
+  //   startTransition(async () => {
+  //     if (isSaved) {
+  //       const result = await unsavePost(postId);
+  //       if (result.success) {
+  //         toast.success("Post unsaved");
+  //         onSaveToggle?.();
+  //       } else {
+  //         toast.error(result.error || "Failed to unsave post");
+  //       }
+  //     } else {
+  //       const result = await savePost(postId);
+  //       if (result.success) {
+  //         toast.success("Post saved");
+  //         onSaveToggle?.();
+  //       } else {
+  //         toast.error(result.error || "Failed to save post");
+  //       }
+  //     }
+  //   });
+  // };
 
-  const handleShare = () => {
-    if (!session) {
-      toast.error("Please login to share posts");
-      return;
-    }
+  // const handleShare = () => {
+  //   if (!session) {
+  //     toast.error("Please login to share posts");
+  //     return;
+  //   }
 
-    startTransition(async () => {
-      const result = await sharePost(postId);
-      if (result.success) {
-        toast.success("Post shared");
-      } else {
-        toast.error(result.error || "Failed to share post");
-      }
-    });
-  };
+  //   startTransition(async () => {
+  //     const result = await sharePost(postId);
+  //     if (result.success) {
+  //       toast.success("Post shared");
+  //     } else {
+  //       toast.error(result.error || "Failed to share post");
+  //     }
+  //   });
+  // };
 
   const currentReaction = userReaction
     ? reactionTypes.find((r) => r.type === userReaction.type)
@@ -183,7 +189,7 @@ export function PostActions({
       </Button>
 
       {/* Share Button */}
-      <Button
+      {/* <Button
         variant="ghost"
         size="sm"
         className="flex-1 justify-start gap-2"
@@ -192,10 +198,10 @@ export function PostActions({
       >
         <Share2 className="h-4 w-4" />
         <span>Share</span>
-      </Button>
+      </Button> */}
 
       {/* Save Button */}
-      <Button
+      {/* <Button
         variant="ghost"
         size="sm"
         className="flex-1 justify-start gap-2"
@@ -208,7 +214,7 @@ export function PostActions({
           <Bookmark className="h-4 w-4" />
         )}
         <span>Save</span>
-      </Button>
+      </Button> */}
     </div>
   );
 }

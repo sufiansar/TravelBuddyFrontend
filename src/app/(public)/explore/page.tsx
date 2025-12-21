@@ -71,9 +71,11 @@ export default function ExplorePage() {
       if (activeTab === "plans") {
         const data = await getTravelPlans(filters, options);
         setPlansData(data);
-        console.log(data, "data");
+
+        console.log(data, "plans data");
       } else {
         const data = await getTravelers(filters, options);
+        console.log(data);
         setTravelersData(data);
       }
     } catch (error) {
@@ -186,7 +188,7 @@ export default function ExplorePage() {
 
       if (viewMode === "grid") {
         return (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3  gap-4 sm:gap-6">
             {travelers.map((traveler) => (
               <TravelerCard key={traveler.id} traveler={traveler} />
             ))}
@@ -221,7 +223,7 @@ export default function ExplorePage() {
             </p>
 
             <div className="mb-6 flex justify-center gap-3">
-              <Link href="/travel-plans">
+              <Link href="/dashboard/travel-plans">
                 <Button size="lg">Find Travel Buddy</Button>
               </Link>
               <Link href="/explore">

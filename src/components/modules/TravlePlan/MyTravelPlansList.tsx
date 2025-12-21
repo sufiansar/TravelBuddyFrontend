@@ -3,7 +3,7 @@ import { MapPin, Plus } from "lucide-react";
 import Link from "next/link";
 import { getMyTravelPlans } from "@/actions";
 import { TravelPlanCard } from "@/components/modules/TravlePlan/TravelPlanCard";
-import { TravelPlansPagination } from "@/components/modules/TravlePlan/TravelPlansPagination";
+import { TravelPlansPagination } from "./TravelPlansPagination";
 
 interface MyTravelPlansListProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -52,7 +52,7 @@ export async function MyTravelPlansList({
             Create your first travel plan to start your adventure
           </p>
           <Button className="mt-4" asChild>
-            <Link href="/travel-plans/create">
+            <Link href="/dashboard/travel-plans/create">
               <Plus className="mr-2 h-4 w-4" />
               Create Travel Plan
             </Link>
@@ -69,8 +69,16 @@ export async function MyTravelPlansList({
           <TravelPlanCard key={plan.id} plan={plan} showActions />
         ))}
       </div>
-
-      {meta.total > meta.limit && <TravelPlansPagination meta={meta} />}
+      {meta.total > meta.limit && (
+        <TravelPlansPagination
+          meta={meta}
+          onPageChange={(page) => {
+            const url = new URL(window.location.href);
+            url.searchParams.set("page", String(page));
+            window.history.pushState({}, "", url);
+          }}
+        />
+      )}
     </>
   );
 }

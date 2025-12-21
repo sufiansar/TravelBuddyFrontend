@@ -175,29 +175,6 @@ export function LoginForm({
           </p>
         )}
 
-        <div className="relative">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t" />
-          </div>
-          <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-background px-2 text-muted-foreground">
-              Or continue with
-            </span>
-          </div>
-        </div>
-
-        <Field>
-          <Button
-            variant="outline"
-            type="button"
-            disabled={loading}
-            className="w-full border-2 hover:border-primary/30 hover:bg-primary/5 transition-all"
-          >
-            <Github className="w-5 h-5 mr-2" />
-            Sign in with GitHub
-          </Button>
-        </Field>
-
         <FieldDescription className="text-center pt-4 border-t">
           Don&apos;t have an account?{" "}
           <Link

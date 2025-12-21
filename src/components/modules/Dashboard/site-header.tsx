@@ -20,16 +20,8 @@ export function SiteHeader({ userInfo }: DashboardNavbarProps) {
           orientation="vertical"
           className="mx-2 data-[orientation=vertical]:h-4"
         />
-        <div className="w-full">
-          <Search className="absolute ml-3 mt-3 size-4 text-muted-foreground" />
-          <Input
-            className="pl-8"
-            type="search"
-            placeholder=" Search..."
-          ></Input>
-        </div>
+
         <div className="ml-auto flex items-center gap-2">
-          <Bell className="h-5 w-5 cursor-pointer text-muted-foreground hover:text-foreground" />
           <UserDropdown userInfo={userInfo} />
         </div>
       </div>

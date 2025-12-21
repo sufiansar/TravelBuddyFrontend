@@ -38,15 +38,15 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-
 import Link from "next/link";
+
 import { TravelPlan } from "@/types/travlePlan.interface";
 import { deleteTravelPlan } from "@/actions";
 import { JoinRequestModal } from "./JoinRequestModal";
+import Image from "next/image";
 
 interface TravelPlanCardProps {
   plan: TravelPlan;
@@ -69,6 +69,8 @@ export function TravelPlanCard({
   const [isRequestModalOpen, setIsRequestModalOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
 
+  console.log(plan);
+
   const isOwner = session?.user?.id === plan.userId;
   const hasBudget = plan.minBudget || plan.maxBudget;
   const duration =
@@ -87,9 +89,8 @@ export function TravelPlanCard({
     });
   };
 
-  const handleViewDetails = () => {
+  const handleViewDetails = () =>
     router.push(`/dashboard/travel-plans/${plan.id}`);
-  };
 
   if (variant === "compact") {
     return (
@@ -131,19 +132,40 @@ export function TravelPlanCard({
 
   return (
     <>
-      <Card className="hover:shadow-lg transition-shadow">
-        <CardHeader className="pb-3">
+      <Card className="flex flex-col h-full hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 overflow-hidden">
+        <div className="relative w-full h-44 overflow-hidden bg-muted">
+          {plan.imageUrl ? (
+            <Image
+              src={plan.imageUrl}
+              alt={plan.destination}
+              fill
+              sizes="(max-width: 640px) 100vw,
+             (max-width: 1024px) 50vw,
+             33vw"
+              className="object-cover"
+              priority
+            />
+          ) : (
+            <div className="absolute inset-0 flex items-center justify-center text-muted-foreground text-sm">
+              No image available
+            </div>
+          )}
+        </div>
+        {/* Header */}
+        <CardHeader className="pb-3 pt-4">
           <div className="flex justify-between items-start">
             <div className="space-y-2">
               <div className="flex items-center gap-2">
                 <MapPin className="h-5 w-5 text-primary" />
                 <h3 className="font-bold text-xl">{plan.destination}</h3>
               </div>
+
               <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
                 <div className="flex items-center gap-1">
                   <User className="h-4 w-4" />
                   <span>By {plan.user?.fullName || "Unknown"}</span>
                 </div>
+
                 <div className="flex items-center gap-1">
                   <Calendar className="h-4 w-4" />
                   <span>
@@ -151,12 +173,14 @@ export function TravelPlanCard({
                     {format(new Date(plan.endDate), "MMM d, yyyy")}
                   </span>
                 </div>
+
                 <div className="flex items-center gap-1">
                   <Clock className="h-4 w-4" />
                   <span>{duration} days</span>
                 </div>
               </div>
             </div>
+
             <div className="flex items-center gap-2">
               <Badge
                 variant={plan.isPublic === "PUBLIC" ? "default" : "secondary"}
@@ -164,6 +188,7 @@ export function TravelPlanCard({
                 <Globe className="h-3 w-3 mr-1" />
                 {plan.isPublic}
               </Badge>
+
               {showActions && isOwner && (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -173,15 +198,13 @@ export function TravelPlanCard({
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
                     <DropdownMenuItem onClick={() => onEdit?.(plan)}>
-                      <Edit className="mr-2 h-4 w-4" />
-                      Edit
+                      <Edit className="mr-2 h-4 w-4" /> Edit
                     </DropdownMenuItem>
                     <DropdownMenuItem
                       className="text-destructive"
                       onClick={() => setIsDeleteDialogOpen(true)}
                     >
-                      <Trash2 className="mr-2 h-4 w-4" />
-                      Delete
+                      <Trash2 className="mr-2 h-4 w-4" /> Delete
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
@@ -190,12 +213,15 @@ export function TravelPlanCard({
           </div>
         </CardHeader>
 
-        <CardContent className="space-y-4">
+        {/* Content grows */}
+        <CardContent className="flex-1 space-y-4">
           {plan.description && (
-            <p className="text-gray-700 line-clamp-2">{plan.description}</p>
+            <p className="text-gray-700 dark:text-gray-200 line-clamp-3">
+              {plan.description}
+            </p>
           )}
 
-          <div className="flex flex-wrap gap-4 pt-3">
+          <div className="flex flex-wrap gap-2 pt-3">
             <Badge variant="outline" className="gap-1">
               <Users className="h-3 w-3" />
               {plan.travelType}
@@ -213,28 +239,18 @@ export function TravelPlanCard({
             )}
 
             {plan.matches && plan.matches.length > 0 && (
-              <Badge variant="secondary" className="gap-1">
-                <Users className="h-3 w-3" />
-                {plan.matches.length} matches
-              </Badge>
+              <Badge variant="secondary">{plan.matches.length} matches</Badge>
             )}
 
             {plan.requests && plan.requests.length > 0 && (
-              <Badge variant="secondary" className="gap-1">
-                <Users className="h-3 w-3" />
-                {plan.requests.length} requests
-              </Badge>
+              <Badge variant="secondary">{plan.requests.length} requests</Badge>
             )}
           </div>
         </CardContent>
 
-        <CardFooter className="flex justify-between pt-4 border-t">
-          <div className="flex items-center gap-2 text-sm">
-            <span className="text-muted-foreground">
-              Created {format(new Date(plan.createdAt), "MMM d, yyyy")}
-            </span>
-          </div>
-          <div className="flex gap-2">
+        {/* Footer pinned bottom */}
+        <CardFooter className="border-t pt-4">
+          <div className="flex gap-2 ml-auto">
             {!isOwner && plan.isPublic === "PUBLIC" && (
               <Button
                 size="sm"
@@ -244,9 +260,11 @@ export function TravelPlanCard({
                 Request to Join
               </Button>
             )}
+
             <Button size="sm" variant="outline" onClick={handleViewDetails}>
               View Details
             </Button>
+
             {isOwner && (
               <Button size="sm" variant="outline" asChild>
                 <Link href={`/dashboard/travel-plans/${plan.id}/requests`}>
@@ -258,6 +276,7 @@ export function TravelPlanCard({
         </CardFooter>
       </Card>
 
+      {/* Delete Dialog */}
       <AlertDialog
         open={isDeleteDialogOpen}
         onOpenChange={setIsDeleteDialogOpen}
@@ -283,6 +302,7 @@ export function TravelPlanCard({
         </AlertDialogContent>
       </AlertDialog>
 
+      {/* Join Request Modal */}
       {!isOwner && (
         <JoinRequestModal
           open={isRequestModalOpen}

@@ -5,6 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Star } from "lucide-react";
 import type { Traveler, TravelPlan } from "@/types/explore.interface";
+import LandingTravelPlanCard from "@/components/modules/TravlePlan/LandingPlanCard";
 
 export default async function Home() {
   // Fetch real data with error handling
@@ -22,6 +23,7 @@ export default async function Home() {
   try {
     const plansData = await getTravelPlans({}, { page: 1, limit: 8 });
     recentPlans = plansData?.data || [];
+    console.log(plansData);
   } catch (error) {
     console.error("Failed to fetch travel plans:", error);
   }
@@ -30,6 +32,8 @@ export default async function Home() {
   const destinations = Array.from(
     new Set(recentPlans.map((plan) => plan.destination).filter(Boolean))
   ).slice(0, 8);
+
+  console.log(destinations);
   return (
     <main className="min-h-screen bg-background text-foreground">
       {/* Hero Section */}
@@ -317,6 +321,45 @@ export default async function Home() {
           <Link href="/explore">
             <Button variant="outline" size="lg">
               View all travelers
+            </Button>
+          </Link>
+        </div>
+      </section>
+
+      {/* Recent Travel Plans Section */}
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="flex flex-col gap-3 text-center mb-12">
+          <h2 className="text-3xl md:text-4xl font-bold">
+            Recent travel plans
+          </h2>
+          <p className="text-muted-foreground">
+            Explore upcoming trips and join travelers heading your way.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {recentPlans.length > 0 ? (
+            recentPlans
+              .slice(0, 6)
+              .map((plan) => (
+                <LandingTravelPlanCard
+                  key={plan.id}
+                  plan={plan}
+                  linkPrefix="/dashboard/travel-plans"
+                  showViewButton
+                />
+              ))
+          ) : (
+            <div className="col-span-full text-center text-muted-foreground">
+              No travel plans available right now.
+            </div>
+          )}
+        </div>
+
+        <div className="text-center mt-10">
+          <Link href="/dashboard/travel-plans">
+            <Button variant="outline" size="lg">
+              Explore all plans
             </Button>
           </Link>
         </div>

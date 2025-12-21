@@ -1,6 +1,6 @@
 "use server";
 
-import { makeApiCall } from "@/actions/shared/apiClient";
+import { makeApiCall, uploadFile } from "@/actions/shared/apiClient";
 import { PaginatedResponse } from "@/types/user.interface";
 import {
   CreateTravelPlanData,
@@ -13,26 +13,41 @@ import { revalidatePath } from "next/cache";
 // Create travel plan
 export async function createTravelPlan(data: CreateTravelPlanData) {
   try {
-    const result = await makeApiCall(
+    const formData = new FormData();
+
+    formData.append("destination", data.destination);
+    formData.append("startDate", data.startDate.toISOString());
+    formData.append("endDate", data.endDate.toISOString());
+    if (data.minBudget !== undefined)
+      formData.append("minBudget", String(data.minBudget));
+    if (data.maxBudget !== undefined)
+      formData.append("maxBudget", String(data.maxBudget));
+    formData.append("travelType", data.travelType);
+    if (data.description) formData.append("description", data.description);
+    formData.append("isPublic", data.isPublic ?? "PUBLIC");
+
+    if (data.imageUrl) {
+      formData.append("imageUrl", data.imageUrl);
+    } else if (typeof data.imageUrl === "string") {
+      formData.append("imageUrl", data.imageUrl);
+    }
+
+    const result = await uploadFile(
       "/travelPlans/create-travel-plan",
-      {
-        method: "POST",
-        body: JSON.stringify(data),
-      },
+      formData,
       true
     );
 
+    // Revalidate pages
     revalidatePath("/travel-plans");
-    revalidatePath("/travel-plans/my");
-
-    // Extract plan data from nested structure
-    const planData = result?.data || result;
+    revalidatePath("/profile/travel-plans");
 
     return {
       success: true,
-      data: planData,
+      data: result,
     };
   } catch (error: any) {
+    console.error("createTravelPlan error:", error);
     return {
       success: false,
       error: error.message || "Failed to create travel plan",
@@ -58,15 +73,18 @@ export async function getAllTravelPlans(params?: TravelPlanFilterParams) {
       },
     });
 
+    // Make sure meta always exists
     return {
       success: true,
-      data: result?.data?.data,
-      meta: result.meta,
+      data: result?.data?.data || [],
+      meta: result?.data?.meta || { page: 1, limit: 10, total: 0 },
     };
   } catch (error: any) {
     return {
       success: false,
       error: error.message || "Failed to fetch travel plans",
+      data: [],
+      meta: { page: 1, limit: 10, total: 0 },
     };
   }
 }

@@ -100,7 +100,7 @@ export function ReviewForm({
         if (result.success) {
           toast.success("Review created successfully");
           onSuccess?.();
-          router.push(`/reviews/user/${values.receiverId}`);
+          router.push(`/dashboard/reviews/user/${values.receiverId}`);
         } else {
           const errorMsg = result.error || "Failed to create review";
           setError(errorMsg);

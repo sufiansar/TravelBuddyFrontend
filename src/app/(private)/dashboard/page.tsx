@@ -7,6 +7,7 @@ import Link from "next/link";
 import { MapPin, Users, Calendar, Heart, ArrowRight, Plus } from "lucide-react";
 import { getMyProfile } from "@/actions";
 import { getAllTravelPlans } from "@/actions/travelPlans/actions";
+import Image from "next/image";
 
 const DashboardHome = async () => {
   const [profileResult, plansResult] = await Promise.all([
@@ -81,7 +82,7 @@ const DashboardHome = async () => {
   ];
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 mx-auto px-4 py-6 max-w-7xl">
       <div className="space-y-2">
         <h1 className="text-4xl font-bold text-foreground">
           Welcome to Your Dashboard
@@ -159,10 +160,18 @@ const DashboardHome = async () => {
                 className="border-border hover:shadow-lg transition-shadow overflow-hidden"
               >
                 {/* Card Header with Background */}
-                <div className="h-32 bg-linear-to-r from-primary/80 to-primary/60"></div>
+                <div className="relative h-48 bg-linear-to-r from-primary/80 to-primary/60">
+                  <Image
+                    src={plan.imageUrl}
+                    alt={plan.destination}
+                    fill
+                    className="object-cover"
+                    sizes="100vw"
+                  />
+                </div>
 
                 {/* Card Content */}
-                <div className="p-6 space-y-4">
+                <div className="p-4 space-y-4">
                   <div className="space-y-2">
                     <h3 className="text-lg font-bold text-foreground">
                       {plan.title}

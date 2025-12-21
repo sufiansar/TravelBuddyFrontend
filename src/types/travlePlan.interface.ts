@@ -1,3 +1,4 @@
+import { TravelType } from "./admin.interface";
 import { User } from "./user.interface";
 
 export interface TravelPlan {
@@ -9,6 +10,7 @@ export interface TravelPlan {
   maxBudget?: number;
   travelType: string;
   description?: string;
+  imageUrl?: string;
   isPublic: "PUBLIC" | "PRIVATE";
   userId: string;
   createdAt: string;
@@ -32,13 +34,17 @@ export interface TravelPlanRequest {
 
 export interface CreateTravelPlanData {
   destination: string;
-  startDate: string;
-  endDate: string;
+  startDate: Date;
+  endDate: Date;
+  imageUrl?: string;
   minBudget?: number;
   maxBudget?: number;
-  travelType: string;
+  travelType: TravelType;
   description?: string;
   isPublic?: "PUBLIC" | "PRIVATE";
+  latitude?: number;
+  longitude?: number;
+  userId?: string;
 }
 
 export interface TravelPlanFilterParams {
@@ -47,7 +53,7 @@ export interface TravelPlanFilterParams {
   sortBy?: string;
   sortOrder?: "asc" | "desc";
   searchTerm?: string;
-  travelType?: string;
+  travelType?: TravelType;
   isPublic?: "PUBLIC" | "PRIVATE";
   minBudget?: number;
   maxBudget?: number;

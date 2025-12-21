@@ -3,8 +3,9 @@ import { Button } from "@/components/ui/button";
 import { MapPin, Plus } from "lucide-react";
 import Link from "next/link";
 import { TravelPlanCard } from "./TravelPlanCard";
-import { TravelPlansPagination } from "./TravelPlansPagination";
+// import { TravelPlansPagination } from "./TravelPlansPagination";
 import { TravelPlan } from "@/types/travlePlan.interface";
+import { TravelPlansPagination } from "./TravelPlansPagination";
 // Import the TravelPlan type
 
 interface TravelPlansListProps {
@@ -78,7 +79,9 @@ export async function TravelPlansList({ searchParams }: TravelPlansListProps) {
         ))}
       </div>
 
-      {meta.total > meta.limit && <TravelPlansPagination meta={meta} />}
+      {meta.total > meta.limit && (
+        <TravelPlansPagination meta={meta} onPageChange={() => {}} />
+      )}
     </>
   );
 }

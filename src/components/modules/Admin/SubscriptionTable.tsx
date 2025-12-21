@@ -203,11 +203,15 @@ export function SubscriptionTable({
           currentPage={meta.page as number}
           totalPages={meta.totalPage as number}
           onPageChange={(page: number) => {
-        
-            const params = new URLSearchParams({
-              ...(currentFilters || {}),
-              page: page.toString(),
-            });
+            const params = new URLSearchParams();
+            if (currentFilters) {
+              Object.entries(currentFilters).forEach(([key, value]) => {
+                if (value && key !== "page" && key !== "limit") {
+                  params.set(key, String(value));
+                }
+              });
+            }
+            params.set("page", page.toString());
             router.push(`?${params.toString()}`);
           }}
         />

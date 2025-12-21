@@ -40,6 +40,8 @@ import { TravelPlan } from "@/types/travlePlan.interface";
 import { createTravelPlan, updateTravelPlan } from "@/actions";
 import { travelPlanFormSchema } from "@/components/zod/travle.validation";
 
+type TravelPlanFormValues = z.infer<typeof travelPlanFormSchema>;
+
 interface TravelPlanFormProps {
   travelPlanToEdit?: TravelPlan;
   onSuccess?: () => void;
@@ -53,7 +55,7 @@ export function TravelPlanForm({
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState("");
 
-  const form = useForm<z.infer<typeof travelPlanFormSchema>>({
+  const form = useForm<TravelPlanFormValues>({
     resolver: zodResolver(travelPlanFormSchema),
     defaultValues: {
       destination: travelPlanToEdit?.destination || "",
@@ -69,6 +71,7 @@ export function TravelPlanForm({
       description: travelPlanToEdit?.description || "",
       isPublic:
         (travelPlanToEdit?.isPublic as "PUBLIC" | "PRIVATE") || "PUBLIC",
+      imageUrl: travelPlanToEdit?.imageUrl || undefined,
     },
   });
 
@@ -91,39 +94,57 @@ export function TravelPlanForm({
     "OTHER",
   ];
 
-  const onSubmit = (values: z.infer<typeof travelPlanFormSchema>) => {
+  const onSubmit = (values: TravelPlanFormValues) => {
     setError("");
     startTransition(async () => {
-      const data = {
-        ...values,
-        startDate: values.startDate.toISOString(),
-        endDate: values.endDate.toISOString(),
-      };
-
-      if (travelPlanToEdit) {
-        const result = await updateTravelPlan(travelPlanToEdit.id, data);
-        if (result.success) {
-          toast.success("Travel plan updated successfully");
-          onSuccess?.();
-          router.push(`/travel-plans/${travelPlanToEdit.id}`);
-        } else {
-          setError(result.error || "Failed to update travel plan");
-        }
-      } else {
-        const result = await createTravelPlan(data);
-        if (result.success) {
-          toast.success("Travel plan created successfully");
-          onSuccess?.();
-          const planId = result.data?.id;
-          if (planId) {
-            router.push(`/dashboard/travel-plans/${planId}`);
-          } else {
-            console.error("No plan ID in response:", result.data);
-            setError("Failed to retrieve created plan ID");
+      try {
+        let result;
+        if (travelPlanToEdit) {
+          const formData = new FormData();
+          formData.append("destination", values.destination);
+          formData.append("travelType", values.travelType);
+          formData.append("startDate", values.startDate.toISOString());
+          formData.append("endDate", values.endDate.toISOString());
+          formData.append("isPublic", values.isPublic);
+          if (values.minBudget !== undefined)
+            formData.append("minBudget", String(values.minBudget));
+          if (values.maxBudget !== undefined)
+            formData.append("maxBudget", String(values.maxBudget));
+          if (values.description)
+            formData.append("description", values.description);
+          if (values.imageUrl instanceof File) {
+            formData.append("image", values.imageUrl);
           }
+          result = await updateTravelPlan(travelPlanToEdit.id, formData as any);
         } else {
-          setError(result.error || "Failed to create travel plan");
+          result = await createTravelPlan({
+            destination: values.destination,
+            travelType: values.travelType as any,
+            startDate: values.startDate,
+            endDate: values.endDate,
+            isPublic: values.isPublic,
+            minBudget: values.minBudget,
+            maxBudget: values.maxBudget,
+            description: values.description,
+            imageUrl: values.imageUrl as any,
+          });
         }
+
+        if (result.success) {
+          toast.success(
+            travelPlanToEdit
+              ? "Travel plan updated successfully"
+              : "Travel plan created successfully"
+          );
+          onSuccess?.();
+          const planId = travelPlanToEdit?.id || result.data?.id;
+          console.log(planId);
+          if (planId) router.push(`/dashboard/travel-plans/${planId}`);
+        } else {
+          setError(result.error || "Failed to submit travel plan");
+        }
+      } catch (err: any) {
+        setError(err.message || "Something went wrong");
       }
     });
   };
@@ -138,6 +159,7 @@ export function TravelPlanForm({
           </Alert>
         )}
 
+        {/* Destination & Travel Type */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <FormField
             control={form.control}
@@ -152,7 +174,6 @@ export function TravelPlanForm({
               </FormItem>
             )}
           />
-
           <FormField
             control={form.control}
             name="travelType"
@@ -182,6 +203,7 @@ export function TravelPlanForm({
           />
         </div>
 
+        {/* Dates */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <FormField
             control={form.control}
@@ -222,7 +244,6 @@ export function TravelPlanForm({
               </FormItem>
             )}
           />
-
           <FormField
             control={form.control}
             name="endDate"
@@ -264,6 +285,7 @@ export function TravelPlanForm({
           />
         </div>
 
+        {/* Budget */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <FormField
             control={form.control}
@@ -295,7 +317,6 @@ export function TravelPlanForm({
               </FormItem>
             )}
           />
-
           <FormField
             control={form.control}
             name="maxBudget"
@@ -328,6 +349,7 @@ export function TravelPlanForm({
           />
         </div>
 
+        {/* Description */}
         <FormField
           control={form.control}
           name="description"
@@ -349,6 +371,7 @@ export function TravelPlanForm({
           )}
         />
 
+        {/* Visibility */}
         <FormField
           control={form.control}
           name="isPublic"
@@ -363,7 +386,7 @@ export function TravelPlanForm({
                 </FormControl>
                 <SelectContent>
                   <SelectItem value="PUBLIC">
-                    Public (Anyone can see and request to join)
+                    Public (Anyone can see)
                   </SelectItem>
                   <SelectItem value="PRIVATE">
                     Private (Only you can see)
@@ -378,6 +401,26 @@ export function TravelPlanForm({
           )}
         />
 
+        {/* Image Upload */}
+        <FormField
+          control={form.control}
+          name="imageUrl"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Image (Optional)</FormLabel>
+              <FormControl>
+                <Input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => field.onChange(e.target.files?.[0])}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {/* Buttons */}
         <div className="flex gap-3 pt-4">
           <Button type="submit" disabled={isPending} className="flex-1">
             {isPending

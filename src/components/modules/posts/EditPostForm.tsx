@@ -32,7 +32,7 @@ export function EditPostForm({ post }: EditPostFormProps) {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    // Clean up object URLs when component unmounts or previews change
+
     return () => {
       imagePreviews.forEach((url) => URL.revokeObjectURL(url));
     };

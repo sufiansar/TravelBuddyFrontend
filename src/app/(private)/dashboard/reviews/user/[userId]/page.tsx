@@ -48,7 +48,7 @@ async function UserReviewsContent({
         description: "This user doesn't have any reviews yet",
         action: {
           label: "Write a Review",
-          href: `/reviews/create?receiverId=${userId}`,
+          href: `/dashboard/reviews/create?receiverId=${userId}`,
         },
       }}
     />
@@ -71,7 +71,7 @@ export default async function UserReviewsPage({
         description: `Reviews received by user #${userId}`,
         showBackButton: true,
         showCreateButton: true,
-        createButtonHref: `/reviews/create?receiverId=${userId}`,
+        createButtonHref: `/dashboard/reviews/create?receiverId=${userId}`,
         createButtonLabel: "Write a Review",
       }}
     >

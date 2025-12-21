@@ -1,60 +1,78 @@
-import { Suspense } from "react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
-import Link from "next/link";
+"use client";
+
+import { useState, useEffect } from "react";
+
+import { TravelType } from "@/types/admin.interface";
+import { getAllTravelPlans } from "@/actions";
 import { TravelPlanFilters } from "@/components/modules/TravlePlan/TravelPlanFilters";
-import { TravelPlansListSkeleton } from "@/components/modules/TravlePlan/TravelPlansListSkeleton";
-import { TravelPlansList } from "@/components/modules/TravlePlan/TravelPlansList";
+import { TravelPlanCard } from "@/components/modules/TravlePlan/TravelPlanCard";
+import { TravelPlansPagination } from "@/components/modules/TravlePlan/TravelPlansPagination";
 
-export default async function TravelPlansPage({
-  searchParams,
+export default function TravelPlansPage({
+  travelTypes,
 }: {
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+  travelTypes: TravelType[];
 }) {
+  const [travelPlans, setTravelPlans] = useState<any[]>([]);
+  const [meta, setMeta] = useState({ page: 1, limit: 10, total: 0 });
+  const [filters, setFilters] = useState<any>({});
+
+  const fetchTravelPlans = async (params?: any) => {
+    const res = await getAllTravelPlans({
+      page: params?.page || 1,
+      limit: params?.limit || 10,
+      searchTerm: params?.searchTerm,
+      travelType: params?.travelType,
+      isPublic: params?.isPublic,
+      sortBy: params?.sortBy,
+      sortOrder: params?.sortOrder,
+      minBudget: params?.minBudget,
+      maxBudget: params?.maxBudget,
+    });
+
+    if (res.success) {
+      setTravelPlans(res.data);
+      setMeta(res.meta || { page: 1, limit: 10, total: 0 });
+    } else {
+      setTravelPlans([]);
+      setMeta({ page: 1, limit: 10, total: 0 });
+    }
+  };
+
+  // Filter change (typing updates instantly, no loading spinner)
+  const handleFilterChange = (newFilters: any) => {
+    setFilters(newFilters);
+    setMeta((prev) => ({ ...prev, page: 1 })); // reset page
+    fetchTravelPlans({ ...newFilters, page: 1 });
+  };
+
+  const handlePageChange = (newPage: number) => {
+    setMeta((prev) => ({ ...prev, page: newPage }));
+    fetchTravelPlans({ ...filters, page: newPage });
+  };
+
+  useEffect(() => {
+    fetchTravelPlans({ ...filters, page: meta.page });
+  }, []);
+
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Travel Plans</h1>
-          <p className="text-muted-foreground mt-2">
-            Discover and join travel plans from fellow adventurers
-          </p>
+    <div className="p-4 space-y-6">
+      <TravelPlanFilters
+        travelTypes={travelTypes}
+        onChange={handleFilterChange}
+      />
+
+      {travelPlans.length > 0 ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {travelPlans.map((plan) => (
+            <TravelPlanCard key={plan.id} plan={plan} />
+          ))}
         </div>
-        <Button asChild>
-          <Link href="/travel-plans/create">
-            <Plus className="mr-2 h-4 w-4" />
-            Create Plan
-          </Link>
-        </Button>
-      </div>
+      ) : (
+        <p className="text-center">No travel plans found.</p>
+      )}
 
-      <Card>
-        <CardHeader>
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <div>
-              <CardTitle>All Travel Plans</CardTitle>
-              <CardDescription>
-                Browse through available travel plans and find your next
-                adventure
-              </CardDescription>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <TravelPlanFilters travelTypes={[]} showAdvanced />
-
-          <Suspense fallback={<TravelPlansListSkeleton />}>
-            <TravelPlansList searchParams={searchParams} />
-          </Suspense>
-        </CardContent>
-      </Card>
+      <TravelPlansPagination meta={meta} onPageChange={handlePageChange} />
     </div>
   );
 }
