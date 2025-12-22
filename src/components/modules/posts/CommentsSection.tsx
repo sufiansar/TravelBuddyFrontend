@@ -136,10 +136,6 @@ export function CommentsSection({
 
   const currentUserId = session?.user?.id;
 
-  console.log("CommentsSection - Session:", session);
-  console.log("CommentsSection - PostId:", postId);
-  console.log("CommentsSection - Comments count:", comments.length);
-
   return (
     <div className="space-y-4">
       {/* Add Comment Form */}

@@ -23,7 +23,7 @@ export default async function Home() {
   try {
     const plansData = await getTravelPlans({}, { page: 1, limit: 8 });
     recentPlans = plansData?.data || [];
-    console.log(plansData);
+    console.log(plansData, "leanding page");
   } catch (error) {
     console.error("Failed to fetch travel plans:", error);
   }
@@ -340,7 +340,7 @@ export default async function Home() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {recentPlans.length > 0 ? (
             recentPlans
-              .slice(0, 6)
+              .slice(0, 3)
               .map((plan) => (
                 <LandingTravelPlanCard
                   key={plan.id}

@@ -11,7 +11,7 @@ export default function SavedPostsPage() {
     <div className="container mx-auto px-4 py-8">
       <div className="flex items-center gap-4 mb-6">
         <Button variant="ghost" size="sm" asChild className="gap-2">
-          <Link href="/posts">
+          <Link href="/post">
             <ArrowLeft className="h-4 w-4" />
             Back to Feed
           </Link>

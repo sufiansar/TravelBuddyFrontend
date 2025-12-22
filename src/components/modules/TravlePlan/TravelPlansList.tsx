@@ -28,7 +28,7 @@ export async function TravelPlansList({ searchParams }: TravelPlansListProps) {
   };
 
   const [plansResult, typesResult] = await Promise.all([
-    getAllTravelPlans(filters),
+    getAllTravelPlans(),
     getTravelTypes(),
   ]);
 
