@@ -52,16 +52,10 @@ export default async function AdminPaymentsPage({
         <CardHeader>
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <CardTitle>All Payments</CardTitle>
-            <div className="flex items-center gap-2">
-              <Button variant="outline" size="sm" className="gap-2">
-                <Filter className="h-4 w-4" />
-                Filters
-              </Button>
-            </div>
           </div>
         </CardHeader>
         <CardContent>
-          <PaymentFilters initialFilters={filters} />
+          {/* <PaymentFilters initialFilters={filters} /> */}
 
           {result.success ? (
             <PaymentTable

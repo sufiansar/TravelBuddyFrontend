@@ -43,7 +43,7 @@ export function AdminReviewsClient({
         </div>
       </div>
 
-      <Card>
+      {/* <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Filter className="w-5 h-5" />
@@ -56,7 +56,7 @@ export function AdminReviewsClient({
             currentFilters={filters}
           />
         </CardContent>
-      </Card>
+      </Card> */}
 
       <Card>
         <CardHeader>

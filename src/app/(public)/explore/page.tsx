@@ -212,7 +212,7 @@ export default function ExplorePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
+    <div className="min-h-screen bg-foreground-50 dark:bg-gray-950">
       {/* Header */}
       <div className="bg-white dark:bg-gray-900 border-b">
         <div className="container mx-auto px-4 py-8">
@@ -234,7 +234,7 @@ export default function ExplorePage() {
             </div>
 
             {/* Search Bar */}
-            <form onSubmit={handleSearch} className="max-w-2xl mx-auto">
+            {/* <form onSubmit={handleSearch} className="max-w-2xl mx-auto">
               <div className="relative">
                 <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
                 <Input
@@ -255,7 +255,7 @@ export default function ExplorePage() {
                   Search
                 </Button>
               </div>
-            </form>
+            </form> */}
           </div>
         </div>
       </div>

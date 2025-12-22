@@ -57,7 +57,7 @@ export function ReviewFilters({
   return (
     <div className="space-y-4 mb-6">
       <div className="flex flex-col gap-4 md:flex-row md:items-end md:gap-4">
-        <div className="flex-1">
+        {/* <div className="flex-1">
           <label className="text-sm font-medium">Search</label>
           <div className="relative">
             <Search className="absolute left-3 top-3 w-4 h-4 text-muted-foreground" />
@@ -68,7 +68,7 @@ export function ReviewFilters({
               className="pl-10"
             />
           </div>
-        </div>
+        </div> */}
 
         <div className="w-full md:w-48">
           <label className="text-sm font-medium">Minimum Rating</label>
