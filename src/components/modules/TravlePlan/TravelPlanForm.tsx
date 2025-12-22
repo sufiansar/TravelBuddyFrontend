@@ -116,6 +116,13 @@ export function TravelPlanForm({
             formData.append("image", values.imageUrl);
           }
           result = await updateTravelPlan(travelPlanToEdit.id, formData as any);
+          if (result.success) {
+            toast.success("Travel plan updated successfully");
+            onSuccess?.();
+            router.push(`/dashboard/travel-plans/${travelPlanToEdit.id}`);
+          } else {
+            setError(result.error || "Failed to update travel plan");
+          }
         } else {
           result = await createTravelPlan({
             destination: values.destination,
@@ -128,23 +135,23 @@ export function TravelPlanForm({
             description: values.description,
             imageUrl: values.imageUrl as any,
           });
+          if (result.success) {
+            toast.success("Travel plan created successfully");
+            onSuccess?.();
+            const planId = result?.data?.id || result?.data?._id;
+            if (planId) {
+              router.push(`/dashboard/travel-plans/${planId}`);
+            } else {
+              console.error("No plan ID in response:", result.data);
+              setError("Failed to retrieve created plan ID");
+            }
+          } else {
+            setError(result.error || "Failed to create travel plan");
+          }
         }
-
-        if (result.success) {
-          toast.success(
-            travelPlanToEdit
-              ? "Travel plan updated successfully"
-              : "Travel plan created successfully"
-          );
-          onSuccess?.();
-          const planId = travelPlanToEdit?.id || result.data?.id;
-          console.log(planId);
-          if (planId) router.push(`/dashboard/travel-plans/${planId}`);
-        } else {
-          setError(result.error || "Failed to submit travel plan");
-        }
-      } catch (err: any) {
-        setError(err.message || "Something went wrong");
+      } catch (error) {
+        console.error("Error submitting travel plan:", error);
+        setError("An unexpected error occurred");
       }
     });
   };

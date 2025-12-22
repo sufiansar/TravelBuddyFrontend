@@ -12,11 +12,14 @@ import Link from "next/link";
 import { TravelPlanFilters } from "@/components/modules/TravlePlan/TravelPlanFilters";
 import { MyTravelPlansList } from "@/components/modules/TravlePlan/MyTravelPlansList";
 import { TravelPlansListSkeleton } from "@/components/modules/TravlePlan/TravelPlansListSkeleton";
+import { TravelType } from "@/types/admin.interface";
 
-export default async function MyTravelPlansPage({
+export default function MyTravelPlansPage({
   searchParams,
+  travelTypes,
 }: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+  travelTypes: TravelType[];
 }) {
   return (
     <div className="container mx-auto px-4 py-8">
@@ -45,7 +48,7 @@ export default async function MyTravelPlansPage({
           </div>
         </CardHeader>
         <CardContent className="space-y-6">
-          <TravelPlanFilters travelTypes={[]} />
+          <TravelPlanFilters travelTypes={travelTypes} />
 
           <Suspense fallback={<TravelPlansListSkeleton />}>
             <MyTravelPlansList searchParams={searchParams} />

@@ -38,7 +38,7 @@ export interface Traveler {
 }
 
 export interface ExploreFilters {
-  destination?: string;
+  searchTerm?: string;
   startDate?: string;
   endDate?: string;
   interests?: string[];

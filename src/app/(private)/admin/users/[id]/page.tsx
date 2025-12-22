@@ -139,7 +139,7 @@ export default async function UserDetailPage({ params }: UserDetailPageProps) {
               <CardTitle className="text-base">Account Status</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="flex justify-between items-center p-2 bg-gray-50 rounded">
+              <div className="flex justify-between items-center p-2 bg-foreground-50 rounded">
                 <div className="flex items-center gap-2">
                   <ShieldCheck className="h-4 w-4 text-blue-500" />
                   <span className="text-sm">Verification</span>
@@ -149,7 +149,7 @@ export default async function UserDetailPage({ params }: UserDetailPageProps) {
                 </span>
               </div>
 
-              <div className="flex justify-between items-center p-2 bg-gray-50 rounded">
+              <div className="flex justify-between items-center p-2 bg-foreground-50 rounded">
                 <div className="flex items-center gap-2">
                   <Ban className="h-4 w-4 text-red-500" />
                   <span className="text-sm">Status</span>
@@ -157,7 +157,7 @@ export default async function UserDetailPage({ params }: UserDetailPageProps) {
                 <span className="font-semibold">{user.userStatus}</span>
               </div>
 
-              <div className="flex justify-between items-center p-2 bg-gray-50 rounded">
+              <div className="flex justify-between items-center p-2 bg-foreground-50 rounded">
                 <div className="flex items-center gap-2">
                   <CreditCard className="h-4 w-4 text-green-500" />
                   <span className="text-sm">Role</span>

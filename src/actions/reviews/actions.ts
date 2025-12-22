@@ -66,7 +66,7 @@ export async function createReview(data: CreateReviewData) {
 export async function getReviewById(id: string) {
   try {
     const result = await makeApiCall(`/reviews/${id}`, {}, true);
-    return { success: true, data: result as Review };
+    return { success: true, data: result.data as Review };
   } catch (error: any) {
     return { success: false, error: error.message };
   }
@@ -233,7 +233,7 @@ export async function getUsersForReview() {
         method: "GET",
         params: {
           page: "1",
-          limit: "100", // Get enough users for the dropdown
+          limit: "10",
         },
       },
       true

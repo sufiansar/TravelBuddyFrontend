@@ -48,6 +48,7 @@ export default function MeetupUsersPage() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterRole, setFilterRole] = useState<string>("all");
+  const [expandedUsers, setExpandedUsers] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     fetchUserData();
@@ -114,7 +115,7 @@ export default function MeetupUsersPage() {
       // Process participants
       meetup.participants.forEach((participant: any) => {
         const user = participant.user;
-        if (user.id === host.id) return; // Skip host
+        if (user.id === host.id) return;
 
         if (!userMap.has(user.id)) {
           userMap.set(user.id, {
@@ -132,7 +133,7 @@ export default function MeetupUsersPage() {
 
         const userData = userMap.get(user.id)!;
         userData.joinedMeetups += 1;
-        userData.totalParticipants += 1; // Count themselves as participant
+        userData.totalParticipants += 1;
         userData.meetups.push({
           id: meetup.id,
           title: meetup.title,
@@ -141,7 +142,6 @@ export default function MeetupUsersPage() {
           participants: meetup.participants.length,
         });
 
-        // Update last activity
         const joinedDate = new Date(participant.joinedAt);
         if (joinedDate > userData.lastActivity) {
           userData.lastActivity = joinedDate;
@@ -294,13 +294,13 @@ export default function MeetupUsersPage() {
                 className="pl-10"
               />
             </div>
-            <div className="flex gap-2">
+            <div className="flex  gap-2">
               <select
                 value={filterRole}
                 onChange={(e) => setFilterRole(e.target.value)}
-                className="px-3 py-2 border rounded-md text-sm"
+                className="px-3 py-2 border bg-foreground-50 rounded-md text-sm"
               >
-                <option value="all">All Users</option>
+                <option value="all">All Users </option>
                 <option value="host">Hosts Only</option>
                 <option value="active">Active Users</option>
                 <option value="inactive">Inactive Users</option>
@@ -331,11 +331,15 @@ export default function MeetupUsersPage() {
               {filteredUsers.map((user) => {
                 const activityLevel = getUserActivityLevel(user);
                 const totalMeetups = user.hostedMeetups + user.joinedMeetups;
+                const isExpanded = expandedUsers.has(user.id);
+                const meetupsToShow = isExpanded
+                  ? user.meetups
+                  : user.meetups.slice(0, 3);
 
                 return (
                   <div
                     key={user.id}
-                    className="p-6 border rounded-lg hover:bg-gray-50 transition-colors"
+                    className="p-6 border rounded-lg  transition-colors"
                   >
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                       <div className="flex items-start gap-4">
@@ -394,7 +398,7 @@ export default function MeetupUsersPage() {
                           </span>
                         </div>
                         <div className="space-y-2">
-                          {user.meetups.slice(0, 3).map((meetup, index) => (
+                          {meetupsToShow.map((meetup, index) => (
                             <div
                               key={index}
                               className="flex items-center justify-between p-2 text-sm border rounded"
@@ -415,9 +419,29 @@ export default function MeetupUsersPage() {
                           ))}
                           {user.meetups.length > 3 && (
                             <div className="text-center">
-                              <Button variant="ghost" size="sm">
-                                <ChevronDown className="h-4 w-4 mr-2" />
-                                Show {user.meetups.length - 3} more
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => {
+                                  setExpandedUsers((prev) => {
+                                    const newSet = new Set(prev);
+                                    if (newSet.has(user.id)) {
+                                      newSet.delete(user.id);
+                                    } else {
+                                      newSet.add(user.id);
+                                    }
+                                    return newSet;
+                                  });
+                                }}
+                              >
+                                <ChevronDown
+                                  className={`h-4 w-4 mr-2 transition-transform ${
+                                    isExpanded ? "rotate-180" : ""
+                                  }`}
+                                />
+                                {isExpanded
+                                  ? "Show less"
+                                  : `Show ${user.meetups.length - 3} more`}
                               </Button>
                             </div>
                           )}
@@ -429,64 +453,6 @@ export default function MeetupUsersPage() {
               })}
             </div>
           )}
-        </CardContent>
-      </Card>
-
-      {/* Export Section */}
-      <Card className="mt-8">
-        <CardHeader>
-          <CardTitle>Export User Data</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-col sm:flex-row gap-4">
-            <Button
-              onClick={() => {
-                const csvData = users.map((user) => ({
-                  Name: user.name,
-                  Email: user.email,
-                  Role: user.role,
-                  "Hosted Meetups": user.hostedMeetups,
-                  "Joined Meetups": user.joinedMeetups,
-                  "Total Activities": user.hostedMeetups + user.joinedMeetups,
-                  "Last Activity": format(user.lastActivity, "yyyy-MM-dd"),
-                }));
-
-                const csvContent = [
-                  Object.keys(csvData[0]).join(","),
-                  ...csvData.map((row) => Object.values(row).join(",")),
-                ].join("\n");
-
-                const blob = new Blob([csvContent], { type: "text/csv" });
-                const url = window.URL.createObjectURL(blob);
-                const link = document.createElement("a");
-                link.href = url;
-                link.download = `meetup-users-${format(
-                  new Date(),
-                  "yyyy-MM-dd"
-                )}.csv`;
-                link.click();
-              }}
-            >
-              Export as CSV
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => {
-                const jsonData = JSON.stringify(users, null, 2);
-                const blob = new Blob([jsonData], { type: "application/json" });
-                const url = window.URL.createObjectURL(blob);
-                const link = document.createElement("a");
-                link.href = url;
-                link.download = `meetup-users-${format(
-                  new Date(),
-                  "yyyy-MM-dd"
-                )}.json`;
-                link.click();
-              }}
-            >
-              Export as JSON
-            </Button>
-          </div>
         </CardContent>
       </Card>
     </div>

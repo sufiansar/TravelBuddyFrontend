@@ -9,6 +9,5 @@ export default async function MyEditPage() {
     redirect("/login");
   }
 
-  // Redirect to the user's actual edit page within the private route
   redirect(`/users/${session.user.id}/edit`);
 }

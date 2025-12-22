@@ -41,12 +41,12 @@ export const adminNavItems: NavSection[] = [
         icon: "BarChart3",
         roles: ["ADMIN"] as unknown as UserRole[],
       },
-      {
-        title: "Settings",
-        href: "/admin/settings",
-        icon: "Settings",
-        roles: ["ADMIN"] as unknown as UserRole[],
-      },
+      // {
+      //   title: "Settings",
+      //   href: "/admin/settings",
+      //   icon: "Settings",
+      //   roles: ["ADMIN"] as unknown as UserRole[],
+      // },
       {
         title: "Manage Roles",
         href: "/admin/roles",

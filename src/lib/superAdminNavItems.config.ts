@@ -17,13 +17,13 @@ export const superAdminNavItems: NavSection[] = [
         icon: "Shield",
         roles: ["SUPER_ADMIN"] as unknown as UserRole[],
       },
-      {
-        title: "Settings",
-        href: "/admin/settings",
-        icon: "Settings",
-        roles: ["SUPER_ADMIN"] as unknown as UserRole[],
-      },
 
+      {
+        title: "Travel Plans",
+        href: "/admin/travel-plans",
+        icon: "MapPin",
+        roles: ["ADMIN"] as unknown as UserRole[],
+      },
       {
         title: "All Reviews",
         href: "/admin/reviews",
@@ -36,6 +36,12 @@ export const superAdminNavItems: NavSection[] = [
         href: "/admin/meetups",
         icon: "Calendar",
         roles: ["SUPER_ADMIN"] as unknown as UserRole[],
+      },
+      {
+        title: "Manage Meetups",
+        href: "/admin/meetups/users",
+        icon: "Calendar",
+        roles: ["ADMIN"] as unknown as UserRole[],
       },
       {
         title: "Meetup Analytics",

@@ -86,33 +86,6 @@ export function ReviewFilters({
             </SelectContent>
           </Select>
         </div>
-
-        <div className="w-full md:w-40">
-          <label className="text-sm font-medium">Sort By</label>
-          <Select value={sortBy} onValueChange={setSortBy}>
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="createdAt">Date Created</SelectItem>
-              <SelectItem value="rating">Rating</SelectItem>
-              <SelectItem value="updatedAt">Last Updated</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div className="w-full md:w-40">
-          <label className="text-sm font-medium">Order</label>
-          <Select value={sortOrder} onValueChange={setSortOrder}>
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="desc">Newest</SelectItem>
-              <SelectItem value="asc">Oldest</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
       </div>
 
       <div className="flex gap-2">

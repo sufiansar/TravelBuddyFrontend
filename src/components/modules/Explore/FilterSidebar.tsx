@@ -136,17 +136,17 @@ export function FilterSidebar({
 
           <ScrollArea className="h-[calc(100vh-200px)] lg:h-[calc(100vh-250px)] pr-4">
             <div className="space-y-4 sm:space-y-6">
-              {/* Destination */}
+              {/* Search Term */}
               <div className="space-y-3">
                 <Label className="flex items-center gap-2">
                   <MapPin className="h-4 w-4" />
-                  Destination
+                  Search
                 </Label>
                 <Input
-                  placeholder="Search destination..."
-                  value={filters.destination || ""}
+                  placeholder="Search destination or travel type..."
+                  value={filters.searchTerm || ""}
                   onChange={(e) =>
-                    handleInputChange("destination", e.target.value)
+                    handleInputChange("searchTerm", e.target.value)
                   }
                 />
               </div>

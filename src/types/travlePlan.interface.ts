@@ -54,7 +54,8 @@ export interface TravelPlanFilterParams {
   sortOrder?: "asc" | "desc";
   searchTerm?: string;
   travelType?: TravelType;
-  isPublic?: "PUBLIC" | "PRIVATE";
+  startDate?: string;
+  endDate?: string;
   minBudget?: number;
   maxBudget?: number;
 }

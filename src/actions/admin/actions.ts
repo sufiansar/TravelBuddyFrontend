@@ -15,9 +15,15 @@ import { revalidatePath } from "next/cache";
 
 export async function getAllUsers(filters: AdminFilters = {}) {
   try {
-    const queryString = new URLSearchParams(
-      filters as Record<string, string>
-    ).toString();
+    // Clean undefined/null values before creating query string
+    const cleanFilters = Object.entries(filters).reduce((acc, [key, value]) => {
+      if (value !== undefined && value !== null && value !== "") {
+        acc[key] = String(value);
+      }
+      return acc;
+    }, {} as Record<string, string>);
+
+    const queryString = new URLSearchParams(cleanFilters).toString();
     const url = `/admin/users${queryString ? `?${queryString}` : ""}`;
     const result = await makeApiCall(url, {}, true);
 
@@ -51,15 +57,21 @@ export async function toggleUserStatus(userId: string, status: UserStatus) {
 
 export async function getAllTravelPlans(filters: AdminFilters = {}) {
   try {
-    const queryString = new URLSearchParams(
-      filters as Record<string, string>
-    ).toString();
+    // Clean undefined/null values before creating query string
+    const cleanFilters = Object.entries(filters).reduce((acc, [key, value]) => {
+      if (value !== undefined && value !== null && value !== "") {
+        acc[key] = String(value);
+      }
+      return acc;
+    }, {} as Record<string, string>);
+
+    const queryString = new URLSearchParams(cleanFilters).toString();
     const url = `/admin/travel-plans${queryString ? `?${queryString}` : ""}`;
     const result = await makeApiCall(url, {}, true);
 
     return {
       success: true,
-      data: result.data as TravelPlan[],
+      data: result?.data?.data as TravelPlan[],
       meta: result.meta,
     };
   } catch (error: any) {
@@ -84,9 +96,15 @@ export async function deleteTravelPlan(planId: string) {
 
 export async function getAllPayments(filters: AdminFilters = {}) {
   try {
-    const queryString = new URLSearchParams(
-      filters as Record<string, string>
-    ).toString();
+    // Clean undefined/null values before creating query string
+    const cleanFilters = Object.entries(filters).reduce((acc, [key, value]) => {
+      if (value !== undefined && value !== null && value !== "") {
+        acc[key] = String(value);
+      }
+      return acc;
+    }, {} as Record<string, string>);
+
+    const queryString = new URLSearchParams(cleanFilters).toString();
     const url = `/admin/payments${queryString ? `?${queryString}` : ""}`;
     const result = await makeApiCall(url, {}, true);
 
@@ -102,9 +120,15 @@ export async function getAllPayments(filters: AdminFilters = {}) {
 
 export async function getAllSubscriptions(filters: AdminFilters = {}) {
   try {
-    const queryString = new URLSearchParams(
-      filters as Record<string, string>
-    ).toString();
+    // Clean undefined/null values before creating query string
+    const cleanFilters = Object.entries(filters).reduce((acc, [key, value]) => {
+      if (value !== undefined && value !== null && value !== "") {
+        acc[key] = String(value);
+      }
+      return acc;
+    }, {} as Record<string, string>);
+
+    const queryString = new URLSearchParams(cleanFilters).toString();
     const url = `/admin/subscriptions${queryString ? `?${queryString}` : ""}`;
     const result = await makeApiCall(url, {}, true);
 

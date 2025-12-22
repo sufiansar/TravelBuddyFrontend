@@ -20,6 +20,7 @@ const PublicNavbar = async () => {
     { href: "/explore", label: "Explore Travelers" },
     { href: "/packages", label: "Packages" },
     { href: "/post", label: "Community Posts" },
+    { href: "/faq", label: "FAQ" },
   ];
 
   const loggedInNavItems = [
@@ -27,6 +28,7 @@ const PublicNavbar = async () => {
     { href: "/explore", label: "Explore Travelers" },
     { href: "/dashboard/travel-plans", label: "Find Travel Buddy" },
     { href: "/packages", label: "Packages" },
+    { href: "/faq", label: "FAQ" },
     { href: "/post", label: "Community Posts" },
     { href: "/dashboard", label: "Dashboard" },
   ];

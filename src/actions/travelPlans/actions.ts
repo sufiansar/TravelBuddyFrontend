@@ -38,13 +38,18 @@ export async function createTravelPlan(data: CreateTravelPlanData) {
       true
     );
 
-    // Revalidate pages
+    const rawPlan =
+      (result as any)?.data?.data ?? (result as any)?.data ?? result;
+    const plan =
+      rawPlan?._id && !rawPlan.id ? { ...rawPlan, id: rawPlan._id } : rawPlan;
+
     revalidatePath("/travel-plans");
     revalidatePath("/profile/travel-plans");
+    revalidatePath("/dashboard/travel-plans");
 
     return {
       success: true,
-      data: result,
+      data: plan,
     };
   } catch (error: any) {
     console.error("createTravelPlan error:", error);
@@ -67,7 +72,8 @@ export async function getAllTravelPlans(params?: TravelPlanFilterParams) {
         ...(params?.sortOrder && { sortOrder: params.sortOrder }),
         ...(params?.searchTerm && { searchTerm: params.searchTerm }),
         ...(params?.travelType && { travelType: params.travelType }),
-        ...(params?.isPublic && { isPublic: params.isPublic }),
+        ...(params?.startDate && { startDate: params.startDate }),
+        ...(params?.endDate && { endDate: params.endDate }),
         ...(params?.minBudget && { minBudget: String(params.minBudget) }),
         ...(params?.maxBudget && { maxBudget: String(params.maxBudget) }),
       },

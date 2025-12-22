@@ -24,9 +24,12 @@ export function TravelPlanFilters({ initialFilters }: TravelPlanFiltersProps) {
   const searchParams = useSearchParams();
 
   const [filters, setFilters] = useState({
-    destination: searchParams.get("destination") || "",
+    searchTerm: searchParams.get("searchTerm") || "",
     travelType: searchParams.get("travelType") || "",
-    isPublic: searchParams.get("isPublic") || "",
+    startDate: searchParams.get("startDate") || "",
+    endDate: searchParams.get("endDate") || "",
+    minBudget: searchParams.get("minBudget") || "",
+    maxBudget: searchParams.get("maxBudget") || "",
   });
 
   const handleFilterChange = (key: string, value: string) => {
@@ -47,9 +50,12 @@ export function TravelPlanFilters({ initialFilters }: TravelPlanFiltersProps) {
 
   const clearFilters = () => {
     setFilters({
-      destination: "",
+      searchTerm: "",
       travelType: "",
-      isPublic: "",
+      startDate: "",
+      endDate: "",
+      minBudget: "",
+      maxBudget: "",
     });
     router.push("/admin/travel-plans");
   };
@@ -63,11 +69,9 @@ export function TravelPlanFilters({ initialFilters }: TravelPlanFiltersProps) {
           <div className="relative">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
             <Input
-              placeholder="Search by destination..."
-              value={filters.destination}
-              onChange={(e) =>
-                handleFilterChange("destination", e.target.value)
-              }
+              placeholder="Search by destination or travel type..."
+              value={filters.searchTerm}
+              onChange={(e) => handleFilterChange("searchTerm", e.target.value)}
               className="pl-9"
             />
           </div>
@@ -81,7 +85,7 @@ export function TravelPlanFilters({ initialFilters }: TravelPlanFiltersProps) {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <Select
           value={filters.travelType || "all"}
           onValueChange={(value) =>
@@ -101,21 +105,34 @@ export function TravelPlanFilters({ initialFilters }: TravelPlanFiltersProps) {
           </SelectContent>
         </Select>
 
-        <Select
-          value={filters.isPublic || "all"}
-          onValueChange={(value) =>
-            handleFilterChange("isPublic", value === "all" ? "" : value)
-          }
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="All Visibility" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All</SelectItem>
-            <SelectItem value="true">Public Only</SelectItem>
-            <SelectItem value="false">Private Only</SelectItem>
-          </SelectContent>
-        </Select>
+        <Input
+          type="date"
+          placeholder="Start Date"
+          value={filters.startDate}
+          onChange={(e) => handleFilterChange("startDate", e.target.value)}
+        />
+
+        <Input
+          type="date"
+          placeholder="End Date"
+          value={filters.endDate}
+          onChange={(e) => handleFilterChange("endDate", e.target.value)}
+        />
+
+        <div className="flex gap-2">
+          <Input
+            type="number"
+            placeholder="Min Budget"
+            value={filters.minBudget}
+            onChange={(e) => handleFilterChange("minBudget", e.target.value)}
+          />
+          <Input
+            type="number"
+            placeholder="Max Budget"
+            value={filters.maxBudget}
+            onChange={(e) => handleFilterChange("maxBudget", e.target.value)}
+          />
+        </div>
 
         {hasFilters && (
           <Button variant="outline" onClick={clearFilters} className="gap-2">

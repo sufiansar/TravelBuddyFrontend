@@ -24,7 +24,7 @@ export default async function TravelPlanDetailPage({
   const { id } = await params;
   const result = await getAllTravelPlans();
   const plans = result.success ? result.data || [] : [];
-  const plan = plans.find((p: any) => p.id === id);
+  const plan = plans?.find((p: any) => p.id === id);
 
   if (!plan) {
     return (
@@ -129,17 +129,17 @@ export default async function TravelPlanDetailPage({
               <CardTitle className="text-base">Statistics</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="flex justify-between items-center p-2 bg-gray-50 rounded">
+              <div className="flex justify-between items-center p-2 bg-foreground-50 rounded">
                 <span className="text-sm">Travel Type</span>
                 <span className="font-semibold">{plan.travelType}</span>
               </div>
 
-              <div className="flex justify-between items-center p-2 bg-gray-50 rounded">
+              <div className="flex justify-between items-center p-2 bg-foreground-50 rounded">
                 <span className="text-sm">Budget (USD)</span>
                 <span className="font-semibold">${plan.budget || "0"}</span>
               </div>
 
-              <div className="flex justify-between items-center p-2 bg-gray-50 rounded">
+              <div className="flex justify-between items-center p-2 bg-foreground-50 rounded">
                 <span className="text-sm">Created</span>
                 <span className="font-semibold text-xs">
                   {format(new Date(plan.createdAt), "MMM dd, yyyy")}

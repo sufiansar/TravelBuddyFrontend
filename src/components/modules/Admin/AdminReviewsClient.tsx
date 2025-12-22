@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Filter } from "lucide-react";
 import { ReviewFilters } from "@/components/modules/Admin/ReviewFilters";
 import { ReviewTable } from "@/components/modules/Admin/ReviewTable";
-import { ReviewExportButton } from "@/components/modules/Admin/ReviewExportButton";
+
 import { useRouter, useSearchParams } from "next/navigation";
 
 interface AdminReviewsClientProps {
@@ -40,9 +40,6 @@ export function AdminReviewsClient({
           <p className="text-muted-foreground">
             Manage all user reviews and ratings
           </p>
-        </div>
-        <div className="flex gap-2">
-          <ReviewExportButton reviews={reviews} />
         </div>
       </div>
 

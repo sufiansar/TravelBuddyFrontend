@@ -270,7 +270,7 @@ export default function UserEditForm({ user }: UserEditFormProps) {
       </Card>
 
       {/* Danger Zone */}
-      <Card className="border-red-200 bg-red-50">
+      <Card className="border-red-200 bg-foreground-50">
         <CardHeader>
           <CardTitle className="text-red-700">Danger Zone</CardTitle>
         </CardHeader>

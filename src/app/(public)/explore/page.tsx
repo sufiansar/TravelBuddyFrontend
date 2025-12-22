@@ -103,7 +103,7 @@ export default function ExplorePage() {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (activeTab === "plans") {
-      handleFilterChange({ ...filters, destination: searchQuery });
+      handleFilterChange({ ...filters, searchTerm: searchQuery });
     } else {
       handleFilterChange({ ...filters, interests: [searchQuery] });
     }

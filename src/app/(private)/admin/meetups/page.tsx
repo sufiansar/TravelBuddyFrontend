@@ -155,7 +155,7 @@ export default function AdminMeetupsPage() {
                     return (
                       <div
                         key={meetup.id}
-                        className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 transition-colors"
+                        className="flex items-center justify-between p-4 border rounded-lg transition-colors"
                       >
                         <div className="flex items-start gap-4">
                           <div className="hidden sm:block">

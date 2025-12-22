@@ -11,8 +11,8 @@ import { PaymentFilters } from "@/components/modules/Admin/PaymentFilters";
 
 interface PaymentsPageProps {
   searchParams?: {
+    searchTerm?: string;
     status?: string;
-    userId?: string;
     page?: string;
     limit?: string;
     sortBy?: string;
@@ -24,8 +24,8 @@ export default async function AdminPaymentsPage({
   searchParams,
 }: PaymentsPageProps) {
   const filters = {
+    searchTerm: searchParams?.searchTerm,
     status: searchParams?.status,
-    userId: searchParams?.userId,
     page: searchParams?.page ? parseInt(searchParams.page) : 1,
     limit: searchParams?.limit ? parseInt(searchParams.limit) : 10,
     sortBy: searchParams?.sortBy,

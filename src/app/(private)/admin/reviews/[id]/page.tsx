@@ -6,52 +6,30 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ArrowLeft, Star, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { format } from "date-fns";
+import { getReviewById } from "@/actions/reviews/actions";
+import { notFound } from "next/navigation";
 
 // Mark this page as dynamic since it uses server session
 export const dynamic = "force-dynamic";
 
 interface ReviewDetailPageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
-
-// Mock data - in production, fetch from API
-const mockReview = {
-  id: "1",
-  rating: 5,
-  comment: "Amazing travel companion! Very helpful and friendly.",
-  reviewerId: "user1",
-  receiverId: "user2",
-  travelPlanId: "plan1",
-  createdAt: new Date().toISOString(),
-  updatedAt: new Date().toISOString(),
-  reviewer: {
-    id: "user1",
-    fullName: "John Doe",
-    username: "johndoe",
-    profileImage: "https://via.placeholder.com/150",
-  },
-  receiver: {
-    id: "user2",
-    fullName: "Jane Smith",
-    username: "janesmith",
-    profileImage: "https://via.placeholder.com/150",
-  },
-  travelPlan: {
-    id: "plan1",
-    title: "Europe Summer Tour",
-    destination: "Europe",
-    startDate: "2024-06-01",
-    endDate: "2024-08-31",
-  },
-};
 
 export default async function ReviewDetailPage({
   params,
 }: ReviewDetailPageProps) {
-  // In production, fetch review data based on params.id
-  const review = mockReview;
+  const { id } = await params;
+
+  const result = await getReviewById(id);
+
+  if (!result.success || !result.data) {
+    notFound();
+  }
+
+  const review = result.data;
 
   const getRatingColor = (rating: number) => {
     if (rating >= 4) return "bg-green-100 text-green-800";
@@ -142,17 +120,20 @@ export default async function ReviewDetailPage({
                     <p className="text-sm text-muted-foreground">
                       {review.travelPlan.destination}
                     </p>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      {format(
-                        new Date(review.travelPlan.startDate),
-                        "MMM dd, yyyy"
-                      )}{" "}
-                      -{" "}
-                      {format(
-                        new Date(review.travelPlan.endDate),
-                        "MMM dd, yyyy"
+                    {review.travelPlan.startDate &&
+                      review.travelPlan.endDate && (
+                        <p className="text-xs text-muted-foreground mt-1">
+                          {format(
+                            new Date(review.travelPlan.startDate),
+                            "MMM dd, yyyy"
+                          )}{" "}
+                          -{" "}
+                          {format(
+                            new Date(review.travelPlan.endDate),
+                            "MMM dd, yyyy"
+                          )}
+                        </p>
                       )}
-                    </p>
                   </div>
                 </div>
               )}
@@ -172,7 +153,9 @@ export default async function ReviewDetailPage({
                 <div>
                   <p className="text-xs text-muted-foreground mb-1">Created</p>
                   <p className="text-sm font-medium">
-                    {format(new Date(review.createdAt), "PPP p")}
+                    {review.createdAt
+                      ? format(new Date(review.createdAt), "PPP p")
+                      : "N/A"}
                   </p>
                 </div>
                 <div>
@@ -180,7 +163,9 @@ export default async function ReviewDetailPage({
                     Last Updated
                   </p>
                   <p className="text-sm font-medium">
-                    {format(new Date(review.updatedAt), "PPP p")}
+                    {review.updatedAt
+                      ? format(new Date(review.updatedAt), "PPP p")
+                      : "N/A"}
                   </p>
                 </div>
               </div>

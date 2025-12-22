@@ -283,24 +283,6 @@ export default async function PublicProfilePage({
               </div>
             </CardContent>
           </Card>
-
-          {/* Contact/Share Options */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Connect</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <Button className="w-full" variant="outline">
-                Send Message
-              </Button>
-              <Button className="w-full" variant="outline">
-                Request to Travel Together
-              </Button>
-              <Button className="w-full" variant="outline">
-                Share Profile
-              </Button>
-            </CardContent>
-          </Card>
         </div>
       </div>
     </div>

@@ -11,9 +11,12 @@ import { TravelPlanFilters } from "@/components/modules/Admin/TravleFilter";
 
 interface TravelPlansPageProps {
   searchParams?: {
-    destination?: string;
+    searchTerm?: string;
     travelType?: string;
-    isPublic?: string;
+    startDate?: string;
+    endDate?: string;
+    minBudget?: string;
+    maxBudget?: string;
     page?: string;
     limit?: string;
     sortBy?: string;
@@ -25,9 +28,16 @@ export default async function AdminTravelPlansPage({
   searchParams,
 }: TravelPlansPageProps) {
   const filters = {
-    destination: searchParams?.destination,
+    searchTerm: searchParams?.searchTerm,
     travelType: searchParams?.travelType,
-    isPublic: searchParams?.isPublic,
+    startDate: searchParams?.startDate,
+    endDate: searchParams?.endDate,
+    minBudget: searchParams?.minBudget
+      ? parseInt(searchParams.minBudget)
+      : undefined,
+    maxBudget: searchParams?.maxBudget
+      ? parseInt(searchParams.maxBudget)
+      : undefined,
     page: searchParams?.page ? parseInt(searchParams.page) : 1,
     limit: searchParams?.limit ? parseInt(searchParams.limit) : 10,
     sortBy: searchParams?.sortBy,
@@ -44,13 +54,6 @@ export default async function AdminTravelPlansPage({
           <p className="text-gray-600">
             Manage all travel plans created by users
           </p>
-        </div>
-
-        <div className="flex items-center gap-3">
-          <Button variant="outline" className="gap-2">
-            <Download className="h-4 w-4" />
-            Export
-          </Button>
         </div>
       </div>
 
